@@ -1,5 +1,5 @@
 # Yolov5 Segmentation
-![output](./NCNN-test/output/horses.jpg)
+![output](./NCNN-test/output/racing.jpg)
 # Setup
 Setup for windows, using visual studio 2022
 ## Prerequisites
@@ -40,7 +40,6 @@ To build for Visual Studio, refer to [this](https://github.com/Tencent/ncnn/wiki
 4. Type the images name e.g : *parking.jpg*
 ![screenshot12](./tutorial/Screenshot12.png) ![screenshot13](./tutorial/Screenshot13.png)
 5. Output saved at "NCNN-test/output" folder
-![output](./NCNN-test/output/parking.jpg)
 
 # How to convert pytorch model to ncnn model 
 Currently, there's 2 ways to convert a pytorch model to ncnn model : 

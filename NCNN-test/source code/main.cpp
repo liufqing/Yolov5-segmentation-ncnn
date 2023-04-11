@@ -537,14 +537,14 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
     }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
     std::string imageInput, modelInput, imagePath, modelPath, outputPath;
     imagePath = "./images";
     modelPath = "./models";
     outputPath = "./output";
 
-    const int target_size = 640; 
-    const float prob_threshold = 0.5f;
+    const int target_size = 640;
+    const float prob_threshold = 0.25f;
     const float nms_threshold = 0.45f;
 
     if (argc < 2) {
