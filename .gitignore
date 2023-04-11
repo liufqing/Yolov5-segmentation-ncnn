@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /NCNN-test/NCNN-test.vcxproj
 /NCNN-test/NCNN-test.vcxproj.filters
+/NCNN-test/test models

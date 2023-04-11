@@ -619,8 +619,8 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects)
 
         cv::Scalar cc(color[0], color[1], color[2]);
 
-        //        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f\n", obj.label, obj.prob,
-        //            obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
+               fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f\n", obj.label, obj.prob,
+                   obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
 
         for (int y = 0; y < bgr.rows; y++) {
             uchar* image_ptr = bgr.ptr(y);
