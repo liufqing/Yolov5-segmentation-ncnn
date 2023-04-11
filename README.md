@@ -36,8 +36,16 @@ To build for Visual Studio, refer to [this](https://github.com/Tencent/ncnn/wiki
 # How to run
 1. Put ncnn model (.bin and .param) to "./NCNN-test/models". Models can be download at [Google Drive](https://drive.google.com/drive/folders/1KtMrWS-zh73aBp44aSUf3gM6vX587VBG)
 2. Put inference image to "./NCNN-test/images"
-3. Run yolo.exe (it is necessary to put it in the folder that include the models and images folder)
-4. Type the images name e.g : *parking.jpg*
+3. Run yolo.exe or run in cmd, just pass the model name, assum the *.bin and *.param are both in models folders
+```cmd
+yolo [model name] [image name]
+```
+for example :
+```cmd
+yolo yolov5x-seg cat.jpg
+```
+
+4. If you dont pass any argument. Type the images name e.g : *cat.jpg*
 ![screenshot12](./tutorial/Screenshot12.png) ![screenshot13](./tutorial/Screenshot13.png)
 5. Output saved at "NCNN-test/output" folder
 
