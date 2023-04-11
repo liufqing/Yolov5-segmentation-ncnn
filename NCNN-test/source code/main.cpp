@@ -518,9 +518,9 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     // stride 16
     {
         ncnn::Mat out;
-        ex.extract("385", out);  //yolov5n + yolov5s
+        //ex.extract("385", out);  //yolov5n + yolov5s
         //        ex.extract("619", out);    //yolov5l
-        //        ex.extract("736", out);    //yolov5x
+                ex.extract("736", out);    //yolov5x
 
         ncnn::Mat anchors(6);
         anchors[0] = 30.f;
@@ -539,9 +539,9 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     // stride 32
     {
         ncnn::Mat out;
-        ex.extract("405", out);  //yolov5n + yolov5s
+        //ex.extract("405", out);  //yolov5n + yolov5s
         //        ex.extract("639", out);    //yolov5l
-        //        ex.extract("756", out);    //yolov5x
+                ex.extract("756", out);    //yolov5x
 
         ncnn::Mat anchors(6);
         anchors[0] = 116.f;
@@ -665,8 +665,8 @@ int main(int argc, char** argv) {
     }
     /*const char* imagepath = argv[1];*/
 
-    yolov5.load_param("./models/yolov5s-seg.param");
-    yolov5.load_model("./models/yolov5s-seg.bin");
+    yolov5.load_param("./test models/yolov5x-seg.param");
+    yolov5.load_model("./test models/yolov5x-seg.bin");
 
     yolov5.opt.use_vulkan_compute = false;
     yolov5.opt.num_threads = 4;
