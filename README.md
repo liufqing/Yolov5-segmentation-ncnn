@@ -31,16 +31,14 @@ To build for Visual Studio, refer to [this](https://github.com/Tencent/ncnn/wiki
 ![screenshot8](./tutorial/Screenshot8.png)
 ![screenshot9](./tutorial/Screenshot9.png)
 4. Add Dependencies by going to *Project>Properties>Configuration Properties>Linker>Input*. Add opencv and ncnn *.lib* to *Additiona Dependencies* (d for debug, without d for release )
-![screenshot10](./tutorial/Screenshot10.png)
-![screenshot11](./tutorial/Screenshot11.png)
+![screenshot10](./tutorial/Screenshot10.png) ![screenshot11](./tutorial/Screenshot11.png)
 
 # How to run
 1. Put ncnn model (.bin and .param) to "./NCNN-test/models". Models can be download at [Google Drive](https://drive.google.com/drive/folders/1KtMrWS-zh73aBp44aSUf3gM6vX587VBG)
 2. Put inference image to "./NCNN-test/images"
 3. Run yolo.exe (it is necessary to put it in the folder that include the models and images folder)
 4. Type the images name e.g : *parking.jpg*
-![screenshot12](./tutorial/Screenshot12.png)
-![screenshot13](./tutorial/Screenshot13.png)
+![screenshot12](./tutorial/Screenshot12.png) ![screenshot13](./tutorial/Screenshot13.png)
 5. Output saved at "NCNN-test/output" folder
 ![output](./NCNN-test/output/parking.jpg)
 
