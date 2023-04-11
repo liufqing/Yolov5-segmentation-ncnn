@@ -1,122 +1,33 @@
-#include "layer.h"
-#include "net.h"
+#include <ncnn/layer.h>
+#include <ncnn/net.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+
 #include <float.h>
 #include <stdio.h>
 #include <vector>
 #include <iostream>
 
+#include "classNames.h"
+#include "colors.h"
+
 #define MAX_STRIDE 64
 
 ncnn::Net yolov5;
 
-const char* class_names[] = {
-        "person", "bicycle", "car", "motorcycle", "airplane", "bus",
-        "train", "truck", "boat", "traffic light", "fire hydrant",
-        "stop sign", "parking meter", "bench", "bird", "cat", "dog",
-        "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe",
-        "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee",
-        "skis", "snowboard", "sports ball", "kite", "baseball bat",
-        "baseball glove", "skateboard", "surfboard", "tennis racket",
-        "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl",
-        "banana", "apple", "sandwich", "orange", "broccoli", "carrot",
-        "hot dog", "pizza", "donut", "cake", "chair", "couch",
-        "potted plant", "bed", "dining table", "toilet", "tv", "laptop",
-        "mouse", "remote", "keyboard", "cell phone", "microwave", "oven",
-        "toaster", "sink", "refrigerator", "book", "clock", "vase",
-        "scissors", "teddy bear", "hair drier", "toothbrush"
+struct Object{
+    cv::Rect_<float> rect;
+    int label{};
+    float prob{};
+    std::vector<float> mask_feat;
+    cv::Mat cv_mask;
 };
 
-const unsigned char colors[81][3] = {
- {56,  0,   255},
- {226, 255, 0},
- {0,   94,  255},
- {0,   37,  255},
- {0,   255, 94},
- {255, 226, 0},
- {0,   18,  255},
- {255, 151, 0},
- {170, 0,   255},
- {0,   255, 56},
- {255, 0,   75},
- {0,   75,  255},
- {0,   255, 169},
- {255, 0,   207},
- {75,  255, 0},
- {207, 0,   255},
- {37,  0,   255},
- {0,   207, 255},
- {94,  0,   255},
- {0,   255, 113},
- {255, 18,  0},
- {255, 0,   56},
- {18,  0,   255},
- {0,   255, 226},
- {170, 255, 0},
- {255, 0,   245},
- {151, 255, 0},
- {132, 255, 0},
- {75,  0,   255},
- {151, 0,   255},
- {0,   151, 255},
- {132, 0,   255},
- {0,   255, 245},
- {255, 132, 0},
- {226, 0,   255},
- {255, 37,  0},
- {207, 255, 0},
- {0,   255, 207},
- {94,  255, 0},
- {0,   226, 255},
- {56,  255, 0},
- {255, 94,  0},
- {255, 113, 0},
- {0,   132, 255},
- {255, 0,   132},
- {255, 170, 0},
- {255, 0,   188},
- {113, 255, 0},
- {245, 0,   255},
- {113, 0,   255},
- {255, 188, 0},
- {0,   113, 255},
- {255, 0,   0},
- {0,   56,  255},
- {255, 0,   113},
- {0,   255, 188},
- {255, 0,   94},
- {255, 0,   18},
- {18,  255, 0},
- {0,   255, 132},
- {0,   188, 255},
- {0,   245, 255},
- {0,   169, 255},
- {37,  255, 0},
- {255, 0,   151},
- {188, 0,   255},
- {0,   255, 37},
- {0,   255, 0},
- {255, 0,   170},
- {255, 0,   37},
- {255, 75,  0},
- {0,   0,   255},
- {255, 207, 0},
- {255, 0,   226},
- {255, 245, 0},
- {188, 255, 0},
- {0,   255, 18},
- {0,   255, 75},
- {0,   255, 151},
- {255, 56,  0},
- {245, 255, 0}
-};
+Object o = Object();
 
-
-static void slice(const ncnn::Mat& in, ncnn::Mat& out, int start, int end, int axis)
-{
+static void slice(const ncnn::Mat& in, ncnn::Mat& out, int start, int end, int axis){
     ncnn::Option opt;
     opt.num_threads = 4;
     opt.use_fp16_storage = false;
@@ -148,8 +59,7 @@ static void slice(const ncnn::Mat& in, ncnn::Mat& out, int start, int end, int a
 
     delete op;
 }
-static void interp(const ncnn::Mat& in, const float& scale, const int& out_w, const int& out_h, ncnn::Mat& out)
-{
+static void interp(const ncnn::Mat& in, const float& scale, const int& out_w, const int& out_h, ncnn::Mat& out){
     ncnn::Option opt;
     opt.num_threads = 4;
     opt.use_fp16_storage = false;
@@ -176,8 +86,7 @@ static void interp(const ncnn::Mat& in, const float& scale, const int& out_w, co
 
     delete op;
 }
-static void reshape(const ncnn::Mat& in, ncnn::Mat& out, int c, int h, int w, int d)
-{
+static void reshape(const ncnn::Mat& in, ncnn::Mat& out, int c, int h, int w, int d){
     ncnn::Option opt;
     opt.num_threads = 4;
     opt.use_fp16_storage = false;
@@ -204,8 +113,7 @@ static void reshape(const ncnn::Mat& in, ncnn::Mat& out, int c, int h, int w, in
 
     delete op;
 }
-static void sigmoid(ncnn::Mat& bottom)
-{
+static void sigmoid(ncnn::Mat& bottom){
     ncnn::Option opt;
     opt.num_threads = 4;
     opt.use_fp16_storage = false;
@@ -222,8 +130,7 @@ static void sigmoid(ncnn::Mat& bottom)
 
     delete op;
 }
-static void matmul(const std::vector<ncnn::Mat>& bottom_blobs, ncnn::Mat& top_blob)
-{
+static void matmul(const std::vector<ncnn::Mat>& bottom_blobs, ncnn::Mat& top_blob){
     ncnn::Option opt;
     opt.num_threads = 2;
     opt.use_fp16_storage = false;
@@ -246,16 +153,6 @@ static void matmul(const std::vector<ncnn::Mat>& bottom_blobs, ncnn::Mat& top_bl
 
     delete op;
 }
-
-struct Object
-{
-    cv::Rect_<float> rect;
-    int label;
-    float prob;
-    std::vector<float> mask_feat;
-    cv::Mat cv_mask;
-
-};
 
 static inline float intersection_area(const Object& a, const Object& b)
 {
@@ -342,24 +239,20 @@ static void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vecto
     }
 }
 
-static inline float sigmoid(float x)
-{
+static inline float sigmoid(float x){
     return static_cast<float>(1.f / (1.f + exp(-x)));
 }
 
-static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& in_pad, const ncnn::Mat& feat_blob, float prob_threshold, std::vector<Object>& objects)
-{
+static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& in_pad, const ncnn::Mat& feat_blob, float prob_threshold, std::vector<Object>& objects){
     const int num_grid = feat_blob.h;
 
     int num_grid_x;
     int num_grid_y;
-    if (in_pad.w > in_pad.h)
-    {
+    if (in_pad.w > in_pad.h){
         num_grid_x = in_pad.w / stride;
         num_grid_y = num_grid / num_grid_x;
     }
-    else
-    {
+    else{
         num_grid_y = in_pad.h / stride;
         num_grid_x = num_grid / num_grid_y;
     }
@@ -368,27 +261,22 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
 
     const int num_anchors = anchors.w / 2;
 
-    for (int q = 0; q < num_anchors; q++)
-    {
+    for (int q = 0; q < num_anchors; q++){
         const float anchor_w = anchors[q * 2];
         const float anchor_h = anchors[q * 2 + 1];
 
         const ncnn::Mat feat = feat_blob.channel(q);
 
-        for (int i = 0; i < num_grid_y; i++)
-        {
-            for (int j = 0; j < num_grid_x; j++)
-            {
+        for (int i = 0; i < num_grid_y; i++){
+            for (int j = 0; j < num_grid_x; j++){
                 const float* featptr = feat.row(i * num_grid_x + j);
 
                 // find class index with max class score
                 int class_index = 0;
                 float class_score = -FLT_MAX;
-                for (int k = 0; k < num_class; k++)
-                {
+                for (int k = 0; k < num_class; k++){
                     float score = featptr[5 + k];
-                    if (score > class_score)
-                    {
+                    if (score > class_score){
                         class_index = k;
                         class_score = score;
                     }
@@ -398,8 +286,7 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
 
                 float confidence = sigmoid(box_score) * sigmoid(class_score);
 
-                if (confidence >= prob_threshold)
-                {
+                if (confidence >= prob_threshold){
                     // yolov5/models/yolo.py Detect forward
                     // y = x[i].sigmoid()
                     // y[..., 0:2] = (y[..., 0:2] * 2. - 0.5 + self.grid[i].to(x[i].device)) * self.stride[i]  # xy
@@ -438,9 +325,9 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
     }
 }
 static void decode_mask(const ncnn::Mat& mask_feat, const int& img_w, const int& img_h,
-    const ncnn::Mat& mask_proto, const ncnn::Mat& in_pad, const int& wpad, const int& hpad,
-    ncnn::Mat& mask_pred_result)
-{
+                        const ncnn::Mat& mask_proto, const ncnn::Mat& in_pad, const int& wpad, const int& hpad,
+                        ncnn::Mat& mask_pred_result){
+
     ncnn::Mat masks;
     matmul(std::vector<ncnn::Mat>{mask_feat, mask_proto}, masks);
     sigmoid(masks);
@@ -450,14 +337,9 @@ static void decode_mask(const ncnn::Mat& mask_feat, const int& img_w, const int&
     slice(masks, mask_pred_result, wpad / 2, in_pad.w - wpad / 2, 2);
     slice(mask_pred_result, mask_pred_result, hpad / 2, in_pad.h - hpad / 2, 1);
     interp(mask_pred_result, 1.0, img_w, img_h, mask_pred_result);
-
 }
 
-static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
-{
-    const int target_size = 640;
-    const float prob_threshold = 0.25f;
-    const float nms_threshold = 0.45f;
+static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects, const int target_size = 640, const float prob_threshold = 0.25f, const float nms_threshold = 0.45f){
 
     int img_w = bgr.cols;
     int img_h = bgr.rows;
@@ -466,14 +348,12 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     int w = img_w;
     int h = img_h;
     float scale = 1.f;
-    if (w > h)
-    {
+    if (w > h){
         scale = (float)target_size / w;
         w = target_size;
         h = h * scale;
     }
-    else
-    {
+    else{
         scale = (float)target_size / h;
         h = target_size;
         w = w * scale;
@@ -518,9 +398,9 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     // stride 16
     {
         ncnn::Mat out;
-        //ex.extract("385", out);  //yolov5n + yolov5s
-        //        ex.extract("619", out);    //yolov5l
-                ex.extract("736", out);    //yolov5x
+        //ex.extract("385", out);   //yolov5n + yolov5s
+        //ex.extract("619", out);   //yolov5l
+        ex.extract("736", out);     //yolov5x
 
         ncnn::Mat anchors(6);
         anchors[0] = 30.f;
@@ -539,9 +419,9 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     // stride 32
     {
         ncnn::Mat out;
-        //ex.extract("405", out);  //yolov5n + yolov5s
-        //        ex.extract("639", out);    //yolov5l
-                ex.extract("756", out);    //yolov5x
+        //ex.extract("405", out);   //yolov5n + yolov5s
+        //ex.extract("639", out);   //yolov5l
+        ex.extract("756", out);     //yolov5x
 
         ncnn::Mat anchors(6);
         anchors[0] = 116.f;
@@ -570,7 +450,7 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     int count = picked.size();
 
     ncnn::Mat mask_feat = ncnn::Mat(32, count, sizeof(float));
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++){
         std::copy(proposals[picked[i]].mask_feat.begin(), proposals[picked[i]].mask_feat.end(), mask_feat.row(i));
     }
 
@@ -578,8 +458,7 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     decode_mask(mask_feat, img_w, img_h, mask_proto, in_pad, wpad, hpad, mask_pred_result);
 
     objects.resize(count);
-    for (int i = 0; i < count; i++)
-    {
+    for (int i = 0; i < count; i++){
         objects[i] = proposals[picked[i]];
 
         // adjust offset to original unpadded
@@ -607,11 +486,10 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects)
     return 0;
 }
 
-static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects)
-{
+static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
     int color_index = 0;
 
-    for (size_t i = 0; i < objects.size(); i++) {
+    for (size_t i = 0; i < objects.size(); i++){
         const Object& obj = objects[i];
 
         const unsigned char* color = colors[color_index % 80];
@@ -660,22 +538,42 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects)
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cout << "No argument pass.";
-    }
-    /*const char* imagepath = argv[1];*/
+    std::string imageInput, modelInput, imagePath, modelPath, outputPath;
+    imagePath = "./images";
+    modelPath = "./models";
+    outputPath = "./output";
 
-    yolov5.load_param("./models/yolov5x-seg.param");
-    yolov5.load_model("./models/yolov5x-seg.bin");
+    const int target_size = 640; 
+    const float prob_threshold = 0.5f;
+    const float nms_threshold = 0.45f;
+
+    if (argc < 2) {
+        std::cout << "No argument pass. Using default model ";
+        modelInput = "yolov5x-seg";
+        std::cout << "\nEnter image path : ";
+        std::cin >> imageInput;
+    }
+    else {
+        modelInput = argv[1];
+        imageInput = argv[2];
+    }
+
+    std::string inputPath = imagePath + "/" + imageInput;
+    std::string model = modelPath + "/" + modelInput + ".bin";
+    std::string param = modelPath + "/" + modelInput + ".param";
+
+    std::cout << "Image = " << inputPath << "\nUsing " << model << " and " << param << std::endl;
+
+
+    const char* Model = model.c_str();
+    const char* Param = param.c_str();
+
+    yolov5.load_param(Param);
+    yolov5.load_model(Model);
 
     yolov5.opt.use_vulkan_compute = false;
     yolov5.opt.num_threads = 4;
-
-    std::cout << "\nEnter image path : ";
-    std::string input;
-    std::cin >> input;
-
-    std::string inputPath = "./images/" + input;
+    
 
     cv::Mat image = cv::imread(inputPath, 1);
     if (image.empty()) {
@@ -684,14 +582,14 @@ int main(int argc, char** argv) {
     }
 
     std::vector<Object> objects;
-    detect_yolov5(image, objects);
+    detect_yolov5(image, objects, target_size, prob_threshold, nms_threshold);
     draw_objects(image, objects);
 
     cv::imshow("Detect", image);
     cv::waitKey();
-    std::string outputPath = "./output/" + input;
-    std::cout << "\nOutput saved at " << outputPath;
-    cv::imwrite(outputPath, image);
+    std::string output = outputPath + "/" + imageInput;
+    std::cout << "\nOutput saved at " << output;
+    cv::imwrite(output, image);
 
     return 0;
 }
