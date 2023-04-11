@@ -659,8 +659,8 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects)
     }
 }
 
-int main(int argc, char** argv){
-    if (argc < 2){
+int main(int argc, char** argv) {
+    if (argc < 2) {
         std::cout << "No argument pass.";
     }
     /*const char* imagepath = argv[1];*/
@@ -676,9 +676,9 @@ int main(int argc, char** argv){
     std::cin >> input;
 
     std::string inputPath = "./resource/" + input;
-    
+
     cv::Mat image = cv::imread(inputPath, 1);
-    if (image.empty()){
+    if (image.empty()) {
         std::cout << "Invalid Path";
         return -1;
     }
@@ -690,7 +690,7 @@ int main(int argc, char** argv){
     cv::imshow("Detect", image);
     cv::waitKey();
     std::string outputPath = "./out/" + input;
-    std::cout <<"\nOutput saved at "<<outputPath;
+    std::cout << "\nOutput saved at " << outputPath;
     cv::imwrite(outputPath, image);
 
     return 0;

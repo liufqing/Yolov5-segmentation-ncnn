@@ -146,6 +146,8 @@
     <Image Include="parking.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="sources\main.cpp" />
+    <ClCompile Include="sources\NCNN-test.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
