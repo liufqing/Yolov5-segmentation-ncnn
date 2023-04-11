@@ -1,5 +1,5 @@
 # Yolov5 Segmentation
-![output](./NCNN-test/out/horses.jpg)
+![output](./NCNN-test/output/horses.jpg)
 # Setup
 Setup for windows, using visual studio 2022
 ## Prerequisites
