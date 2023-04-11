@@ -665,8 +665,8 @@ int main(int argc, char** argv) {
     }
     /*const char* imagepath = argv[1];*/
 
-    yolov5.load_param("./test models/yolov5x-seg.param");
-    yolov5.load_model("./test models/yolov5x-seg.bin");
+    yolov5.load_param("./models/yolov5x-seg.param");
+    yolov5.load_model("./models/yolov5x-seg.bin");
 
     yolov5.opt.use_vulkan_compute = false;
     yolov5.opt.num_threads = 4;
@@ -675,7 +675,7 @@ int main(int argc, char** argv) {
     std::string input;
     std::cin >> input;
 
-    std::string inputPath = "./resources/" + input;
+    std::string inputPath = "./images/" + input;
 
     cv::Mat image = cv::imread(inputPath, 1);
     if (image.empty()) {

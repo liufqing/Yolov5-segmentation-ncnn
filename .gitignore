@@ -364,3 +364,11 @@ FodyWeavers.xsd
 /NCNN-test/NCNN-test.vcxproj
 /NCNN-test/NCNN-test.vcxproj.filters
 /NCNN-test/test models
+NCNN-test/models/yolov5s-seg (2).param
+NCNN-test/models/yolov5s-seg (2).bin
+NCNN-test/models/yolov5n-seg (2).param
+NCNN-test/models/yolov5n-seg (2).bin
+NCNN-test/models/yolov5l-seg.bin
+NCNN-test/models/yolov5l-seg.param
+NCNN-test/models/yolov5x-seg.bin
+NCNN-test/models/yolov5x-seg.param
