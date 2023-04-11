@@ -689,7 +689,7 @@ int main(int argc, char** argv) {
 
     cv::imshow("Detect", image);
     cv::waitKey();
-    std::string outputPath = "./out/" + input;
+    std::string outputPath = "./output/" + input;
     std::cout << "\nOutput saved at " << outputPath;
     cv::imwrite(outputPath, image);
 
