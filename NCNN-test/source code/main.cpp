@@ -548,7 +548,7 @@ int main(int argc, char* argv[]) {
     const float nms_threshold = 0.45f;
 
     if (argc < 2) {
-        std::cout << "No argument pass. Using default model ";
+        std::cout << "No argument pass. Using default model";
         modelInput = "yolov5x-seg";
         std::cout << "\nEnter image path : ";
         std::cin >> imageInput;
