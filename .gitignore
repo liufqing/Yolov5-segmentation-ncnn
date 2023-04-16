@@ -363,7 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /.vscode/settings.json
 /Yolov5/models/yolov5x.ncnn.param
-/Yolov5/output/animals.jpg
 /Yolov5/models/yolov5x.ncnn.bin
 /Yolov5-seg/models/yolov5x-seg.param
 /Yolov5-seg/models/yolov5x-seg.ncnn.param
