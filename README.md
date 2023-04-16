@@ -1,6 +1,8 @@
 # Yolov5 Segmentation with NCNN
 ![output](./Yolov5-seg/output/cat.jpg)
 
+![output](./build/screenshots/cat.gif)
+
 # Setup
 Setup for windows, using visual studio 2022. Refer to [build](./build/build.md)
 
