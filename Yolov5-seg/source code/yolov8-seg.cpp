@@ -19,7 +19,7 @@ namespace fs = std::filesystem;
 
 #define MAX_STRIDE 32
 
-ncnn::Net yolov8;
+ncnn::Net yolo;
 
 struct Object{
     cv::Rect_<float> rect;
@@ -396,7 +396,7 @@ static int detect_yolov8(const cv::Mat& bgr, std::vector<Object>& objects, const
     in_pad.substract_mean_normalize(0, norm_vals);
 
     // yolov8 model inference
-    ncnn::Extractor ex = yolov8.create_extractor();
+    ncnn::Extractor ex = yolo.create_extractor();
     ex.input("images", in_pad);
 
     ncnn::Mat out;
@@ -546,13 +546,13 @@ int main(int argc, char* argv[]) {
     
     // fs::path filePath = input;
 
-    if (yolov8.load_param(param.c_str()))
+    if (yolo.load_param(param.c_str()))
         exit(-1);
-    if (yolov8.load_model(bin.c_str()))
+    if (yolo.load_model(bin.c_str()))
         exit(-1);
 
-    yolov8.opt.use_vulkan_compute = false;
-    yolov8.opt.num_threads = 4;
+    yolo.opt.use_vulkan_compute = false;
+    yolo.opt.num_threads = 4;
 
     if (input == "0") {
         std::cout << "Using camera\nUsing " << bin << " and " << param << std::endl;

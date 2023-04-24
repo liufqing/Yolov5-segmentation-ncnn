@@ -146,8 +146,8 @@
     <ClCompile Include="source code\yolov5.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source code\classNames.h" />
-    <ClInclude Include="source code\colors.h" />
+    <ClInclude Include="source code\classNames.hpp" />
+    <ClInclude Include="source code\colors.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

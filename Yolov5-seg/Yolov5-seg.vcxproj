@@ -143,8 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="source code\classNames.h" />
-    <ClInclude Include="source code\colors.h" />
+    <ClInclude Include="source code\classNames.hpp" />
+    <ClInclude Include="source code\colors.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source code\yolov5-seg.cpp" />

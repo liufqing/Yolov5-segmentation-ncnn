@@ -20,7 +20,7 @@ namespace fs = std::filesystem;
 #define MAX_STRIDE 64
 #define DYNAMIC 1
 
-ncnn::Net yolov5;
+ncnn::Net yolo;
 
 struct Object{
     cv::Rect_<float> rect;
@@ -383,7 +383,7 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
     in_pad.substract_mean_normalize(0, norm_vals);
 
     // yolov5 model inference
-    ncnn::Extractor ex = yolov5.create_extractor();
+    ncnn::Extractor ex = yolo.create_extractor();
     ex.input("images", in_pad); // images or in0
 
     ncnn::Mat out0;
@@ -683,13 +683,13 @@ int main(int argc, char* argv[]) {
     
     // fs::path filePath = input;
 
-    if (yolov5.load_param(param.c_str()))
+    if (yolo.load_param(param.c_str()))
         exit(-1);
-    if (yolov5.load_model(bin.c_str()))
+    if (yolo.load_model(bin.c_str()))
         exit(-1);
 
-    yolov5.opt.use_vulkan_compute = false;
-    yolov5.opt.num_threads = 4;
+    yolo.opt.use_vulkan_compute = false;
+    yolo.opt.num_threads = 4;
 
     if (input == "0") {
         std::cout << "Using camera\nUsing " << bin << " and " << param << std::endl;

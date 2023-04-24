@@ -20,7 +20,7 @@ namespace fs = std::filesystem;
 #define MAX_STRIDE 64
 #define DYNAMIC 1
 
-ncnn::Net yolov5;
+ncnn::Net yolo;
 
 struct Object{
     cv::Rect_<float> rect;
@@ -238,7 +238,7 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects,  cons
     in_pad.substract_mean_normalize(0, norm_vals);
 
     // yolov5 model inference
-    ncnn::Extractor ex = yolov5.create_extractor();
+    ncnn::Extractor ex = yolo.create_extractor();
     ex.input("in0", in_pad); //images or in0
 
     ncnn::Mat out0;
@@ -550,25 +550,25 @@ static void draw_objects(const cv::Mat& brg, const std::vector<Object>& objects)
 
 int main(int argc, char* argv[]) {
     std::string input, output, model, inputFolder, modelFolder, outputFolder;
-    
+
     inputFolder = "../input";
     outputFolder = "../output";
     modelFolder = "../models";
 
-    cv::Mat in,out;
+    cv::Mat in, out;
     cv::VideoCapture capture;
 
     std::vector<Object> objects;
 
     if (argc < 2) {
         model = "pnnx/yolov5s.ncnn";
-        std::cout << "No argument pass. Using default model\n";
-        std::cout << "Enter input : ";
+        std::cout << "No argument pass. Using default model " << model;
+        std::cout << "\nEnter input : ";
         std::cin >> input;
     }
     else if (argc == 2) {
         model = "pnnx/yolov5s.ncnn";
-        std::cout << "Using default model\n";
+        std::cout << "Using default model " << model;
         input = argv[1];
     }
     else {
@@ -583,13 +583,13 @@ int main(int argc, char* argv[]) {
 
     // fs::path filePath = input;
 
-    if (yolov5.load_param(param.c_str()))
+    if (yolo.load_param(param.c_str()))
         exit(-1);
-    if (yolov5.load_model(bin.c_str()))
+    if (yolo.load_model(bin.c_str()))
         exit(-1);
 
-    yolov5.opt.use_vulkan_compute = false;
-    yolov5.opt.num_threads = 4;
+    yolo.opt.use_vulkan_compute = false;
+    yolo.opt.num_threads = 4;
 
     if (input == "0") {
         std::cout << "Using camera\nUsing " << bin << " and " << param << std::endl;
@@ -623,6 +623,7 @@ int main(int argc, char* argv[]) {
             detect_yolov5(in, objects);
 
             out = in.clone();
+            //draw_objects_seg(out, objects);
             draw_objects(out, objects);
             cv::imshow("Detect", out);
 
