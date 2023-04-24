@@ -26,8 +26,5 @@
     <ClInclude Include="source code\colors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source code\idNames.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

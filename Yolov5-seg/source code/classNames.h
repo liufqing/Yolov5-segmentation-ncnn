@@ -1,5 +1,5 @@
 #pragma once
-const char* class_names[] = {
+const char* class_names[80] = {
 	"person", "bicycle", "car", "motorcycle", "airplane", "bus",
 	"train", "truck", "boat", "traffic light", "fire hydrant",
 	"stop sign", "parking meter", "bench", "bird", "cat", "dog",
@@ -15,3 +15,12 @@ const char* class_names[] = {
 	"toaster", "sink", "refrigerator", "book", "clock", "vase",
 	"scissors", "teddy bear", "hair drier", "toothbrush"
 };
+
+//const char* class_names[6] = {
+//	"cccd_back",
+//	"cccd_front",
+//	"cccdc_back",
+//	"cccdc_front",
+//	"cmt9_back",
+//	"cmt9_front"
+//};

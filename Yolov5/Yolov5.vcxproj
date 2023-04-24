@@ -148,7 +148,6 @@
   <ItemGroup>
     <ClInclude Include="source code\classNames.h" />
     <ClInclude Include="source code\colors.h" />
-    <ClInclude Include="source code\idNames.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

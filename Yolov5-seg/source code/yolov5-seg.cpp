@@ -1,4 +1,3 @@
-#include <ncnn/layer.h>
 #include <ncnn/net.h>
 
 #include <opencv2/core/core.hpp>
@@ -11,6 +10,7 @@
 #include <iostream>
 #include <filesystem>
 #include <string>
+#include <fstream>
 
 #include "classNames.h"
 #include "colors.h"
@@ -24,8 +24,8 @@ ncnn::Net yolov5;
 
 struct Object{
     cv::Rect_<float> rect;
-    int label;
-    float prob;
+    int label{};
+    float prob{};
     std::vector<float> mask_feat;
     cv::Mat cv_mask;
 };
@@ -167,16 +167,14 @@ static void qsort_descent_inplace(std::vector<Object>& faceobjects, int left, in
     int j = right;
     float p = faceobjects[(left + right) / 2].prob;
 
-    while (i <= j)
-    {
+    while (i <= j){
         while (faceobjects[i].prob > p)
             i++;
 
         while (faceobjects[j].prob < p)
             j--;
 
-        if (i <= j)
-        {
+        if (i <= j){
             // swap
             std::swap(faceobjects[i], faceobjects[j]);
 
@@ -185,13 +183,13 @@ static void qsort_descent_inplace(std::vector<Object>& faceobjects, int left, in
         }
     }
 
-#pragma omp parallel sections
+    #pragma omp parallel sections
     {
-#pragma omp section
+        #pragma omp section
         {
             if (left < j) qsort_descent_inplace(faceobjects, left, j);
         }
-#pragma omp section
+        #pragma omp section
         {
             if (i < right) qsort_descent_inplace(faceobjects, i, right);
         }
@@ -211,18 +209,15 @@ static void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vecto
     const int n = faceobjects.size();
 
     std::vector<float> areas(n);
-    for (int i = 0; i < n; i++)
-    {
+    for (int i = 0; i < n; i++){
         areas[i] = faceobjects[i].rect.area();
     }
 
-    for (int i = 0; i < n; i++)
-    {
+    for (int i = 0; i < n; i++){
         const Object& a = faceobjects[i];
 
         int keep = 1;
-        for (int j = 0; j < (int)picked.size(); j++)
-        {
+        for (int j = 0; j < (int)picked.size(); j++){
             const Object& b = faceobjects[picked[j]];
 
             // intersection over union
@@ -238,8 +233,30 @@ static void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vecto
     }
 }
 
-static inline float sigmoid(float x){
-    return static_cast<float>(1.f / (1.f + exp(-x)));
+inline float fast_exp(float x) {
+    union {
+        uint32_t i;
+        float f;
+    } v{};
+    v.i = (1 << 23) * (1.4426950409 * x + 126.93490512f);
+    return v.f;
+}
+
+inline float sigmoid(float x) {
+    return 1.0f / (1.0f + fast_exp(-x));
+}
+
+static void decode_mask(const ncnn::Mat& mask_feat, const int& img_w, const int& img_h,
+                        const ncnn::Mat& mask_proto, const ncnn::Mat& in_pad, const int& wpad, const int& hpad,
+                        ncnn::Mat& mask_pred_result){
+    ncnn::Mat masks;
+    matmul(std::vector<ncnn::Mat>{mask_feat, mask_proto}, masks);
+    sigmoid(masks);
+    reshape(masks, masks, masks.h, in_pad.h / 4, in_pad.w / 4, 0);
+    interp(masks, 4.0, 0, 0, masks);
+    slice(masks, mask_pred_result, wpad / 2, in_pad.w - wpad / 2, 2);
+    slice(mask_pred_result, mask_pred_result, hpad / 2, in_pad.h - hpad / 2, 1);
+    interp(mask_pred_result, 1.0, img_w, img_h, mask_pred_result);
 }
 
 static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& in_pad, const ncnn::Mat& feat_blob, float prob_threshold, std::vector<Object>& objects) {
@@ -247,95 +264,87 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
 
     int num_grid_x;
     int num_grid_y;
-    if (in_pad.w > in_pad.h){
-        num_grid_x = in_pad.w / stride;
-        num_grid_y = num_grid / num_grid_x;
-    }
-    else{
-        num_grid_y = in_pad.h / stride;
-        num_grid_x = num_grid / num_grid_y;
-    }
+    // if (in_pad.w > in_pad.h){
+    //     num_grid_x = in_pad.w / stride;
+    //     num_grid_y = num_grid / num_grid_x;
+    // }
+    // else{
+    //     num_grid_y = in_pad.h / stride;
+    //     num_grid_x = num_grid / num_grid_y;
+    // }
 
+    num_grid_x = in_pad.w / stride;
+    num_grid_y = in_pad.h / stride;
+    
+    const int num_anchors = anchors.w / 2;
     const int num_class = feat_blob.w - 5 - 32;// -5
 
-    const int num_anchors = anchors.w / 2;
-
+    // enumerate all anchor types
     for (int q = 0; q < num_anchors; q++){
         const float anchor_w = anchors[q * 2];
         const float anchor_h = anchors[q * 2 + 1];
-
         const ncnn::Mat feat = feat_blob.channel(q);
-
         for (int i = 0; i < num_grid_y; i++){
-            for (int j = 0; j < num_grid_x; j++){
+            for (int j = 0; j < num_grid_x; j++) {
                 const float* featptr = feat.row(i * num_grid_x + j);
-
-                // find class index with max class score
-                int class_index = 0;
-                float class_score = -FLT_MAX;
-                for (int k = 0; k < num_class; k++){
-                    float score = featptr[5 + k];
-                    if (score > class_score){
-                        class_index = k;
-                        class_score = score;
-                    }
-                }
-
                 float box_score = featptr[4];
+                float box_confidence = sigmoid(box_score);
+                if(box_confidence >= prob_threshold) {
+                    // find class_index with max class_score
+                    int class_index = 0;
+                    float class_score = -FLT_MAX;
+                    for (int k = 0; k < num_class; k++) {
+                        float score = featptr[5 + k];
+                        if (score > class_score){
+                            class_index = k;
+                            class_score = score;
+                        }
+                    }
 
-                float confidence = sigmoid(box_score) * sigmoid(class_score);
+                    // combined score = box score * class score
+                    // apply sigmoid first to get normed 0~1 value
+                    float confidence = sigmoid(box_score) * sigmoid(class_score);
 
-                if (confidence >= prob_threshold){
-                    // yolov5/models/yolo.py Detect forward
-                    // y = x[i].sigmoid()
-                    // y[..., 0:2] = (y[..., 0:2] * 2. - 0.5 + self.grid[i].to(x[i].device)) * self.stride[i]  # xy
-                    // y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]  # wh
-                    
-                    float dx = sigmoid(featptr[0]);
-                    float dy = sigmoid(featptr[1]);
-                    float dw = sigmoid(featptr[2]);
-                    float dh = sigmoid(featptr[3]);
+                    // filter candidate boxes with combined score >= prob_threshold
+                    if (confidence >= prob_threshold){
+                        // yolov5/models/yolo.py Detect forward
+                        // y = x[i].sigmoid()
+                        // y[..., 0:2] = (y[..., 0:2] * 2. - 0.5 + self.grid[i].to(x[i].device)) * self.stride[i]  # xy
+                        // y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]  # wh
+                        
+                        float dx = sigmoid(featptr[0]);
+                        float dy = sigmoid(featptr[1]);
+                        float dw = sigmoid(featptr[2]);
+                        float dh = sigmoid(featptr[3]);
 
-                    float pb_cx = (dx * 2.f - 0.5f + j) * stride;
-                    float pb_cy = (dy * 2.f - 0.5f + i) * stride;
+                        float cx = (dx * 2.f - 0.5f + j) * stride;
+                        float cy = (dy * 2.f - 0.5f + i) * stride;
+                        float bw = pow(dw * 2.f, 2) * anchor_w;
+                        float bh = pow(dh * 2.f, 2) * anchor_h;
 
-                    float pb_w = pow(dw * 2.f, 2) * anchor_w;
-                    float pb_h = pow(dh * 2.f, 2) * anchor_h;
+                        // transform candidate box (center-x,center-y,w,h) to (x0,y0,x1,y1)
+                        float x0 = cx - bw * 0.5f;
+                        float y0 = cy - bh * 0.5f;
+                        float x1 = cx + bw * 0.5f;
+                        float y1 = cy + bh * 0.5f;
 
-                    float x0 = pb_cx - pb_w * 0.5f;
-                    float y0 = pb_cy - pb_h * 0.5f;
-                    float x1 = pb_cx + pb_w * 0.5f;
-                    float y1 = pb_cy + pb_h * 0.5f;
+                        // collect candidates
+                        Object obj;
+                        obj.rect.x = x0;
+                        obj.rect.y = y0;
+                        obj.rect.width = x1 - x0;
+                        obj.rect.height = y1 - y0;
+                        obj.label = class_index;
+                        obj.prob = confidence;
+                        obj.mask_feat.resize(32); //?
+                        std::copy(featptr + 5 + num_class, featptr + 5 + num_class + 32, obj.mask_feat.begin()); //?
 
-                    Object obj;
-                    obj.rect.x = x0;
-                    obj.rect.y = y0;
-                    obj.rect.width = x1 - x0;
-                    obj.rect.height = y1 - y0;
-                    obj.label = class_index;
-                    obj.prob = confidence;
-                    obj.mask_feat.resize(32); //?
-                    std::copy(featptr + 5 + num_class, featptr + 5 + num_class + 32, obj.mask_feat.begin()); //?
-
-                    objects.push_back(obj);
+                        objects.push_back(obj);
+                    }
                 }
             }
         }
     }
-}
-static void decode_mask(const ncnn::Mat& mask_feat, const int& img_w, const int& img_h,
-                        const ncnn::Mat& mask_proto, const ncnn::Mat& in_pad, const int& wpad, const int& hpad,
-                        ncnn::Mat& mask_pred_result){
-
-    ncnn::Mat masks;
-    matmul(std::vector<ncnn::Mat>{mask_feat, mask_proto}, masks);
-    sigmoid(masks);
-    reshape(masks, masks, masks.h, in_pad.h / 4, in_pad.w / 4, 0);
-    interp(masks, 4.0, 0, 0, masks);
-    //ncnn::Mat mask_pred_result;
-    slice(masks, mask_pred_result, wpad / 2, in_pad.w - wpad / 2, 2);
-    slice(mask_pred_result, mask_pred_result, hpad / 2, in_pad.h - hpad / 2, 1);
-    interp(mask_pred_result, 1.0, img_w, img_h, mask_pred_result);
 }
 
 #if DYNAMIC
@@ -367,7 +376,7 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
     int wpad = (w + MAX_STRIDE - 1) / MAX_STRIDE * MAX_STRIDE - w;
     int hpad = (h + MAX_STRIDE - 1) / MAX_STRIDE * MAX_STRIDE - h;
     ncnn::Mat in_pad;
-    ncnn::copy_make_border(in, in_pad, hpad / 2, hpad - hpad / 2, wpad / 2, wpad - wpad / 2, ncnn::BORDER_CONSTANT, 114.f);
+    ncnn::copy_make_border(in, in_pad, hpad / 2, hpad - hpad / 2, wpad / 2, wpad - wpad / 2, ncnn::BORDER_CONSTANT, 114.f);//0.f?
 
     // apply yolov5 pre process, that is to normalize 0~255 to 0~1
     const float norm_vals[3] = { 1 / 255.f, 1 / 255.f, 1 / 255.f };
@@ -383,6 +392,9 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
     ex.extract("output", out0); //output or out0
     ex.extract("385", out1); //yolov5n + yolov5s : 385 ;  yolov5l : 619 ;  yolov5x : 736
     ex.extract("405", out2); //yolov5n + yolov5s : 405 ;  yolov5l : 639 ;  yolov5x : 756
+
+    ncnn::Mat mask_proto;
+    ex.extract("seg", mask_proto);
 
     std::vector<Object> proposals;
 
@@ -435,9 +447,6 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
 
         proposals.insert(proposals.end(), objects32.begin(), objects32.end());
     }
-
-    ncnn::Mat mask_proto;
-    ex.extract("seg", mask_proto);
 
     // sort all proposals by score from highest to lowest
     qsort_descent_inplace(proposals);
@@ -524,74 +533,22 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
     ex.input("in0", in_pad); // images or in0
     ncnn::Mat out;
     ex.extract("out0", out); //output or out0
-
-    // the out blob would be a 2-dim tensor with w=85 h=25200
-    //
-    //        |cx|cy|bw|bh|box score(1)| per-class scores(80) |
-    //        +--+--+--+--+------------+----------------------+
-    //        |53|50|70|80|    0.11    |0.1 0.0 0.0 0.5 ......|
-    //   all /|  |  |  |  |      .     |           .          |
-    //  boxes |46|40|38|44|    0.95    |0.0 0.9 0.0 0.0 ......|
-    // (25200)|  |  |  |  |      .     |           .          |
-    //       \|  |  |  |  |      .     |           .          |
-    //        +--+--+--+--+------------+----------------------+
-    //
-
-    // enumerate all boxes
-    std::vector<Object> proposals;
-
-    for (int i = 0; i < out.h; i++)
-    {
-        const float* ptr = out.row(i);
-
-        const int num_class = 80;
-
-        const float cx = ptr[0];
-        const float cy = ptr[1];
-        const float bw = ptr[2];
-        const float bh = ptr[3];
-        const float box_score = ptr[4];
-        const float* class_scores = ptr + 5;
-
-        // find class index with the biggest class score among all classes
-        int class_index = 0;
-        float class_score = -FLT_MAX;
-        for (int j = 0; j < num_class; j++)
-        {
-            if (class_scores[j] > class_score)
-            {
-                class_score = class_scores[j];
-                class_index = j;
-            }
-        }
-
-        // combined score = box score * class score
-        float confidence = box_score * class_score;
-
-        // filter candidate boxes with combined score >= prob_threshold
-        if (confidence < prob_threshold)
-            continue;
-
-        // transform candidate box (center-x,center-y,w,h) to (x0,y0,x1,y1)
-        float x0 = cx - bw * 0.5f;
-        float y0 = cy - bh * 0.5f;
-        float x1 = cx + bw * 0.5f;
-        float y1 = cy + bh * 0.5f;
-
-        // collect candidates
-        Object obj;
-        obj.rect.x = x0;
-        obj.rect.y = y0;
-        obj.rect.width = x1 - x0;
-        obj.rect.height = y1 - y0;
-        obj.label = class_index;
-        obj.prob = confidence;
-
-        proposals.push_back(obj);
-    }
-
     ncnn::Mat mask_proto;
     ex.extract("out1", mask_proto); //seg or out1
+
+    // enumerate all boxes
+    ncnn::Mat anchors(6);
+    anchors[0] = 10.f;
+    anchors[1] = 13.f;
+    anchors[2] = 16.f;
+    anchors[3] = 30.f;
+    anchors[4] = 33.f;
+    anchors[5] = 23.f;
+    std::vector<Object> proposals;
+    std::vector<Object> objects8;
+    generate_proposals(anchors, 8, in_pad, out, prob_threshold, objects8);
+
+    proposals.insert(proposals.end(), objects8.begin(), objects8.end());
 
     // sort all candidates by score from highest to lowest
     qsort_descent_inplace(proposals);
@@ -604,13 +561,13 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
     const int count = picked.size();
 
     ncnn::Mat mask_feat = ncnn::Mat(32, count, sizeof(float));
-    for (int i = 0; i < count; i++){
-        std::copy(proposals[picked[i]].mask_feat.begin(), proposals[picked[i]].mask_feat.end(), mask_feat.row(i));
+    for (int i = 0; i < count; i++) {
+        float* mask_feat_ptr = mask_feat.row(i);
+        std::memcpy(mask_feat_ptr, proposals[picked[i]].mask_feat.data(), sizeof(float) * proposals[picked[i]].mask_feat.size());
     }
 
     ncnn::Mat mask_pred_result;
     decode_mask(mask_feat, img_w, img_h, mask_proto, in_pad, wpad, hpad, mask_pred_result);
-
 
     objects.resize(count);
     for (int i = 0; i < count; i++)
@@ -633,34 +590,42 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
         objects[i].rect.y = y0;
         objects[i].rect.width = x1 - x0;
         objects[i].rect.height = y1 - y0;
+        objects[i].cv_mask = cv::Mat::zeros(img_h, img_w, CV_32FC1);
+        cv::Mat mask = cv::Mat(img_h, img_w, CV_32FC1, (float*)mask_pred_result.channel(i));
+        mask(objects[i].rect).copyTo(objects[i].cv_mask(objects[i].rect));
     }
+
     return 0;
 }
 #endif
+
+static void draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
+    for (int y = 0; y < bgr.rows; y++) {
+        uchar* image_ptr = bgr.ptr(y);
+        const float* mask_ptr = mask.ptr<float>(y);
+        for (int x = 0; x < bgr.cols; x++) {
+            if (mask_ptr[x] >= 0.5) {
+                image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
+                image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
+                image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
+            }
+            image_ptr += 3;
+        }
+    }
+}
 
 static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
     int color_index = 0;
 
     for (size_t i = 0; i < objects.size(); i++){
         const Object& obj = objects[i];
-        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
+        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label]);
 
+        color_index = obj.label ;
         const unsigned char* color = colors[color_index % 80];
-        color_index++;
         cv::Scalar cc(color[0], color[1], color[2]);
 
-        for (int y = 0; y < bgr.rows; y++) {
-            uchar* image_ptr = bgr.ptr(y);
-            const float* mask_ptr = obj.cv_mask.ptr<float>(y);
-            for (int x = 0; x < bgr.cols; x++) {
-                if (mask_ptr[x] >= 0.5) {
-                    image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
-                    image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
-                    image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
-                }
-                image_ptr += 3;
-            }
-        }
+        draw_segment(bgr, obj.cv_mask, color);
 
         cv::rectangle(bgr, obj.rect, cc, 1);
 
@@ -682,13 +647,12 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
     }
 }
 
-
 int main(int argc, char* argv[]) {
     std::string input, output, model, inputFolder, modelFolder, outputFolder;
 
-    inputFolder = "./input";
-    outputFolder = "./output";
-    modelFolder = "./models";
+    inputFolder = "../input";
+    outputFolder = "../output/seg";
+    modelFolder = "../models/seg";
 
     cv::Mat in, out;
     cv::VideoCapture capture;
@@ -696,10 +660,11 @@ int main(int argc, char* argv[]) {
     std::vector<Object> objects;
 
     if (argc < 2) {
-        model = "yolov5s-seg";
+        model = "preconvert/yolov5s-seg";
         std::cout << "No argument pass. Using default model " << model;
         std::cout << "\nEnter input : ";
-        std::cin >> input;
+        //std::cin >> input;
+        input = "cat.bmp";
     }
     else {
         model = argv[1];
@@ -710,6 +675,8 @@ int main(int argc, char* argv[]) {
     std::string outputPath = outputFolder + "/" + input;
     std::string bin = modelFolder + "/" + model + ".bin";
     std::string param = modelFolder + "/" + model + ".param";
+    
+    // fs::path filePath = input;
 
     if (yolov5.load_param(param.c_str()))
         exit(-1);
@@ -751,6 +718,7 @@ int main(int argc, char* argv[]) {
             detect_yolov5_seg(in, objects);
 
             out = in.clone();
+            //draw_objects_seg(out, objects);
             draw_objects(out, objects);
             cv::imshow("Detect", out);
 
