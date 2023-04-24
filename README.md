@@ -1,5 +1,5 @@
 # Yolov5 Segmentation with NCNN
-![output](./Yolov5-seg/output/cat.jpg)
+![output](./output/cat.jpg)
 
 ![output](./build/screenshots/cat.gif)
 
@@ -25,7 +25,7 @@ For example :
 yolov5-seg yolov5s-seg woman.jpg
 ```
 ![output](./build/screenshots/Screenshot12.png)
-![output](./Yolov5-seg/output/woman.jpg)
+![output](./output/woman.jpg)
 
 4. If you dont pass any argument, the default model "yolov5-seg" is used
 5. Output saved at "/output" folder
