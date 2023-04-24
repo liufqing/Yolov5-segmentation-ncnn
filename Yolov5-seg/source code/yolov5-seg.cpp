@@ -12,8 +12,8 @@
 #include <string>
 #include <fstream>
 
-#include "classNames.h"
-#include "colors.h"
+#include "classNames.hpp"
+#include "colors.hpp"
 
 namespace fs = std::filesystem;
 
@@ -47,8 +47,8 @@ static void slice(const ncnn::Mat& in, ncnn::Mat& out, int start, int end, int a
     ends.fill(end);
     ncnn::Mat starts = ncnn::Mat(1);
     starts.fill(start);
-    pd.set(9, starts);  // start
-    pd.set(10, ends);   // end
+    pd.set(9, starts);  //start
+    pd.set(10, ends);   //end
     pd.set(11, axes);   //axes
 
     op->load_param(pd);
@@ -100,8 +100,8 @@ static void reshape(const ncnn::Mat& in, ncnn::Mat& out, int c, int h, int w, in
     // set param
     ncnn::ParamDict pd;
 
-    pd.set(0, w);           // start
-    pd.set(1, h);           // end
+    pd.set(0, w);           //start
+    pd.set(1, h);           //end
     if (d > 0)
         pd.set(11, d);      //axes
     pd.set(2, c);           //axes

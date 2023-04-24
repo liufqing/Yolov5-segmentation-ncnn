@@ -147,7 +147,7 @@
     <ClInclude Include="source code\colors.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source code\yolov8-seg.cpp" />
+    <ClCompile Include="source code\yolov5-seg.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

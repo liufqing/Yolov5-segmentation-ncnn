@@ -12,8 +12,8 @@
 #include <string>
 #include <fstream>
 
-#include "classNames.h"
-#include "colors.h"
+#include "classNames.hpp"
+#include "colors.hpp"
 
 namespace fs = std::filesystem;
 
@@ -52,9 +52,9 @@ static void slice(const ncnn::Mat& in, ncnn::Mat& out, int start, int end, int a
     ends.fill(end);
     ncnn::Mat starts = ncnn::Mat(1);
     starts.fill(start);
-    pd.set(9, starts);// start
-    pd.set(10, ends);// end
-    pd.set(11, axes);//axes
+    pd.set(9, starts);  //start
+    pd.set(10, ends);   //end
+    pd.set(11, axes);   //axes
 
     op->load_param(pd);
 
@@ -525,13 +525,13 @@ int main(int argc, char* argv[]) {
 
     if (argc < 2) {
         model = "preconvert/yolov8s-seg";
-        std::cout << "No argument pass. Using default model " << model;
-        std::cout << "\nEnter input : ";
+        std::cout << "No argument pass. Using default model\n";
+        std::cout << "Enter input : ";
         std::cin >> input;
     }
     else if (argc == 2) {
         model = "preconvert/yolov8s-seg";
-        std::cout << "Using default model " << model;
+        std::cout << "Using default model\n";
         input = argv[1];
     }
     else {

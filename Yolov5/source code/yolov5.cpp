@@ -12,8 +12,8 @@
 #include <string>
 #include <fstream>
 
-#include "classNames.h"
-#include "colors.h"
+#include "classNames.hpp"
+#include "colors.hpp"
 
 namespace fs = std::filesystem;
 
@@ -562,13 +562,13 @@ int main(int argc, char* argv[]) {
 
     if (argc < 2) {
         model = "pnnx/yolov5s.ncnn";
-        std::cout << "No argument pass. Using default model " << model;
-        std::cout << "\nEnter input : ";
+        std::cout << "No argument pass. Using default model\n";
+        std::cout << "Enter input : ";
         std::cin >> input;
     }
     else if (argc == 2) {
         model = "pnnx/yolov5s.ncnn";
-        std::cout << "Using default model " << model;
+        std::cout << "Using default model\n";
         input = argv[1];
     }
     else {
