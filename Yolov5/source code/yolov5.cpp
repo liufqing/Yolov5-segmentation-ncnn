@@ -564,8 +564,12 @@ int main(int argc, char* argv[]) {
         model = "pnnx/yolov5s.ncnn";
         std::cout << "No argument pass. Using default model " << model;
         std::cout << "\nEnter input : ";
-        //std::cin >> input;
-        input = "cat.jpg";
+        std::cin >> input;
+    }
+    else if (argc == 2) {
+        model = "pnnx/yolov5s.ncnn";
+        std::cout << "Using default model " << model;
+        input = argv[1];
     }
     else {
         model = argv[1];

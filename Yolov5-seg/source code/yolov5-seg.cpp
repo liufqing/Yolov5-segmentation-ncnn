@@ -664,8 +664,12 @@ int main(int argc, char* argv[]) {
         model = "preconvert/yolov5s-seg";
         std::cout << "No argument pass. Using default model " << model;
         std::cout << "\nEnter input : ";
-        //std::cin >> input;
-        input = "cat.bmp";
+        std::cin >> input;
+    }
+    else if (argc == 2) {
+        model = "preconvert/yolov5s-seg";
+        std::cout << "Using default model " << model;
+        input = argv[1];
     }
     else {
         model = argv[1];
