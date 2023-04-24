@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="source code\classNames.hpp" />
     <ClInclude Include="source code\colors.hpp" />
   </ItemGroup>
   <ItemGroup>

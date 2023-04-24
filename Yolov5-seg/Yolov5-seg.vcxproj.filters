@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source code\classNames.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source code\colors.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -4,21 +4,23 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include <float.h>
-#include <stdio.h>
-#include <vector>
 #include <iostream>
-#include <filesystem>
+#include <stdio.h>
 #include <string>
+#include <float.h>
+#include <vector>
+#include <filesystem>
 #include <fstream>
 
-#include "classNames.hpp"
 #include "colors.hpp"
 
 namespace fs = std::filesystem;
 
 #define MAX_STRIDE 64
 #define DYNAMIC 1
+
+std::vector<std::string> class_names;
+int class_count;
 
 ncnn::Net yolo;
 
@@ -437,7 +439,7 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects, const
     for (int i = 0; i < out.h; i++) {
         const float* ptr = out.row(i);
 
-        const int num_class = 80;
+        const int num_class = class_count;
 
         const float box_score = ptr[4];
 
@@ -516,22 +518,21 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects, const
     return 0;
 }
 #endif
-static void draw_objects(const cv::Mat& brg, const std::vector<Object>& objects){
+static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
     int color_index = 0;
 
     for (size_t i = 0; i < objects.size(); i++){
         const Object& obj = objects[i];
         fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label]);
-        
-        color_index = obj.label;
-        const unsigned char* color = colors[color_index % 80];
+
+        color_index = obj.label ;
+        const unsigned char* color = colors[color_index];
         // color_index++;
         cv::Scalar cc(color[0], color[1], color[2]);
 
-        cv::rectangle(brg, obj.rect, cc, 1);
+        cv::rectangle(bgr, obj.rect, cc, 1);
 
-        char text[256];
-        sprintf_s(text, "%s %.1f%%", class_names[obj.label], obj.prob * 100);
+        std::string text = class_names[obj.label] + " " + cv::format("%.2f", obj.prob * 100) + "%";
 
         int baseLine = 0;
         cv::Size label_size = cv::getTextSize(text, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
@@ -540,20 +541,32 @@ static void draw_objects(const cv::Mat& brg, const std::vector<Object>& objects)
         int y = obj.rect.y - label_size.height - baseLine;
         if (y < 0)
             y = 0;
-        if (x + label_size.width > brg.cols)
-            x = brg.cols - label_size.width;
+        if (x + label_size.width > bgr.cols)
+            x = bgr.cols - label_size.width;
 
-        cv::rectangle(brg, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
-        cv::putText(brg, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+        cv::rectangle(bgr, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
+        cv::putText(bgr, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
     }
 }
 
+int get_class_names(std::string data) {
+    std::ifstream file(data);
+    std::string name = "";
+    int count = 0;
+    while (std::getline(file, name)) {
+        class_names.push_back(name);
+        count++;
+    }
+    return count;
+}
+
 int main(int argc, char* argv[]) {
-    std::string input, output, model, inputFolder, modelFolder, outputFolder;
+    std::string input, output, model, data, inputFolder, modelFolder, outputFolder, dataFolder;
 
     inputFolder = "../input";
     outputFolder = "../output";
     modelFolder = "../models";
+    dataFolder = "../data";
 
     cv::Mat in, out;
     cv::VideoCapture capture;
@@ -562,13 +575,15 @@ int main(int argc, char* argv[]) {
 
     if (argc < 2) {
         model = "pnnx/yolov5s.ncnn";
-        std::cout << "No argument pass. Using default model " << model;
-        std::cout << "\nEnter input : ";
+        data = "coco128.txt";
+        std::cout << "No argument pass. Using default model \n";
+        std::cout << "Enter input : ";
         std::cin >> input;
     }
     else if (argc == 2) {
         model = "pnnx/yolov5s.ncnn";
-        std::cout << "Using default model " << model;
+        data = "coco128.txt";
+        std::cout << "Using default model \n";
         input = argv[1];
     }
     else {
@@ -578,10 +593,12 @@ int main(int argc, char* argv[]) {
 
     std::string inputPath = inputFolder + "/" + input;
     std::string outputPath = outputFolder + "/" + input;
+    std::string dataPath = dataFolder + "/" + data;
     std::string bin = modelFolder + "/" + model + ".bin";
     std::string param = modelFolder + "/" + model + ".param";
 
     // fs::path filePath = input;
+    class_count = get_class_names(dataPath);
 
     if (yolo.load_param(param.c_str()))
         exit(-1);

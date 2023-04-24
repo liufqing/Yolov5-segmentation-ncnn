@@ -4,23 +4,24 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include <float.h>
-#include <stdio.h>
-#include <vector>
 #include <iostream>
-#include <filesystem>
+#include <stdio.h>
 #include <string>
+#include <float.h>
+#include <vector>
+#include <filesystem>
 #include <fstream>
 
-#include "classNames.hpp"
 #include "colors.hpp"
 
 namespace fs = std::filesystem;
 
 #define MAX_STRIDE 64
-#define DYNAMIC 1
+#define DYNAMIC 0
 
 ncnn::Net yolo;
+std::vector<std::string> class_names;
+int class_count;
 
 struct Object{
     cv::Rect_<float> rect;
@@ -529,7 +530,7 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
     in_pad.substract_mean_normalize(0, norm_vals);
 
     // yolov5 model inference
-    ncnn::Extractor ex = yolov5.create_extractor();
+    ncnn::Extractor ex = yolo.create_extractor();
     ex.input("in0", in_pad); // images or in0
     ncnn::Mat out;
     ex.extract("out0", out); //output or out0
@@ -546,9 +547,52 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
     anchors[5] = 23.f;
     std::vector<Object> proposals;
     std::vector<Object> objects8;
-    generate_proposals(anchors, 8, in_pad, out, prob_threshold, objects8);
+for (int i = 0; i < out.h; i++) {
+        const float* ptr = out.row(i);
 
-    proposals.insert(proposals.end(), objects8.begin(), objects8.end());
+        const int num_class = class_count;
+
+        const float box_score = ptr[4];
+
+        // find class index with the biggest class score among all classes
+        int class_index = 0;
+        float class_score = -FLT_MAX;
+        for (int k = 0; k < num_class; k++) {
+            float score = ptr[5 + k];
+            if (score > class_score) {
+                class_index = k;
+                class_score = score;
+            }
+        }
+
+        // combined score = box score * class score
+        float confidence = box_score * class_score;
+
+        // filter candidate boxes with combined score >= prob_threshold
+        if (confidence >= prob_threshold) {
+            const float cx = ptr[0]; //center-x
+            const float cy = ptr[1]; //center-y
+            const float bw = ptr[2]; //box-width
+            const float bh = ptr[3]; //box-height
+
+            // transform candidate box (center-x,center-y,w,h) to (x0,y0,x1,y1)
+            float x0 = cx - bw * 0.5f;
+            float y0 = cy - bh * 0.5f;
+            float x1 = cx + bw * 0.5f;
+            float y1 = cy + bh * 0.5f;
+
+            // collect candidates
+            Object obj;
+            obj.rect.x = x0;
+            obj.rect.y = y0;
+            obj.rect.width = x1 - x0;
+            obj.rect.height = y1 - y0;
+            obj.label = class_index;
+            obj.prob = confidence;
+
+            proposals.push_back(obj);
+        }
+    }
 
     // sort all candidates by score from highest to lowest
     qsort_descent_inplace(proposals);
@@ -622,7 +666,7 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
         fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label]);
 
         color_index = obj.label ;
-        const unsigned char* color = colors[color_index % 80];
+        const unsigned char* color = colors[color_index];
         // color_index++;
         cv::Scalar cc(color[0], color[1], color[2]);
 
@@ -630,8 +674,7 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
 
         cv::rectangle(bgr, obj.rect, cc, 1);
 
-        char text[256];
-        sprintf_s(text, "%s %.1f%%", class_names[obj.label], obj.prob * 100);
+        std::string text = class_names[obj.label] + " " + cv::format("%.2f", obj.prob * 100) + "%";
 
         int baseLine = 0;
         cv::Size label_size = cv::getTextSize(text, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
@@ -648,12 +691,24 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
     }
 }
 
+int get_class_names(std::string data) {
+    std::ifstream file(data);
+    std::string name = "";
+    int count = 0;
+    while (std::getline(file, name)) {
+        class_names.push_back(name);
+        count++;
+    }
+    return count;
+}
+
 int main(int argc, char* argv[]) {
-    std::string input, output, model, inputFolder, modelFolder, outputFolder;
+    std::string input, output, model, data, inputFolder, modelFolder, outputFolder, dataFolder;
 
     inputFolder = "../input";
     outputFolder = "../output/seg";
     modelFolder = "../models/seg";
+    dataFolder = "../data";
 
     cv::Mat in, out;
     cv::VideoCapture capture;
@@ -661,27 +716,34 @@ int main(int argc, char* argv[]) {
     std::vector<Object> objects;
 
     if (argc < 2) {
-        model = "preconvert/yolov5s-seg";
-        std::cout << "No argument pass. Using default model " << model;
-        std::cout << "\nEnter input : ";
+        model = "pnnx/yolov5s-seg.ncnn";
+        data = "coco128.txt";
+
+        std::cout << "No argument pass. Using default model \n";
+        std::cout << "Enter input : ";
         std::cin >> input;
     }
     else if (argc == 2) {
-        model = "preconvert/yolov5s-seg";
-        std::cout << "Using default model " << model;
+        model = "pnnx/yolov5s-seg.ncnn";
+        data = "coco128.txt";
+
+        std::cout << "Using default model \n";
         input = argv[1];
     }
     else {
         model = argv[1];
-        input = argv[2];
+        data = argv[2];
+        input = argv[3];
     }
 
     std::string inputPath = inputFolder + "/" + input;
     std::string outputPath = outputFolder + "/" + input;
+    std::string dataPath = dataFolder + "/" + data;
     std::string bin = modelFolder + "/" + model + ".bin";
     std::string param = modelFolder + "/" + model + ".param";
     
     // fs::path filePath = input;
+    class_count = get_class_names(dataPath);
 
     if (yolo.load_param(param.c_str()))
         exit(-1);
