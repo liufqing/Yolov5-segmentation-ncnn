@@ -623,6 +623,7 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
 
         color_index = obj.label ;
         const unsigned char* color = colors[color_index % 80];
+        // color_index++;
         cv::Scalar cc(color[0], color[1], color[2]);
 
         draw_segment(bgr, obj.cv_mask, color);

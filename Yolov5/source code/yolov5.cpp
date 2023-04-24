@@ -565,7 +565,7 @@ int main(int argc, char* argv[]) {
         std::cout << "No argument pass. Using default model " << model;
         std::cout << "\nEnter input : ";
         //std::cin >> input;
-        input = "cat.mp4";
+        input = "cat.jpg";
     }
     else {
         model = argv[1];

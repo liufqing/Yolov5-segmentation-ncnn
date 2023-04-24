@@ -462,30 +462,35 @@ static int detect_yolov8(const cv::Mat& bgr, std::vector<Object>& objects, const
     return 0;
 }
 
-static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects) {
+static void draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
+    for (int y = 0; y < bgr.rows; y++) {
+        uchar* image_ptr = bgr.ptr(y);
+        const float* mask_ptr = mask.ptr<float>(y);
+        for (int x = 0; x < bgr.cols; x++) {
+            if (mask_ptr[x] >= 0.5) {
+                image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
+                image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
+                image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
+            }
+            image_ptr += 3;
+        }
+    }
+}
+
+static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
     int color_index = 0;
-    
-    for (size_t i = 0; i < objects.size(); i++) {
+
+    for (size_t i = 0; i < objects.size(); i++){
         const Object& obj = objects[i];
-        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
-        
+        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label]);
+
+        color_index = obj.label ;
         const unsigned char* color = colors[color_index % 80];
-        color_index++;
+        // color_index++;
         cv::Scalar cc(color[0], color[1], color[2]);
 
-        for (int y = 0; y < bgr.rows; y++) {
-            uchar* image_ptr = bgr.ptr(y);
-            const float* mask_ptr = obj.cv_mask.ptr<float>(y);
-            for (int x = 0; x < bgr.cols; x++) {
-                if (mask_ptr[x] >= 0.5)
-                {
-                    image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
-                    image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
-                    image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
-                }
-                image_ptr += 3;
-            }
-        }
+        draw_segment(bgr, obj.cv_mask, color);
+
         cv::rectangle(bgr, obj.rect, cc, 1);
 
         char text[256];
@@ -506,32 +511,90 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects) {
     }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
+    std::string input, output, model, inputFolder, modelFolder, outputFolder;
 
-    const char* imagepath = "input/cat.bmp";
+    inputFolder = "../input";
+    outputFolder = "../output/seg";
+    modelFolder = "../models/seg";
 
-    //yolov8.load_param("models/preconvert/yolov8s-seg.param");
-    //yolov8.load_model("models/preconvert/yolov8s-seg.bin");
-    //yolov8.load_param("models/pnnx/yolov5s-seg.ncnn.param");
-    //yolov8.load_model("models/pnnx/yolov5s-seg.ncnn.bin");
-    yolov8.load_param("models/preconvert/yolov5s-seg.param");
-    yolov8.load_model("models/preconvert/yolov5s-seg.bin");
-
-    cv::Mat m = cv::imread(imagepath, 1);
-    if (m.empty())
-    {
-        fprintf(stderr, "cv::imread %s failed\n", imagepath);
-        return -1;
-    }
+    cv::Mat in, out;
+    cv::VideoCapture capture;
 
     std::vector<Object> objects;
-    detect_yolov8(m, objects);
 
-    cv::Mat out = m.clone();
+    if (argc < 2) {
+        model = "preconvert/yolov8s-seg";
+        std::cout << "No argument pass. Using default model " << model;
+        std::cout << "\nEnter input : ";
+        //std::cin >> input;
+        input = "cat.bmp";
+    }
+    else {
+        model = argv[1];
+        input = argv[2];
+    }
 
-    draw_objects(out, objects);
-    cv::imshow("Detect", out);
-    cv::waitKey();
+    std::string inputPath = inputFolder + "/" + input;
+    std::string outputPath = outputFolder + "/" + input;
+    std::string bin = modelFolder + "/" + model + ".bin";
+    std::string param = modelFolder + "/" + model + ".param";
+    
+    // fs::path filePath = input;
+
+    if (yolov8.load_param(param.c_str()))
+        exit(-1);
+    if (yolov8.load_model(bin.c_str()))
+        exit(-1);
+
+    yolov8.opt.use_vulkan_compute = false;
+    yolov8.opt.num_threads = 4;
+
+    if (input == "0") {
+        std::cout << "Using camera\nUsing " << bin << " and " << param << std::endl;
+        capture.open(0);
+    }
+    else {
+        in = cv::imread(inputPath, 1);
+        std::cout << "Input = " << inputPath << "\nUsing " << bin << " and " << param << std::endl;
+        if (!in.empty()) {
+            detect_yolov8(in, objects);
+            out = in.clone();
+
+            draw_objects(out, objects);
+            cv::imshow("Detect", out);
+            cv::waitKey();
+
+            std::cout << "\nOutput saved at " << outputPath;
+            cv::imwrite(outputPath, out);
+
+            return 0;
+        }
+        else {
+            capture.open(inputPath);
+        }
+    }
+
+    if (capture.isOpened()) {
+        std::cout << "Object Detection Started...." << std::endl;
+        do {
+            capture >> in; //extract frame by frame
+            detect_yolov8(in, objects);
+
+            out = in.clone();
+            //draw_objects_seg(out, objects);
+            draw_objects(out, objects);
+            cv::imshow("Detect", out);
+
+            char key = (char)cv::pollKey();
+
+            if (key == 27 || key == 'q' || key == 'Q') // Press q or esc to exit from window
+                break;
+        } while (!in.empty());
+    }
+    else {
+        std::cout << "Could not Open Camera/Video";
+    }
 
     return 0;
 }
