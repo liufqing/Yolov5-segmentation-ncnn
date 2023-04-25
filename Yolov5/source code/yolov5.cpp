@@ -39,16 +39,14 @@ static void qsort_descent_inplace(std::vector<Object>& faceobjects, int left, in
     int j = right;
     float p = faceobjects[(left + right) / 2].prob;
 
-    while (i <= j)
-    {
+    while (i <= j){
         while (faceobjects[i].prob > p)
             i++;
 
         while (faceobjects[j].prob < p)
             j--;
 
-        if (i <= j)
-        {
+        if (i <= j){
             // swap
             std::swap(faceobjects[i], faceobjects[j]);
 
@@ -77,7 +75,7 @@ static void qsort_descent_inplace(std::vector<Object>& faceobjects) {
     qsort_descent_inplace(faceobjects, 0, faceobjects.size() - 1);
 }
 
-static void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vector<int>& picked, float nms_threshold, bool agnostic = false) {
+static void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vector<int>& picked, float nms_threshold, bool agnostic = true) {
     picked.clear();
 
     const int n = faceobjects.size();
@@ -121,10 +119,6 @@ inline float fast_exp(float x){
 inline float sigmoid(float x){
     return 1.0f / (1.0f + fast_exp(-x));
 }
-
-// static inline float sigmoid(float x){
-//     return static_cast<float>(1.f / (1.f + exp(-x)));
-// }
 
 static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& in_pad, const ncnn::Mat& feat_blob, float prob_threshold, std::vector<Object>& objects) {
     // const int num_grid_x = feat_blob.w;
@@ -417,7 +411,7 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects, const
     in_pad.substract_mean_normalize(0, norm_vals);
 
     // yolov5 model inference
-    ncnn::Extractor ex = yolov5.create_extractor();
+    ncnn::Extractor ex = yolo.create_extractor();
     ex.input("in0", in_pad); // images or in0
     ncnn::Mat out;
     ex.extract("out0", out); //output or out0
@@ -523,7 +517,7 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
 
     for (size_t i = 0; i < objects.size(); i++){
         const Object& obj = objects[i];
-        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label]);
+        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
 
         color_index = obj.label ;
         const unsigned char* color = colors[color_index];
