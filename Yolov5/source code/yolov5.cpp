@@ -130,25 +130,25 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
     num_grid_y = in_pad.h / stride;
 
     const int num_anchors = anchors.w / 2;
-    const int num_class = feat_blob.c / num_anchors - 5;
-
-    const int feat_offset = num_class + 5;
+    const int num_class = feat_blob.w - 5;
 
     // enumerate all anchor types
-    for (int q = 0; q < num_anchors; q++) {
+    for (int q = 0; q < num_anchors; q++){
         const float anchor_w = anchors[q * 2];
         const float anchor_h = anchors[q * 2 + 1];
-        for (int i = 0; i < num_grid_y; i++) {
+        const ncnn::Mat feat = feat_blob.channel(q);
+        for (int i = 0; i < num_grid_y; i++){
             for (int j = 0; j < num_grid_x; j++) {
-                float box_score = feat_blob.channel(q * feat_offset + 4).row(i)[j];
+                const float* featptr = feat.row(i * num_grid_x + j);
+                float box_score = featptr[4];
                 float box_confidence = sigmoid(box_score);
                 if(box_confidence >= prob_threshold) {
-                    // find class index with max class score
+                    // find class_index with max class_score
                     int class_index = 0;
                     float class_score = -FLT_MAX;
                     for (int k = 0; k < num_class; k++) {
-                        float score = feat_blob.channel(q * feat_offset + 5 + k).row(i)[j];
-                        if (score > class_score) {
+                        float score = featptr[5 + k];
+                        if (score > class_score){
                             class_index = k;
                             class_score = score;
                         }
@@ -159,16 +159,16 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
                     float confidence = sigmoid(box_score) * sigmoid(class_score);
 
                     // filter candidate boxes with combined score >= prob_threshold
-                    if (confidence >= prob_threshold) {
+                    if (confidence >= prob_threshold){
                         // yolov5/models/yolo.py Detect forward
                         // y = x[i].sigmoid()
                         // y[..., 0:2] = (y[..., 0:2] * 2. - 0.5 + self.grid[i].to(x[i].device)) * self.stride[i]  # xy
                         // y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]  # wh
-
-                        float dx = sigmoid(feat_blob.channel(q * feat_offset + 0).row(i)[j]);
-                        float dy = sigmoid(feat_blob.channel(q * feat_offset + 1).row(i)[j]);
-                        float dw = sigmoid(feat_blob.channel(q * feat_offset + 2).row(i)[j]);
-                        float dh = sigmoid(feat_blob.channel(q * feat_offset + 3).row(i)[j]);
+                        
+                        float dx = sigmoid(featptr[0]);
+                        float dy = sigmoid(featptr[1]);
+                        float dw = sigmoid(featptr[2]);
+                        float dh = sigmoid(featptr[3]);
 
                         float cx = (dx * 2.f - 0.5f + j) * stride;
                         float cy = (dy * 2.f - 0.5f + i) * stride;
@@ -189,14 +189,14 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
                         obj.rect.height = y1 - y0;
                         obj.label = class_index;
                         obj.prob = confidence;
-
+                        
                         objects.push_back(obj);
                     }
                 }
             }
         }
     }
-}  
+}
 
 #if DYNAMIC
 static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects,  const int target_size = 640, const float prob_threshold = 0.25f, const float nms_threshold = 0.45f){
@@ -244,9 +244,9 @@ static int detect_yolov5(const cv::Mat& bgr, std::vector<Object>& objects,  cons
     // the three blob names can be easily discovered in netron visualizer
     // they are the outputs of the last three convolution, before any memory layout transformation
     // each out blob is the feat for a grid scale stride(8, 16, 32)
-    ex.extract("193", out0); //193 or 258 or 323 or 388
-    ex.extract("207", out1); //207 or 272 or 337 or 402
-    ex.extract("222", out2); //222 or 287 or 352 or 417
+    ex.extract("195", out0); //193 or 258 or 323 or 388
+    ex.extract("209", out1); //207 or 272 or 337 or 402
+    ex.extract("224", out2); //222 or 287 or 352 or 417
 
     // the out blob would be a 3-dim tensor with w=dynamic h=dynamic c=255=85*3
     // we view it as [grid_w,grid_h,85,3] for 3 anchor ratio types
