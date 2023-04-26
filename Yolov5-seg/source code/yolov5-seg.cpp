@@ -17,7 +17,6 @@
 namespace fs = std::filesystem;
 
 #define MAX_STRIDE 64
-#define DYNAMIC 0
 
 ncnn::Net yolo;
 std::vector<std::string> class_names;
@@ -204,22 +203,25 @@ static void qsort_descent_inplace(std::vector<Object>& faceobjects) {
     qsort_descent_inplace(faceobjects, 0, faceobjects.size() - 1);
 }
 
-static void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vector<int>& picked, float nms_threshold) {
+static void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vector<int>& picked, float nms_threshold, bool agnostic = true) {
     picked.clear();
 
     const int n = faceobjects.size();
 
     std::vector<float> areas(n);
-    for (int i = 0; i < n; i++){
+    for (int i = 0; i < n; i++) {
         areas[i] = faceobjects[i].rect.area();
     }
 
-    for (int i = 0; i < n; i++){
+    for (int i = 0; i < n; i++) {
         const Object& a = faceobjects[i];
 
         int keep = 1;
-        for (int j = 0; j < (int)picked.size(); j++){
+        for (int j = 0; j < (int)picked.size(); j++) {
             const Object& b = faceobjects[picked[j]];
+
+            if (!agnostic && a.label != b.label)
+                continue;
 
             // intersection over union
             float inter_area = intersection_area(a, b);
@@ -262,23 +264,19 @@ static void decode_mask(const ncnn::Mat& mask_feat, const int& img_w, const int&
 
 static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& in_pad, const ncnn::Mat& feat_blob, float prob_threshold, std::vector<Object>& objects) {
     const int num_grid = feat_blob.h;
-
     int num_grid_x;
     int num_grid_y;
-    // if (in_pad.w > in_pad.h){
-    //     num_grid_x = in_pad.w / stride;
-    //     num_grid_y = num_grid / num_grid_x;
-    // }
-    // else{
-    //     num_grid_y = in_pad.h / stride;
-    //     num_grid_x = num_grid / num_grid_y;
-    // }
-
-    num_grid_x = in_pad.w / stride;
-    num_grid_y = in_pad.h / stride;
+    if (in_pad.w > in_pad.h){
+        num_grid_x = in_pad.w / stride;
+        num_grid_y = num_grid / num_grid_x;
+    }
+    else{
+        num_grid_y = in_pad.h / stride;
+        num_grid_x = num_grid / num_grid_y;
+    }
     
     const int num_anchors = anchors.w / 2;
-    const int num_class = feat_blob.w - 5 - 32;// -5
+    const int num_class = feat_blob.w - 5 - 32;
 
     // enumerate all anchor types
     for (int q = 0; q < num_anchors; q++){
@@ -338,7 +336,7 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
                         obj.label = class_index;
                         obj.prob = confidence;
                         obj.mask_feat.resize(32); //?
-                        std::copy(featptr + 5 + num_class, featptr + 5 + num_class + 32, obj.mask_feat.begin()); //?
+                        std::copy(featptr + 5 + num_class , featptr + 5 + num_class + 32, obj.mask_feat.begin()); //?
 
                         objects.push_back(obj);
                     }
@@ -348,8 +346,7 @@ static void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn:
     }
 }
 
-#if DYNAMIC
-static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, const int target_size = 640, const float prob_threshold = 0.25f, const float nms_threshold = 0.45f){
+static int detect_yolov5_seg_dynamic(const cv::Mat& bgr, std::vector<Object>& objects, const int target_size = 640, const float prob_threshold = 0.25f, const float nms_threshold = 0.45f){
     // load image, resize and letterbox pad to multiple of MAX_STRIDE
     int img_w = bgr.cols;
     int img_h = bgr.rows;
@@ -495,7 +492,6 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
 
     return 0;
 }
-#else
 static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, const int target_size = 640, const float prob_threshold = 0.25f, const float nms_threshold = 0.45f){
     // load image, resize and pad to 640x640
     const int img_w = bgr.cols;
@@ -529,7 +525,7 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
     const float norm_vals[3] = { 1 / 255.f, 1 / 255.f, 1 / 255.f };
     in_pad.substract_mean_normalize(0, norm_vals);
 
-    // yolov5 model inference
+    //inference
     ncnn::Extractor ex = yolo.create_extractor();
     ex.input("in0", in_pad); // images or in0
     ncnn::Mat out;
@@ -537,17 +533,8 @@ static int detect_yolov5_seg(const cv::Mat& bgr, std::vector<Object>& objects, c
     ncnn::Mat mask_proto;
     ex.extract("out1", mask_proto); //seg or out1
 
-    // enumerate all boxes
-    ncnn::Mat anchors(6);
-    anchors[0] = 10.f;
-    anchors[1] = 13.f;
-    anchors[2] = 16.f;
-    anchors[3] = 30.f;
-    anchors[4] = 33.f;
-    anchors[5] = 23.f;
     std::vector<Object> proposals;
-    std::vector<Object> objects8;
-for (int i = 0; i < out.h; i++) {
+    for (int i = 0; i < out.h; i++) {
         const float* ptr = out.row(i);
 
         const int num_class = class_count;
@@ -589,6 +576,8 @@ for (int i = 0; i < out.h; i++) {
             obj.rect.height = y1 - y0;
             obj.label = class_index;
             obj.prob = confidence;
+            obj.mask_feat.resize(32); //?
+            std::copy(out.row(i) + 5 + num_class, out.row(i) + 5 + num_class + 32, obj.mask_feat.begin()); //?
 
             proposals.push_back(obj);
         }
@@ -604,14 +593,13 @@ for (int i = 0; i < out.h; i++) {
     // collect final result after nms
     const int count = picked.size();
 
-    ncnn::Mat mask_feat = ncnn::Mat(32, count, sizeof(float));
-    for (int i = 0; i < count; i++) {
-        float* mask_feat_ptr = mask_feat.row(i);
-        std::memcpy(mask_feat_ptr, proposals[picked[i]].mask_feat.data(), sizeof(float) * proposals[picked[i]].mask_feat.size());
-    }
+     ncnn::Mat mask_feat = ncnn::Mat(32, count, sizeof(float));
+     for (int i = 0; i < count; i++){
+         std::copy(proposals[picked[i]].mask_feat.begin(), proposals[picked[i]].mask_feat.end(), mask_feat.row(i));
+     }
 
-    ncnn::Mat mask_pred_result;
-    decode_mask(mask_feat, img_w, img_h, mask_proto, in_pad, wpad, hpad, mask_pred_result);
+     ncnn::Mat mask_pred_result;
+     decode_mask(mask_feat, img_w, img_h, mask_proto, in_pad, wpad, hpad, mask_pred_result);
 
     objects.resize(count);
     for (int i = 0; i < count; i++)
@@ -634,6 +622,7 @@ for (int i = 0; i < out.h; i++) {
         objects[i].rect.y = y0;
         objects[i].rect.width = x1 - x0;
         objects[i].rect.height = y1 - y0;
+
         objects[i].cv_mask = cv::Mat::zeros(img_h, img_w, CV_32FC1);
         cv::Mat mask = cv::Mat(img_h, img_w, CV_32FC1, (float*)mask_pred_result.channel(i));
         mask(objects[i].rect).copyTo(objects[i].cv_mask(objects[i].rect));
@@ -641,7 +630,6 @@ for (int i = 0; i < out.h; i++) {
 
     return 0;
 }
-#endif
 
 static void draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
     for (int y = 0; y < bgr.rows; y++) {
@@ -663,7 +651,7 @@ static void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects){
 
     for (size_t i = 0; i < objects.size(); i++){
         const Object& obj = objects[i];
-        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label]);
+        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f \n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
 
         color_index = obj.label ;
         const unsigned char* color = colors[color_index];
@@ -702,90 +690,41 @@ int get_class_names(std::string data) {
     return count;
 }
 
-int main(int argc, char* argv[]) {
-    std::string input, output, model, data, inputFolder, modelFolder, outputFolder, dataFolder;
-
-    inputFolder = "../input";
-    outputFolder = "../output/seg";
-    modelFolder = "../models/seg";
-    dataFolder = "../data";
-
-    cv::Mat in, out;
-    cv::VideoCapture capture;
-
-    std::vector<Object> objects;
-
-    if (argc < 2) {
-        model = "pnnx/yolov5s-seg.ncnn";
-        data = "coco128.txt";
-
-        std::cout << "No argument pass. Using default model \n";
-        std::cout << "Enter input : ";
-        std::cin >> input;
+class InputParser {
+public:
+    InputParser(int& argc, char** argv) {
+        for (int i = 1; i < argc; ++i)
+            this->tokens.push_back(std::string(argv[i]));
     }
-    else if (argc == 2) {
-        model = "pnnx/yolov5s-seg.ncnn";
-        data = "coco128.txt";
-
-        std::cout << "Using default model \n";
-        input = argv[1];
-    }
-    else {
-        model = argv[1];
-        data = argv[2];
-        input = argv[3];
-    }
-
-    std::string inputPath = inputFolder + "/" + input;
-    std::string outputPath = outputFolder + "/" + input;
-    std::string dataPath = dataFolder + "/" + data;
-    std::string bin = modelFolder + "/" + model + ".bin";
-    std::string param = modelFolder + "/" + model + ".param";
-    
-    // fs::path filePath = input;
-    class_count = get_class_names(dataPath);
-
-    if (yolo.load_param(param.c_str()))
-        exit(-1);
-    if (yolo.load_model(bin.c_str()))
-        exit(-1);
-
-    yolo.opt.use_vulkan_compute = false;
-    yolo.opt.num_threads = 4;
-
-    if (input == "0") {
-        std::cout << "Using camera\nUsing " << bin << " and " << param << std::endl;
-        capture.open(0);
-    }
-    else {
-        in = cv::imread(inputPath, 1);
-        std::cout << "Input = " << inputPath << "\nUsing " << bin << " and " << param << std::endl;
-        if (!in.empty()) {
-            detect_yolov5_seg(in, objects);
-            out = in.clone();
-
-            draw_objects(out, objects);
-            cv::imshow("Detect", out);
-            cv::waitKey();
-
-            std::cout << "\nOutput saved at " << outputPath;
-            cv::imwrite(outputPath, out);
-
-            return 0;
+    const std::string& getCmdOption(const std::string& option) const {
+        std::vector<std::string>::const_iterator itr;
+        itr = std::find(this->tokens.begin(), this->tokens.end(), option);
+        if (itr != this->tokens.end() && ++itr != this->tokens.end()) {
+            return *itr;
         }
-        else {
-            capture.open(inputPath);
-        }
+        static const std::string empty_string("");
+        return empty_string;
     }
-
+    bool cmdOptionExists(const std::string& option) const {
+        return std::find(this->tokens.begin(), this->tokens.end(), option) != this->tokens.end();
+    }
+private:
+    std::vector <std::string> tokens;
+};
+void video(cv::VideoCapture capture, cv::Mat in, bool dynamic){
     if (capture.isOpened()) {
         std::cout << "Object Detection Started...." << std::endl;
+        
+        cv::Mat out;
+        std::vector<Object> objects;
+
         do {
             capture >> in; //extract frame by frame
-            detect_yolov5_seg(in, objects);
-
+            if (dynamic)
+                detect_yolov5_seg_dynamic(in, objects);
+            else
+                detect_yolov5_seg(in, objects);
             out = in.clone();
-            //draw_objects_seg(out, objects);
             draw_objects(out, objects);
             cv::imshow("Detect", out);
 
@@ -798,6 +737,82 @@ int main(int argc, char* argv[]) {
     else {
         std::cout << "Could not Open Camera/Video";
     }
+}
 
+int main(int argc, char* argv[]) {
+    InputParser argument(argc, argv);
+
+    std::string inputFolder = "../input";
+    std::string outputFolder = "../output/seg";
+    std::string modelFolder = "../models/seg";
+    std::string dataFolder = "../data";
+
+    cv::Mat in, out;
+    cv::VideoCapture capture;
+
+    std::vector<Object> objects;
+
+    std::string model = "pnnx/yolov5s-seg.ncnn";
+    std::string data = "coco128.txt";
+    std::string input = "cat.bmp";
+
+    bool dynamic = argument.cmdOptionExists("-dynamic");
+    bool save = argument.cmdOptionExists("-save");
+
+    if (argument.cmdOptionExists("-model"))
+        model = argument.getCmdOption("-model");
+    if (argument.cmdOptionExists("-data"))
+        data = argument.getCmdOption("-data");
+    if (argument.cmdOptionExists("-input"))
+        input = argument.getCmdOption("-input");
+
+    std::string inputPath = inputFolder + "/" + input;
+    std::string outputPath = outputFolder + "/" + input;
+    std::string dataPath = dataFolder + "/" + data;
+    std::string bin = modelFolder + "/" + model + ".bin";
+    std::string param = modelFolder + "/" + model + ".param";
+
+    std::cout << "input = " << inputPath << "\nmodel =  " << bin << "\nparam = " << param << "\ndata = " << dataPath << "\ndynamic = " << dynamic << "\nsave = " << save << std::endl;
+
+    // fs::path filePath = input;
+    class_count = get_class_names(dataPath);
+
+    if (yolo.load_param(param.c_str()))
+        exit(-1);
+    if (yolo.load_model(bin.c_str()))
+        exit(-1);
+
+    yolo.opt.use_vulkan_compute = false;
+    yolo.opt.num_threads = 4;
+
+    if (input == "0") {
+        capture.open(0);
+        video(capture, in, dynamic);
+        return 0;
+    }
+    else {
+        in = cv::imread(inputPath, 1);
+        if (!in.empty()) {
+            if (dynamic)
+                detect_yolov5_seg_dynamic(in, objects);
+            else
+                detect_yolov5_seg(in, objects);
+            out = in.clone();
+
+            draw_objects(out, objects);
+            cv::imshow("Detect", out);
+            cv::waitKey();
+
+            if (save){
+                cv::imwrite(outputPath, out);
+                std::cout << "\nOutput saved at " << outputPath;
+            }
+            return 0;
+        }
+        else {
+            capture.open(inputPath);
+            video(capture, in, dynamic);
+        }
+    }
     return 0;
 }
