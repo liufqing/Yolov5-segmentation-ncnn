@@ -16,10 +16,10 @@ int main(int argc, char* argv[]) {
     std::string input       = argument.setDefaultArgument("-input", "test.bmp");
     std::string in_blob     = argument.setDefaultArgument("-in", "in0");
     std::string out_blob    = argument.setDefaultArgument("-out", "out0");
-    std::string out0_blob   = argument.setDefaultArgument("-out0", "200");
-    std::string out1_blob   = argument.setDefaultArgument("-out1", "217");
-    std::string out2_blob   = argument.setDefaultArgument("-out2", "235");
-    std::string seg_blob    = argument.setDefaultArgument("-seg", "out1");
+    std::string out1_blob   = argument.setDefaultArgument("-out1", "out1");
+    std::string out2_blob   = argument.setDefaultArgument("-out2", "out2");
+    std::string out3_blob   = argument.setDefaultArgument("-out3", "out3");
+    std::string seg_blob    = argument.setDefaultArgument("-seg", "seg");
     int size      = std::stoi(argument.setDefaultArgument("-size","640"));
     float conf    = std::stof(argument.setDefaultArgument("-conf", "0.25"));
     float nms     = std::stof(argument.setDefaultArgument("-nms", "0.45"));
@@ -40,9 +40,9 @@ int main(int argc, char* argv[]) {
                 << "\ndata      = " << dataPath
                 << "\nin_blob   = " << in_blob
                 << "\nout_blob  = " << out_blob
-                << "\nout0_blob = " << out0_blob
                 << "\nout1_blob = " << out1_blob
                 << "\nout2_blob = " << out2_blob
+                << "\nout3_blob = " << out3_blob
                 << "\nseg_blob  = " << seg_blob
                 << "\nsize      = " << size
                 << "\nconf      = " << conf
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     Yolov5.get_class_names(dataPath);
-    Yolov5.get_blob_name(in_blob,out_blob,out0_blob,out1_blob,out2_blob,seg_blob);
+    Yolov5.get_blob_name(in_blob,out_blob,out1_blob,out2_blob,out3_blob,seg_blob);
     Yolov5.dynamic = dynamic;
     Yolov5.save = save;
     Yolov5.target_size = size;

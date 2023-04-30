@@ -29,12 +29,12 @@ void Yolo::get_class_names(std::string data) {
     }
     class_count = count;
 }
-void Yolo::get_blob_name(std::string in, std::string out, std::string out0, std::string out1, std::string out2, std::string seg){
+void Yolo::get_blob_name(std::string in, std::string out, std::string out1, std::string out2, std::string out3, std::string seg){
     in_blob = in;
     out_blob = out;
-    out0_blob = out0;
     out1_blob = out1;
     out2_blob = out2;
+    out3_blob = out3;
     seg_blob = seg;
 }
 
@@ -241,9 +241,9 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     ncnn::Mat out0;
     ncnn::Mat out1;
     ncnn::Mat out2;
-    ex.extract(out0_blob.c_str(), out0); //output or out0
-    ex.extract(out1_blob.c_str(), out1); //yolov5n + yolov5s : 385 ;  yolov5l : 619 ;  yolov5x : 736
-    ex.extract(out2_blob.c_str(), out2); //yolov5n + yolov5s : 405 ;  yolov5l : 639 ;  yolov5x : 756
+    ex.extract(out1_blob.c_str(), out0); //output or out0
+    ex.extract(out2_blob.c_str(), out1); //yolov5n + yolov5s : 385 ;  yolov5l : 619 ;  yolov5x : 736
+    ex.extract(out3_blob.c_str(), out2); //yolov5n + yolov5s : 405 ;  yolov5l : 639 ;  yolov5x : 756
 
     ncnn::Mat mask_proto;
     ex.extract(seg_blob.c_str(), mask_proto);

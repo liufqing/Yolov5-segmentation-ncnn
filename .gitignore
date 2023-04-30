@@ -377,3 +377,7 @@ FodyWeavers.xsd
 /models/seg/preconvert/yolov5x-seg.bin
 Yolov5-seg/source code/yolov8-seg.cpp
 Yolov5-seg/source code/ncnn.cpp
+/models/seg/yolov5x-seg.ncnn.param
+/models/seg/yolov5x-seg.ncnn.bin
+/models/yolov5x.ncnn.param
+/models/yolov5x.ncnn.bin

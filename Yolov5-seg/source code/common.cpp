@@ -388,6 +388,7 @@ inline float fast_exp(float x) {
 }
 
 inline float sigmoid(float x) {
+    //return static_cast<float>(1.f / (1.f + exp(-x)));
     return 1.0f / (1.0f + fast_exp(-x));
 }
 

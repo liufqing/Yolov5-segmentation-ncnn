@@ -39,8 +39,8 @@ private:
     int class_count=0;
     std::string in_blob;
     std::string out_blob;
-    std::string out0_blob;
     std::string out1_blob;
     std::string out2_blob;
+    std::string out3_blob;
     std::string seg_blob;
 };
