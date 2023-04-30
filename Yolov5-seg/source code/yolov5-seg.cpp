@@ -28,11 +28,11 @@ int main(int argc, char* argv[]) {
 
     std::cout << argument.argNum() << " argument(s) passed";
 
-    std::string inputPath = inputFolder + "/" + input;
-    std::string outputPath = outputFolder + "/" + input;
-    std::string dataPath = dataFolder + "/" + data;
-    std::string bin = modelFolder + "/" + model + ".bin";
-    std::string param = modelFolder + "/" + model + ".param";
+    std::string inputPath  = inputFolder  +   "/" + input;
+    std::string outputPath = outputFolder +   "/" + input;
+    std::string dataPath   = dataFolder   +   "/" + data;
+    std::string bin        = modelFolder  +   "/" + model + ".bin";
+    std::string param      = modelFolder  +   "/" + model + ".param";
 
     std::cout   << "\nmodel     = " << bin
                 << "\nparam     = " << param 

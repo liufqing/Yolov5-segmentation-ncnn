@@ -19,7 +19,7 @@ extern const unsigned char colors[81][3];
 
 void matPrint(const ncnn::Mat& m);
 
-void matVisualize(const char* title, const ncnn::Mat& m);
+void matVisualize(const char* title, const ncnn::Mat& m, bool save = 0);
 
 void slice(const ncnn::Mat& in, ncnn::Mat& out, int start, int end, int axis);
 

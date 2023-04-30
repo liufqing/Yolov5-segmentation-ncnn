@@ -361,13 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/.vscode/settings.json
-/Yolov5/models/yolov5x.ncnn.param
-/Yolov5/models/yolov5x.ncnn.bin
-/Yolov5-seg/models/yolov5x-seg.param
-/Yolov5-seg/models/yolov5x-seg.ncnn.param
-/Yolov5-seg/models/yolov5x-seg.ncnn.bin
-/Yolov5-seg/models/yolov5x-seg.bin
 /.vscode
 /models/pnnx/yolov5x.ncnn.param
 /models/pnnx/yolov5x.ncnn.bin
