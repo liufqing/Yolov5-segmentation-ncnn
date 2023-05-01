@@ -19,20 +19,39 @@ public:
     Yolo();
     ~Yolo();
     int load(const std::string& bin, const std::string& param);
+
     int detect(const cv::Mat& bgr, std::vector<Object>& objects);
+
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
+
     void draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color);
-    void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects);
+    /**
+     * @brief 
+     * 
+     * @param bgr : background image to be draw on
+     * @param objects : object vector contain all the detected object in the image
+     * @param mode : determine the color for each object to be draw ( bounding box and feature mask ) - default = 1 
+     * @note
+     * 
+     * mode = 0 : color object by class index
+     * mode = 1 : color object by object number index
+     */
+    void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int mode = 1);
+
     void video(cv::VideoCapture capture);
+
     void image(cv::Mat in, std::string outputPath);
+
     void get_class_names(std::string data);
-    void get_blob_name(std::string in, std::string out, std::string out0, std::string out1, std::string out2,std::string seg);
-    bool dynamic = false;
-    bool save = false;
-    bool noseg = false;
-    int target_size = 640;
+
+    void get_blob_name(std::string in, std::string out, std::string out0, std::string out1, std::string out2, std::string seg);
+
+    bool dynamic         = false;
+    bool save            = false;
+    bool noseg           = false;
+    int target_size      = 640;
     float prob_threshold = 0.25;
-    float nms_threshold = 0.45;
+    float nms_threshold  = 0.45;
 private:
     ncnn::Net net;
     std::vector<std::string> class_names;
