@@ -11,20 +11,20 @@ int main(int argc, char* argv[]) {
     std::string dataFolder      = "../data";
 
     //set default argument
-    std::string model       = argument.setDefaultArgument("-model", "yolov5s-seg.ncnn");
-    std::string data        = argument.setDefaultArgument("-data", "coco128.txt");
-    std::string input       = argument.setDefaultArgument("-input", "test.bmp");
-    std::string in_blob     = argument.setDefaultArgument("-in", "in0");
-    std::string out_blob    = argument.setDefaultArgument("-out", "out0");
-    std::string out1_blob   = argument.setDefaultArgument("-out1", "out1");
-    std::string out2_blob   = argument.setDefaultArgument("-out2", "out2");
-    std::string out3_blob   = argument.setDefaultArgument("-out3", "out3");
-    std::string seg_blob    = argument.setDefaultArgument("-seg", "seg");
-    int size      = std::stoi(argument.setDefaultArgument("-size","640"));
-    float conf    = std::stof(argument.setDefaultArgument("-conf", "0.25"));
-    float nms     = std::stof(argument.setDefaultArgument("-nms", "0.45"));
-    bool dynamic            = argument.cmdOptionExists("-dynamic");
-    bool save               = argument.cmdOptionExists("-save");
+    std::string model     =           argument.setDefaultArgument("-model", "yolov5s-seg.ncnn");
+    std::string data      =           argument.setDefaultArgument("-data", "coco128.txt");
+    std::string input     =           argument.setDefaultArgument("-input", "test.bmp");
+    std::string in_blob   =           argument.setDefaultArgument("-in", "in0");
+    std::string out_blob  =           argument.setDefaultArgument("-out", "out0");
+    std::string out1_blob =           argument.setDefaultArgument("-out1", "out1");
+    std::string out2_blob =           argument.setDefaultArgument("-out2", "out2");
+    std::string out3_blob =           argument.setDefaultArgument("-out3", "out3");
+    std::string seg_blob  =           argument.setDefaultArgument("-seg", "seg");
+    int size              = std::stoi(argument.setDefaultArgument("-size", "640"));
+    float conf            = std::stof(argument.setDefaultArgument("-conf", "0.25"));
+    float nms             = std::stof(argument.setDefaultArgument("-nms", "0.45"));
+    bool dynamic          =           argument.cmdOptionExists("-dynamic");
+    bool save             =           argument.cmdOptionExists("-save");
 
     std::cout << argument.argNum() << " argument(s) passed";
 

@@ -11,19 +11,21 @@ int main(int argc, char* argv[]) {
     std::string dataFolder = "../data";
 
     //set default argument
-    std::string model       = argument.setDefaultArgument("-model", "yolov5s.ncnn");
-    std::string data        = argument.setDefaultArgument("-data", "coco128.txt");
-    std::string input       = argument.setDefaultArgument("-input", "cat.bmp");
-    std::string in_blob     = argument.setDefaultArgument("-in", "in0");
-    std::string out_blob    = argument.setDefaultArgument("-out", "out0");
-    std::string out0_blob   = argument.setDefaultArgument("-out0", "193");
-    std::string out1_blob   = argument.setDefaultArgument("-out1", "207");
-    std::string out2_blob   = argument.setDefaultArgument("-out2", "222");
-    bool dynamic            = argument.cmdOptionExists("-dynamic");
-    bool save               = argument.cmdOptionExists("-save");
-    int size      = std::stoi(argument.setDefaultArgument("-size","640"));
-    float conf    = std::stof(argument.setDefaultArgument("-conf", "0.25"));
-    float nms     = std::stof(argument.setDefaultArgument("-nms", "0.45"));
+    std::string model     =           argument.setDefaultArgument("-model", "yolov5s.ncnn");
+    std::string data      =           argument.setDefaultArgument("-data", "coco128.txt");
+    std::string input     =           argument.setDefaultArgument("-input", "test.bmp");
+    std::string in_blob   =           argument.setDefaultArgument("-in", "in0");
+    std::string out_blob  =           argument.setDefaultArgument("-out", "out0");
+    std::string out1_blob =           argument.setDefaultArgument("-out1", "out1");
+    std::string out2_blob =           argument.setDefaultArgument("-out2", "out2");
+    std::string out3_blob =           argument.setDefaultArgument("-out3", "out3");
+    int size              = std::stoi(argument.setDefaultArgument("-size", "640"));
+    float conf            = std::stof(argument.setDefaultArgument("-conf", "0.25"));
+    float nms             = std::stof(argument.setDefaultArgument("-nms", "0.45"));
+    bool dynamic          =           argument.cmdOptionExists("-dynamic");
+    bool save             =           argument.cmdOptionExists("-save");
+
+    std::cout << argument.argNum() << " argument(s) passed";
 
     std::string inputPath = inputFolder + "/" + input;
     std::string outputPath = outputFolder + "/" + input;
@@ -31,26 +33,33 @@ int main(int argc, char* argv[]) {
     std::string bin = modelFolder + "/" + model + ".bin";
     std::string param = modelFolder + "/" + model + ".param";
 
-    std::cout   << "input = " << inputPath
-                << "\nmodel =  " << bin
-                << "\nparam = " << param 
-                << "\ndata = " << dataPath
-                << "\nsize = " << size
-                << "\nconf = " << conf
-                << "\nnms = " << nms
-                << "\ndynamic = " << dynamic 
-                << "\nsave = " << save << std::endl;
+    std::cout << "\nmodel     = " << bin
+        << "\nparam     = " << param
+        << "\ninput     = " << inputPath
+        << "\ndata      = " << dataPath
+        << "\nin_blob   = " << in_blob
+        << "\nout_blob  = " << out_blob
+        << "\nout1_blob = " << out1_blob
+        << "\nout2_blob = " << out2_blob
+        << "\nout3_blob = " << out3_blob
+        << "\nsize      = " << size
+        << "\nconf      = " << conf
+        << "\nnms       = " << nms
+        << "\ndynamic   = " << dynamic
+        << "\nsave      = " << save << std::endl;
 
     Yolo Yolov5;
 
-    Yolov5.load(bin,param);
+    if (Yolov5.load(bin, param)) {
+        return -1;
+    }
     Yolov5.get_class_names(dataPath);
+    Yolov5.get_blob_name(in_blob, out_blob, out1_blob, out2_blob, out3_blob);
     Yolov5.dynamic = dynamic;
     Yolov5.save = save;
     Yolov5.target_size = size;
     Yolov5.prob_threshold = conf;
     Yolov5.nms_threshold = nms;
-    Yolov5.get_blob_name(in_blob,out_blob,out0_blob,out1_blob,out2_blob);
 
     if (input == "0") {
         cv::VideoCapture capture;
@@ -58,17 +67,15 @@ int main(int argc, char* argv[]) {
         Yolov5.video(capture);
         return 0;
     }
+    cv::Mat in = cv::imread(inputPath, 1);
+    if (!in.empty()) {
+        Yolov5.image(in, outputPath);
+        return 0;
+    }
     else {
-        cv::Mat in = cv::imread(inputPath, 1);
-        if (!in.empty()) {
-            Yolov5.image(in, outputPath);
-            return 0;
-        }
-        else {
-            cv::VideoCapture capture;
-            capture.open(inputPath);
-            Yolov5.video(capture);
-        }
+        cv::VideoCapture capture;
+        capture.open(inputPath);
+        Yolov5.video(capture);
     }
     return 0;
 }

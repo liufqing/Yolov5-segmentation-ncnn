@@ -10,10 +10,9 @@
 #include <string>
 #include <float.h>
 #include <vector>
-#include <filesystem>
 #include <fstream>
 
-#include "colors.hpp"
+#include "common.hpp"
 
 #define MAX_STRIDE 64
 
