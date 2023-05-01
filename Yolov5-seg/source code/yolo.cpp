@@ -349,17 +349,19 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     return 0;
 }
 
-void Yolo::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects) {
+void Yolo::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int mode) {
     int color_index = 0;
 
     for (size_t i = 0; i < objects.size(); i++) {
         const Object& obj = objects[i];
         fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label].c_str());
 
-        color_index = obj.label;
+        if(mode == 0)
+            color_index = obj.label;
         const unsigned char* color = colors[color_index];
-        // color_index++;
         cv::Scalar cc(color[0], color[1], color[2]);
+        if(mode == 1)
+            color_index++;
 
         draw_segment(bgr, obj.cv_mask, color);
 
