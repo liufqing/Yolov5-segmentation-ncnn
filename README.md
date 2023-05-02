@@ -1,5 +1,5 @@
 # Yolov5 Segmentation with NCNN
-![output](./Yolov5-seg/output/cat.jpg)
+![output](./output/seg/cat.jpg)
 
 ![output](./build/screenshots/cat.gif)
 
@@ -9,26 +9,35 @@ Setup for windows, using visual studio 2022. Refer to [build](./build/build.md)
 Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmentation-ncnn/releases/tag/v1.0)
 
 # How to run
-1. Put NCNN model (.bin and .param) to the "./models" folder. Models can be download at [Google Drive](https://drive.google.com/drive/folders/1KtMrWS-zh73aBp44aSUf3gM6vX587VBG)
+1. Put NCNN model (.bin and .param) to the "./models" folder.
 2. Put inference image to "./input" folder
-3. Run yolo.exe or run in cmd, just pass the model name, assumed that the *.bin and *.param are both in models folder
+3. Run yolov5-seg.exe in cmd ( assumed that the *.bin and *.param are both in models folder )
 ```cmd
-yolov5-seg [model name] [input]
+yolov5-seg [-model] [-data] [-input] [-size] [-conf] [-nms] [-dynamic] [-save]
 ```
-Input can be : 
-- images ( *jpg, *png,... ) (Press anykey to close image after)
-- videos ( *mp4, *mov,... ) (Press 'q' or 'esc' to close video)
-- 0 for webcam (Press 'q' or 'esc' to close webcam)
+-model : ncnn model name. Default yolov5s-seg.ncnn
+
+-data : class names txt file. Default coco128.txt
+
+-input : images ( *jpg, *png,... ), videos ( *mp4, *mov,... ), 0 for webcam
+
+-size : target size. Default 640
+
+-conf : confident threshold. Default 0.25
+
+-nms : nms threshold. Default 0.45
+
+-dynamic : dynamic dectec flag. Default false
+
+-save : save output flag. Default false
 
 For example :
 ```cmd
-yolov5-seg yolov5s-seg woman.jpg
+yolov5-seg -input woman.jpg -model yolov5x-seg.ncnn -dynamic -save
 ```
-![output](./build/screenshots/Screenshot12.png)
-![output](./Yolov5-seg/output/woman.jpg)
+![output](./output/seg/woman.jpg)
 
-4. If you dont pass any argument, the default model "yolov5-seg" is used
-5. Output saved at "/output" folder
+4. Output saved at "/output" folder
 
 # How to convert pytorch model to ncnn model 
 Currently, there's 2 ways to convert a pytorch model to ncnn model : 
