@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Yolov5-seg", "Yolov5-seg\Yolov5-seg.vcxproj", "{C441E239-2626-480F-BF7B-B0D02FA0C42D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Yolov5", "Yolov5\Yolov5.vcxproj", "{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -29,18 +27,6 @@ Global
 		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Test|x64.Build.0 = test|x64
 		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Test|x86.ActiveCfg = test|Win32
 		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Test|x86.Build.0 = test|Win32
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Debug|x64.ActiveCfg = Debug|x64
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Debug|x64.Build.0 = Debug|x64
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Debug|x86.ActiveCfg = Debug|Win32
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Debug|x86.Build.0 = Debug|Win32
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Release|x64.ActiveCfg = Release|x64
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Release|x64.Build.0 = Release|x64
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Release|x86.ActiveCfg = Release|Win32
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Release|x86.Build.0 = Release|Win32
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Test|x64.ActiveCfg = Release|x64
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Test|x64.Build.0 = Release|x64
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Test|x86.ActiveCfg = Release|Win32
-		{43F9E17D-9600-4A6B-AFAC-8580DF4AA8F0}.Test|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
