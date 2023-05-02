@@ -446,7 +446,7 @@ void Yolo::image(cv::Mat in, std::string outputPath) {
         detect(in, objects);
     cv::Mat out = in.clone();
 
-    draw_objects(out, objects);
+    draw_objects(out, objects, 1);
     cv::imshow("Detect", out);
     cv::waitKey();
 
@@ -470,7 +470,7 @@ void Yolo::video(cv::VideoCapture capture) {
             else
                 detect(frame, objects);
             out = frame.clone();
-            draw_objects(out, objects);
+            draw_objects(out, objects, 0);
             cv::imshow("Detect", out);
 
             char key = (char)cv::pollKey();
