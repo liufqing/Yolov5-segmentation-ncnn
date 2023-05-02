@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
     float nms             = std::stof(argument.setDefaultArgument("-nms", "0.45"));
     bool dynamic          =           argument.cmdOptionExists("-dynamic");
     bool save             =           argument.cmdOptionExists("-save");
+    bool noseg            =           argument.cmdOptionExists("-noseg");
 
     std::cout << argument.argNum() << " argument(s) passed";
 
@@ -48,7 +49,8 @@ int main(int argc, char* argv[]) {
                 << "\nconf      = " << conf
                 << "\nnms       = " << nms
                 << "\ndynamic   = " << dynamic
-                << "\nsave      = " << save << std::endl;
+                << "\nsave      = " << save 
+                << "\nnoseg     = " << noseg << std::endl;
 
     Yolo Yolov5;
 
@@ -62,6 +64,7 @@ int main(int argc, char* argv[]) {
     Yolov5.target_size = size;
     Yolov5.prob_threshold = conf;
     Yolov5.nms_threshold = nms;
+    Yolov5.noseg = noseg;
 
     if (input == "0") {
         cv::VideoCapture capture;

@@ -77,7 +77,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
     ncnn::Mat out;
     ex.extract(out_blob.c_str(), out);
     /*
-    the out blob would be a 2-dim tensor with w=85 h=25200
+    The out blob would be a 2-dim tensor with w=85 h=25200
 
            |cx|cy|bw|bh|box score(1)| per-class scores(80) |
            +--+--+--+--+------------+----------------------+
@@ -88,7 +88,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
           \|  |  |  |  |      .     |           .          |
            +--+--+--+--+------------+----------------------+
 
-    the out blob would be a 2-dim tensor with w=117 h=25200 (for segment model)
+    The out blob would be a 2-dim tensor with w=117 h=25200 (for segment model)
     
            |cx|cy|bw|bh|box score(1)| per-class scores(80) |mask feature(32)|
            +--+--+--+--+------------+----------------------+----------------+
@@ -101,20 +101,20 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
     */
 
     ncnn::Mat mask_proto;
-    ex.extract(seg_blob.c_str(), mask_proto); //seg or out1
+    ex.extract(seg_blob.c_str(), mask_proto);
+
+    std::vector<Object> proposals;
 
     const int num_grid = out.h;
     const int num_class = out.w - 5 - 32;
-    std::vector<Object> proposals;
     for (int i = 0; i < num_grid; i++) {
-        const float* ptr = out.row(i);
-        const float box_score = ptr[4];
+        const float box_score = out.row(i)[4];
 
-        // find class index with the biggest class score among all classes
+        // find class index with max class score
         int class_index = 0;
         float class_score = -FLT_MAX;
         for (int k = 0; k < num_class; k++) {
-            float score = ptr[5 + k];
+            float score = out.row(i)[5 + k];
             if (score > class_score) {
                 class_index = k;
                 class_score = score;
@@ -122,14 +122,14 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
         }
 
         // combined score = box score * class score
-        float confidence = box_score * class_score;
+        float score = box_score * class_score;
 
         // filter candidate boxes with combined score >= prob_threshold
-        if (confidence >= prob_threshold) {
-            const float cx = ptr[0]; //center-x
-            const float cy = ptr[1]; //center-y
-            const float bw = ptr[2]; //box-width
-            const float bh = ptr[3]; //box-height
+        if (score >= prob_threshold) {
+            const float cx = out.row(i)[0]; //center x coordinate
+            const float cy = out.row(i)[1]; //center y coordinate
+            const float bw = out.row(i)[2]; //box width
+            const float bh = out.row(i)[3]; //box height
 
             // transform candidate box (center-x,center-y,w,h) to (x0,y0,x1,y1)
             float x0 = cx - bw * 0.5f;
@@ -144,9 +144,9 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
             obj.rect.width = x1 - x0;
             obj.rect.height = y1 - y0;
             obj.label = class_index;
-            obj.prob = confidence;
+            obj.prob = score;
             obj.mask_feat.resize(32);
-            std::copy(ptr + 5 + num_class, ptr + 5 + num_class + 32, obj.mask_feat.begin());
+            std::copy(out.row(i) + 5 + num_class, out.row(i) + 5 + num_class + 32, obj.mask_feat.begin());
 
             proposals.push_back(obj);
         }
@@ -228,7 +228,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     int wpad = (w + MAX_STRIDE - 1) / MAX_STRIDE * MAX_STRIDE - w;
     int hpad = (h + MAX_STRIDE - 1) / MAX_STRIDE * MAX_STRIDE - h;
     ncnn::Mat in_pad;
-    ncnn::copy_make_border(in, in_pad, hpad / 2, hpad - hpad / 2, wpad / 2, wpad - wpad / 2, ncnn::BORDER_CONSTANT, 114.f);//0.f?
+    ncnn::copy_make_border(in, in_pad, hpad / 2, hpad - hpad / 2, wpad / 2, wpad - wpad / 2, ncnn::BORDER_CONSTANT, 114.f);
 
     // apply yolov5 pre process, that is to normalize 0~255 to 0~1
     const float norm_vals[3] = { 1 / 255.f, 1 / 255.f, 1 / 255.f };
@@ -236,14 +236,55 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
 
     // yolov5 model inference
     ncnn::Extractor ex = net.create_extractor();
-    ex.input(in_blob.c_str(), in_pad); // images or in0
+    ex.input(in_blob.c_str(), in_pad);
 
     ncnn::Mat out0;
     ncnn::Mat out1;
     ncnn::Mat out2;
-    ex.extract(out1_blob.c_str(), out0); //output or out0
-    ex.extract(out2_blob.c_str(), out1); //yolov5n + yolov5s : 385 ;  yolov5l : 619 ;  yolov5x : 736
-    ex.extract(out3_blob.c_str(), out2); //yolov5n + yolov5s : 405 ;  yolov5l : 639 ;  yolov5x : 756
+    ex.extract(out1_blob.c_str(), out0);
+    ex.extract(out2_blob.c_str(), out1);
+    ex.extract(out3_blob.c_str(), out2);
+    /*
+    The out blob would be a 3-dim tensor with w=dynamic h=dynamic c=255=85*3
+    We view it as [grid_w,grid_h,85,3] for 3 anchor ratio types
+
+                |<--   dynamic anchor grids     -->|
+                |   larger image yields more grids |
+                +-------------------------- // ----+
+               /| center-x                         |
+              / | center-y                         |
+             /  | box-w                            |
+     anchor-0   | box-h                            |
+      +-----+   | box score(1)                     |
+      |     |   +----------------                  |
+      |     |   | per-class scores(80)             |
+      +-----+\  |   .                              |
+              \ |   .                              |
+               \|   .                              |
+                +-------------------------- // ----+
+               /| center-x                         |
+              / | center-y                         |
+             /  | box-w                            |
+     anchor-1   | box-h                            |
+      +-----+   | box score(1)                     |
+      |     |   +----------------                  |
+      +-----+   | per-class scores(80)             |
+             \  |   .                              |
+              \ |   .                              |
+               \|   .                              |
+                +-------------------------- // ----+
+               /| center-x                         |
+              / | center-y                         |
+             /  | box-w                            |
+     anchor-2   | box-h                            |
+      +--+      | box score(1)                     |
+      |  |      +----------------                  |
+      |  |      | per-class scores(80)             |
+      +--+   \  |   .                              |
+              \ |   .                              |
+               \|   .                              |
+                +-------------------------- // ----+
+    */
 
     ncnn::Mat mask_proto;
     ex.extract(seg_blob.c_str(), mask_proto);
@@ -262,10 +303,10 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         anchors[4] = 33.f;
         anchors[5] = 23.f;
 
-        std::vector<Object> objects8;
-        generate_proposals(anchors, 8, in_pad, out0, prob_threshold, objects8);
+        std::vector<Object> objects;
+        generate_proposals(anchors, 8, in_pad, out0, prob_threshold, objects); 
 
-        proposals.insert(proposals.end(), objects8.begin(), objects8.end());
+        proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
 
     // stride 16
@@ -278,10 +319,10 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         anchors[4] = 59.f;
         anchors[5] = 119.f;
 
-        std::vector<Object> objects16;
-        generate_proposals(anchors, 16, in_pad, out1, prob_threshold, objects16);
+        std::vector<Object> objects;
+        generate_proposals(anchors, 16, in_pad, out1, prob_threshold, objects);
 
-        proposals.insert(proposals.end(), objects16.begin(), objects16.end());
+        proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
 
     // stride 32
@@ -294,10 +335,10 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         anchors[4] = 373.f;
         anchors[5] = 326.f;
 
-        std::vector<Object> objects32;
-        generate_proposals(anchors, 32, in_pad, out2, prob_threshold, objects32);
+        std::vector<Object> objects;
+        generate_proposals(anchors, 32, in_pad, out2, prob_threshold, objects);
 
-        proposals.insert(proposals.end(), objects32.begin(), objects32.end());
+        proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
 
     // sort all proposals by score from highest to lowest
@@ -342,8 +383,6 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         objects[i].cv_mask = cv::Mat::zeros(img_h, img_w, CV_32FC1);
         cv::Mat mask = cv::Mat(img_h, img_w, CV_32FC1, (float*)mask_pred_result.channel(i));
         mask(objects[i].rect).copyTo(objects[i].cv_mask(objects[i].rect));
-        // cv::imshow("mask", objects[i].cv_mask);
-        // cv::waitKey();
     }
 
     return 0;

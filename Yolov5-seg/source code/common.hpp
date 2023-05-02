@@ -5,7 +5,10 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include <iostream>
+
 #define MAX_STRIDE 64
+#define PERMUTE 0
 
 struct Object {
     cv::Rect_<float> rect;
