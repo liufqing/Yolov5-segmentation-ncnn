@@ -26,6 +26,7 @@ int main(int argc, char* argv[]) {
     bool dynamic          =           argument.cmdOptionExists("-dynamic");
     bool save             =           argument.cmdOptionExists("-save");
     bool noseg            =           argument.cmdOptionExists("-noseg");
+    bool agnostic         =           argument.cmdOptionExists("agnostic");
 
     std::cout << argument.argNum() << " argument(s) passed";
 
@@ -49,7 +50,8 @@ int main(int argc, char* argv[]) {
                 << "\nconf      = " << conf
                 << "\nnms       = " << nms
                 << "\ndynamic   = " << dynamic
-                << "\nsave      = " << save 
+                << "\nsave      = " << save
+                << "\nagnostic  = " << agnostic
                 << "\nnoseg     = " << noseg << std::endl;
 
     Yolo Yolov5;
@@ -59,12 +61,13 @@ int main(int argc, char* argv[]) {
     }
     Yolov5.get_class_names(dataPath);
     Yolov5.get_blob_name(in_blob,out_blob,out1_blob,out2_blob,out3_blob,seg_blob);
-    Yolov5.dynamic = dynamic;
-    Yolov5.save = save;
-    Yolov5.target_size = size;
+    Yolov5.dynamic        = dynamic;
+    Yolov5.save           = save;
+    Yolov5.target_size    = size;
     Yolov5.prob_threshold = conf;
-    Yolov5.nms_threshold = nms;
-    Yolov5.noseg = noseg;
+    Yolov5.nms_threshold  = nms;
+    Yolov5.noseg          = noseg;
+    Yolov5.agnostic       = agnostic;
 
     if (input == "0") {
         cv::VideoCapture capture;

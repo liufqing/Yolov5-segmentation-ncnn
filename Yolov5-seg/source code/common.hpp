@@ -8,7 +8,9 @@
 #include <iostream>
 
 #define MAX_STRIDE 64
-#define PERMUTE 0
+#define PERMUTE 0 // Using the permute layer output
+#define FAST_EXP 1 // Using fast exponential function
+#define SEGMENT 1 // Using segmentation model
 
 struct Object {
     cv::Rect_<float> rect;

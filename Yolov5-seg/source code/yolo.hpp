@@ -49,6 +49,7 @@ public:
     bool dynamic         = false;
     bool save            = false;
     bool noseg           = false;
+    bool agnostic        = true;
     int target_size      = 640;
     float prob_threshold = 0.25;
     float nms_threshold  = 0.45;

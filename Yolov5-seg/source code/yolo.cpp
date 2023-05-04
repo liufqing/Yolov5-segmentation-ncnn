@@ -157,7 +157,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
 
     // apply non max suppression
     std::vector<int> picked;
-    nms_sorted_bboxes(proposals, picked, nms_threshold);
+    nms_sorted_bboxes(proposals, picked, nms_threshold), agnostic;
 
     // collect final result after nms
     const int count = picked.size();
@@ -346,7 +346,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
 
     // apply nms with nms_threshold 
     std::vector<int> picked;
-    nms_sorted_bboxes(proposals, picked, nms_threshold);
+    nms_sorted_bboxes(proposals, picked, nms_threshold, agnostic);
 
     // collect final result after nms
     int count = picked.size();
