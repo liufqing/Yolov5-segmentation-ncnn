@@ -14,19 +14,13 @@ int main(int argc, char* argv[]) {
     std::string model     =           argument.setDefaultArgument("-model", "yolov5s-seg.ncnn");
     std::string data      =           argument.setDefaultArgument("-data", "coco128.txt");
     std::string input     =           argument.setDefaultArgument("-input", "test.bmp");
-    std::string in_blob   =           argument.setDefaultArgument("-in", "in0");
-    std::string out_blob  =           argument.setDefaultArgument("-out", "out0");
-    std::string out1_blob =           argument.setDefaultArgument("-out1", "out1");
-    std::string out2_blob =           argument.setDefaultArgument("-out2", "out2");
-    std::string out3_blob =           argument.setDefaultArgument("-out3", "out3");
-    std::string seg_blob  =           argument.setDefaultArgument("-seg", "seg");
     int size              = std::stoi(argument.setDefaultArgument("-size", "640"));
     float conf            = std::stof(argument.setDefaultArgument("-conf", "0.25"));
     float nms             = std::stof(argument.setDefaultArgument("-nms", "0.45"));
     bool dynamic          =           argument.cmdOptionExists("-dynamic");
     bool save             =           argument.cmdOptionExists("-save");
     bool noseg            =           argument.cmdOptionExists("-noseg");
-    bool agnostic         =           argument.cmdOptionExists("agnostic");
+    bool agnostic         =           argument.cmdOptionExists("-agnostic");
 
     std::cout << argument.argNum() << " argument(s) passed";
 
@@ -40,19 +34,14 @@ int main(int argc, char* argv[]) {
                 << "\nparam     = " << param 
                 << "\ninput     = " << inputPath
                 << "\ndata      = " << dataPath
-                << "\nin_blob   = " << in_blob
-                << "\nout_blob  = " << out_blob
-                << "\nout1_blob = " << out1_blob
-                << "\nout2_blob = " << out2_blob
-                << "\nout3_blob = " << out3_blob
-                << "\nseg_blob  = " << seg_blob
                 << "\nsize      = " << size
                 << "\nconf      = " << conf
                 << "\nnms       = " << nms
                 << "\ndynamic   = " << dynamic
                 << "\nsave      = " << save
                 << "\nagnostic  = " << agnostic
-                << "\nnoseg     = " << noseg << std::endl;
+                << "\nnoseg     = " << noseg 
+                << "\n------------------------------------------------" <<std::endl;
 
     Yolo Yolov5;
 
@@ -60,7 +49,6 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     Yolov5.get_class_names(dataPath);
-    Yolov5.get_blob_name(in_blob,out_blob,out1_blob,out2_blob,out3_blob,seg_blob);
     Yolov5.dynamic        = dynamic;
     Yolov5.save           = save;
     Yolov5.target_size    = size;

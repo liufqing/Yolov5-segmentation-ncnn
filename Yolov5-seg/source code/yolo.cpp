@@ -3,6 +3,12 @@
 Yolo::Yolo() {
 	net.opt.use_vulkan_compute = false;
 	net.opt.num_threads = 4;
+    in_blob = "in0";
+    out_blob = "out0";
+    out1_blob = "out1";
+    out2_blob = "out2";
+    out3_blob = "out3";
+    seg_blob = "seg";
 }
 
 Yolo::~Yolo() {
@@ -389,16 +395,20 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
 }
 
 void Yolo::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int mode) {
-    int color_index = 0;
+    int objCount = objects.size();
+    std::cout << "objects count = " << objCount <<std::endl;
 
-    for (size_t i = 0; i < objects.size(); i++) {
+    int color_index = 0;
+    for (size_t i = 0; i < objCount; i++) {
         const Object& obj = objects[i];
         fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label].c_str());
 
         if(mode == 0)
             color_index = obj.label;
+
         const unsigned char* color = colors[color_index];
         cv::Scalar cc(color[0], color[1], color[2]);
+
         if(mode == 1)
             color_index++;
 
@@ -439,7 +449,6 @@ void Yolo::draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) 
 }
 
 void Yolo::image(cv::Mat in, std::string outputPath) {
-    std::vector<Object> objects;
     if (dynamic)
         detect_dynamic(in, objects);
     else
@@ -461,8 +470,6 @@ void Yolo::video(cv::VideoCapture capture) {
         std::cout << "Object Detection Started...." << std::endl;
 
         cv::Mat frame, out;
-        std::vector<Object> objects;
-
         do {
             capture >> frame; //extract frame by frame
             if (dynamic)

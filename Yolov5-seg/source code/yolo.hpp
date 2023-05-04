@@ -56,6 +56,7 @@ public:
 private:
     ncnn::Net net;
     std::vector<std::string> class_names;
+    std::vector<Object> objects;
     int class_count=0;
     std::string in_blob;
     std::string out_blob;
