@@ -25,6 +25,8 @@ public:
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
 
     void draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color);
+
+    void draw_segment(cv::Mat& bgr, const std::vector<Object>& objects, int mode);
     /**
      * @brief 
      * 
@@ -53,6 +55,7 @@ public:
     int target_size      = 640;
     float prob_threshold = 0.25;
     float nms_threshold  = 0.45;
+    float mask_conf      = 0.5;
 private:
     ncnn::Net net;
     std::vector<std::string> class_names;

@@ -412,8 +412,6 @@ void Yolo::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int mo
         if(mode == 1)
             color_index++;
 
-        draw_segment(bgr, obj.cv_mask, color);
-
         cv::rectangle(bgr, obj.rect, cc, 1);
 
         std::string text = class_names[obj.label] + " " + cv::format("%.2f", obj.prob * 100) + "%";
@@ -430,6 +428,41 @@ void Yolo::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int mo
 
         cv::rectangle(bgr, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
         cv::putText(bgr, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+        //cv::imshow("Mask", obj.cv_mask);
+        //cv::waitKey();
+        draw_segment(bgr, obj.cv_mask, color);
+    }
+}
+
+void Yolo::draw_segment(cv::Mat& bgr, const std::vector<Object>& objects, int mode) {
+    int objCount = objects.size();
+    std::cout << "objects count = " << objCount << std::endl;
+
+    int color_index = 0;
+    for (size_t i = 0; i < objCount; i++) {
+        const Object& obj = objects[i];
+        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label].c_str());
+
+        if (mode == 0)
+            color_index = obj.label;
+
+        const unsigned char* color = colors[color_index];
+        cv::Scalar cc(color[0], color[1], color[2]);
+
+        if (mode == 1)
+            color_index++;
+        for (int y = 0; y < bgr.rows; y++) {
+            uchar* image_ptr = bgr.ptr(y);
+            const float* mask_ptr = obj.cv_mask.ptr<float>(y);
+            for (int x = 0; x < bgr.cols; x++) {
+                if (mask_ptr[x] >= mask_conf) {
+                    image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
+                    image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
+                    image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
+                }
+                image_ptr += 3;
+            }
+        }
     }
 }
 
@@ -438,7 +471,7 @@ void Yolo::draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) 
         uchar* image_ptr = bgr.ptr(y);
         const float* mask_ptr = mask.ptr<float>(y);
         for (int x = 0; x < bgr.cols; x++) {
-            if (mask_ptr[x] >= 0.5) {
+            if (mask_ptr[x] >= mask_conf) {
                 image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
                 image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
                 image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
@@ -449,6 +482,7 @@ void Yolo::draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) 
 }
 
 void Yolo::image(cv::Mat in, std::string outputPath) {
+    cv::imshow("Source", in);
     if (dynamic)
         detect_dynamic(in, objects);
     else
