@@ -45,3 +45,10 @@ Currently, there's 2 ways to convert a pytorch model to ncnn model :
 2. pytorch >> torchscript >> ncnn (via [pnnx](https://github.com/pnnx/pnnx))
 
 The author himself( or maybe her ) ([nihui](https://github.com/nihui)) recommended the **second method** (refer to [this comment](https://github.com/Tencent/ncnn/issues/4488#issuecomment-1434299765))
+
+# MEME PLACE
+Scientists : AI is going to take over the world.
+
+Mean while AI :
+
+![output](./output/seg/meme.jpg)
