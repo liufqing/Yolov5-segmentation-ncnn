@@ -1,5 +1,6 @@
 #include "yolo.hpp"
 #include "parser.hpp"
+#include "files.h"
 
 int main(int argc, char* argv[]) {
     InputParser argument(argc, argv);
@@ -44,6 +45,9 @@ int main(int argc, char* argv[]) {
                 << "\n------------------------------------------------" <<std::endl;
 
     Yolo Yolov5;
+
+    if(save)
+        mkdir(outputFolder);
 
     if (Yolov5.load(bin, param)) {
         return -1;

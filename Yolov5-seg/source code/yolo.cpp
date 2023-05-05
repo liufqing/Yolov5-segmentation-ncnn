@@ -244,12 +244,12 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     ncnn::Extractor ex = net.create_extractor();
     ex.input(in_blob.c_str(), in_pad);
 
-    ncnn::Mat out0;
     ncnn::Mat out1;
     ncnn::Mat out2;
-    ex.extract(out1_blob.c_str(), out0);
-    ex.extract(out2_blob.c_str(), out1);
-    ex.extract(out3_blob.c_str(), out2);
+    ncnn::Mat out3;
+    ex.extract(out1_blob.c_str(), out1);
+    ex.extract(out2_blob.c_str(), out2);
+    ex.extract(out3_blob.c_str(), out3);
     /*
     The out blob would be a 3-dim tensor with w=dynamic h=dynamic c=255=85*3
     We view it as [grid_w,grid_h,85,3] for 3 anchor ratio types
@@ -290,6 +290,58 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
               \ |   .                              |
                \|   .                              |
                 +-------------------------- // ----+
+
+    The out blob would be a 3-dim tensor with w=dynamic h=dynamic c=(80 + 5 + 32)*3 = 351
+    We view it as [grid_w,grid_h,117,3] for 3 anchor ratio types
+
+                |<--   dynamic anchor grids     -->|
+                |   larger image yields more grids |
+                +-------------------------- // ----+
+               /| center-x                         |
+              / | center-y                         |
+             /  | box-w                            |
+     anchor-0   | box-h                            |
+      +-----+   | box score(1)                     |
+      |     |   +----------------                  |
+      |     |   | per-class scores(80)             |
+      +-----+\  |   .                              |
+              \ |   .                              |
+               \|   .                              |
+                |mask_feat(32)                     |
+                |   .                              |
+                |   .                              |
+                |   .                              |
+                +-------------------------- // ----+
+               /| center-x                         |
+              / | center-y                         |
+             /  | box-w                            |
+     anchor-1   | box-h                            |
+      +-----+   | box score(1)                     |
+      |     |   +----------------                  |
+      +-----+   | per-class scores(80)             |
+             \  |   .                              |
+              \ |   .                              |
+               \|   .                              |
+                |mask_feat(32)                     |
+                |   .                              |
+                |   .                              |
+                |   .                              |
+                +-------------------------- // ----+
+               /| center-x                         |
+              / | center-y                         |
+             /  | box-w                            |
+     anchor-2   | box-h                            |
+      +--+      | box score(1)                     |
+      |  |      +----------------                  |
+      |  |      | per-class scores(80)             |
+      +--+   \  |   .                              |
+              \ |   .                              |
+               \|   .                              |
+                |mask_feat(32)                     |
+                |   .                              |
+                |   .                              |
+                |   .                              |
+                +-------------------------- // ----+
     */
 
     ncnn::Mat mask_proto;
@@ -310,7 +362,11 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         anchors[5] = 23.f;
 
         std::vector<Object> objects;
-        generate_proposals(anchors, 8, in_pad, out0, prob_threshold, objects); 
+#if PERMUTE
+        generate_proposals(anchors, 8, in_pad, out1, prob_threshold, objects);
+#else
+        generate_proposals(anchors, 8, out1, prob_threshold, objects);
+#endif // PERMUTE
 
         proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
@@ -326,7 +382,11 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         anchors[5] = 119.f;
 
         std::vector<Object> objects;
-        generate_proposals(anchors, 16, in_pad, out1, prob_threshold, objects);
+#if PERMUTE
+        generate_proposals(anchors, 16, in_pad, out2, prob_threshold, objects);
+#else
+        generate_proposals(anchors, 16, out2, prob_threshold, objects);
+#endif // PERMUTE
 
         proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
@@ -342,7 +402,11 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         anchors[5] = 326.f;
 
         std::vector<Object> objects;
-        generate_proposals(anchors, 32, in_pad, out2, prob_threshold, objects);
+#if PERMUTE
+        generate_proposals(anchors, 32, in_pad, out3, prob_threshold, objects);
+#else
+        generate_proposals(anchors, 32, out3, prob_threshold, objects);
+#endif // PERMUTE
 
         proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
