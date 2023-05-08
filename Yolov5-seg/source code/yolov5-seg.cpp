@@ -11,11 +11,11 @@ int main(int argc, char* argv[]) {
     std::string dataFolder      = "../data";
 
     //set default argument
-    std::string model     =           argument.setDefaultArgument("-model", "yolov5s-seg.ncnn");
-    std::string data      =           argument.setDefaultArgument("-data", "coco128.txt");
-    std::string input     =           argument.setDefaultArgument("-input", "test.bmp");
+    std::string model     =           argument.setDefaultArgument("-model", "yolov5s-seg-idcard-best.ncnn");
+    std::string data      =           argument.setDefaultArgument("-data", "idcard.txt");
+    std::string input     =           argument.setDefaultArgument("-input", "cmnd5.jpg");
     int size              = std::stoi(argument.setDefaultArgument("-size", "640"));
-    float conf            = std::stof(argument.setDefaultArgument("-conf", "0.25"));
+    float conf            = std::stof(argument.setDefaultArgument("-conf", "0.4"));
     float nms             = std::stof(argument.setDefaultArgument("-nms", "0.45"));
     bool dynamic          =           argument.cmdOptionExists("-dynamic");
     bool save             =           argument.cmdOptionExists("-save");
