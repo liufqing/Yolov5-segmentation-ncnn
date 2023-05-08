@@ -307,7 +307,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
       +-----+\  |   .                              |
               \ |   .                              |
                \|   .                              |
-                |mask_feat(32)                     |
+                | mask_feat(32)                    |
                 |   .                              |
                 |   .                              |
                 |   .                              |
@@ -322,7 +322,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
              \  |   .                              |
               \ |   .                              |
                \|   .                              |
-                |mask_feat(32)                     |
+                | mask_feat(32)                    |
                 |   .                              |
                 |   .                              |
                 |   .                              |
@@ -337,7 +337,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
       +--+   \  |   .                              |
               \ |   .                              |
                \|   .                              |
-                |mask_feat(32)                     |
+                | mask_feat(32)                    |
                 |   .                              |
                 |   .                              |
                 |   .                              |
@@ -546,7 +546,7 @@ void Yolo::draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) 
 }
 
 void Yolo::image(cv::Mat in, std::string outputPath) {
-    cv::imshow("Source", in);
+    //cv::imshow("Source", in);
     if (dynamic)
         detect_dynamic(in, objects);
     else
