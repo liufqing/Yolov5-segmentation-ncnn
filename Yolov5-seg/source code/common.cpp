@@ -84,6 +84,21 @@ const unsigned char colors[81][3] = {
     {245, 255, 0}
 };
 
+std::vector<std::string> IMG_FORMATS{ "bmp", "dng", "jpg", "jpeg", "mpo", "png", "tif", "tiff", "webp", "pfm" };
+std::vector<std::string> VID_FORMATS{ "asf", "avi", "gif", "m4v", "mkv", "mov", "mp4", "mpeg", "mpg", "ts", "wmv" };
+
+bool isImage(const std::string& path) {
+	std::string ext = path.substr(path.find_last_of(".") + 1);
+	std::transform(ext.begin(), ext.end(), ext.begin(), std::tolower);
+	return std::find(IMG_FORMATS.begin(), IMG_FORMATS.end(), ext) != IMG_FORMATS.end();
+}
+
+bool isVideo(const std::string& path) {
+	std::string ext = path.substr(path.find_last_of(".") + 1);
+	std::transform(ext.begin(), ext.end(), ext.begin(), std::tolower);
+	return std::find(VID_FORMATS.begin(), VID_FORMATS.end(), ext) != VID_FORMATS.end();
+}
+
 void matPrint(const ncnn::Mat& m){
     for (int q = 0; q < m.c; q++){
         const float* ptr = m.channel(q);
@@ -147,9 +162,9 @@ void matVisualize(const char* title, const ncnn::Mat& m, bool save) {
             normed_feats[i].copyTo(show_map(cv::Rect(tx * m.w, ty * m.h, m.w, m.h)));
         }
         cv::resize(show_map, show_map, cv::Size(0, 0), 2, 2, cv::INTER_NEAREST);
-        cv::imshow(title, show_map);
-        cv::waitKey();
-        cv::imwrite(title, show_map);
+        //cv::imshow(title, show_map);
+        //cv::waitKey();
+        cv::imwrite("masks.jpg", show_map);
     }
 }
 
@@ -391,9 +406,14 @@ inline float sigmoid(float x) {
 }
 #endif // FAST_EXP
 
+inline float relu(float x) {
+    if (x > 0)
+        return x;
+    else
+        return 0;
+}
 
 void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& in_pad, const ncnn::Mat& feat_blob, float prob_threshold, std::vector<Object>& objects) {
-#if PERMUTE
     const int num_grid = feat_blob.h;
     int num_grid_x;
     int num_grid_y;
@@ -407,37 +427,20 @@ void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& i
     }
     const int num_anchors = anchors.w / 2;
     const int num_class = feat_blob.w - 5 - 32;
-#else
-    const int num_grid_x = feat_blob.w;
-    const int num_grid_y = feat_blob.h;
-
-    const int num_anchors = anchors.w / 2;
-    const int num_class = feat_blob.c / num_anchors - 5 - 32;
-
-    const int feat_offset = num_class + 5 + 32;
-#endif
     // enumerate all anchor types
     for (int q = 0; q < num_anchors; q++) {
         const float anchor_w = anchors[q * 2];
         const float anchor_h = anchors[q * 2 + 1];
         for (int i = 0; i < num_grid_y; i++) {
             for (int j = 0; j < num_grid_x; j++) {
-#if PERMUTE
                 float box_score = feat_blob.channel(q).row(i * num_grid_x + j)[4];
-#else
-                float box_score = feat_blob.channel(q * feat_offset + 4).row(i)[j];
-#endif
                 float box_confidence = sigmoid(box_score);
                 if (box_confidence >= prob_threshold) {
                     // find class_index with max class_score
                     int class_index = 0;
                     float class_score = -FLT_MAX;
                     for (int k = 0; k < num_class; k++) {
-#if PERMUTE
                         float score = feat_blob.channel(q).row(i * num_grid_x + j)[5 + k];
-#else
-                        float score = feat_blob.channel(q * feat_offset + 5 + k).row(i)[j];
-#endif
                         if (score > class_score) {
                             class_index = k;
                             class_score = score;
@@ -453,17 +456,10 @@ void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& i
                         // y = x[i].sigmoid()
                         // y[..., 0:2] = (y[..., 0:2] * 2. - 0.5 + self.grid[i].to(x[i].device)) * self.stride[i]  # xy
                         // y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]  # wh
-#if PERMUTE
                         float dx = sigmoid(feat_blob.channel(q).row(i * num_grid_x + j)[0]);
                         float dy = sigmoid(feat_blob.channel(q).row(i * num_grid_x + j)[1]);
                         float dw = sigmoid(feat_blob.channel(q).row(i * num_grid_x + j)[2]);
                         float dh = sigmoid(feat_blob.channel(q).row(i * num_grid_x + j)[3]);
-#else
-                        float dx = sigmoid(feat_blob.channel(q * feat_offset + 0).row(i)[j]);
-                        float dy = sigmoid(feat_blob.channel(q * feat_offset + 1).row(i)[j]);
-                        float dw = sigmoid(feat_blob.channel(q * feat_offset + 2).row(i)[j]);
-                        float dh = sigmoid(feat_blob.channel(q * feat_offset + 3).row(i)[j]);
-#endif
 
                         float cx = (dx * 2.f - 0.5f + j) * stride;  //center x coordinate
                         float cy = (dy * 2.f - 0.5f + i) * stride;  //cennter y coordinate
@@ -484,13 +480,79 @@ void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& i
                         obj.rect.height = y1 - y0;
                         obj.label = class_index;
                         obj.prob = score;
-#if PERMUTE
                         obj.mask_feat.resize(32);
                         std::copy(feat_blob.channel(q).row(i * num_grid_x + j) + 5 + num_class, feat_blob.channel(q).row(i * num_grid_x + j) + 5 + num_class + 32, obj.mask_feat.begin());
-#else
-                        for (int t = 0; t < 32; t++)
-                            obj.mask_feat.push_back((float)feat_blob.channel(q * feat_offset + 5 + num_class + t).row(i)[j]);
-#endif
+                        objects.push_back(obj);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void generate_proposals(const ncnn::Mat& anchors,int stride, const ncnn::Mat& feat_blob, float prob_threshold, std::vector<Object>& objects) {
+    const int num_grid_x = feat_blob.w;
+    const int num_grid_y = feat_blob.h;
+
+    const int num_anchors = anchors.w / 2;
+    const int num_class = feat_blob.c / num_anchors - 5 - 32;
+
+    const int feat_offset = num_class + 5 + 32;
+    // enumerate all anchor types
+    for (int q = 0; q < num_anchors; q++) {
+        const float anchor_w = anchors[q * 2];
+        const float anchor_h = anchors[q * 2 + 1];
+        for (int i = 0; i < num_grid_y; i++) {
+            for (int j = 0; j < num_grid_x; j++) {
+                float box_score = feat_blob.channel(q * feat_offset + 4).row(i)[j];
+                float box_confidence = sigmoid(box_score);
+                if (box_confidence >= prob_threshold) {
+                    // find class_index with max class_score
+                    int class_index = 0;
+                    float class_score = -FLT_MAX;
+                    for (int k = 0; k < num_class; k++) {
+                        float score = feat_blob.channel(q * feat_offset + 5 + k).row(i)[j];
+                        if (score > class_score) {
+                            class_index = k;
+                            class_score = score;
+                        }
+                    }
+
+                    // combined score = box score * class score
+                    float score = sigmoid(box_score) * sigmoid(class_score); // apply sigmoid first to get normed 0~1 value
+
+                    // filter candidate boxes with combined score >= prob_threshold
+                    if (score >= prob_threshold) {
+                        // yolov5/models/yolo.py Detect forward
+                        // y = x[i].sigmoid()
+                        // y[..., 0:2] = (y[..., 0:2] * 2. - 0.5 + self.grid[i].to(x[i].device)) * self.stride[i]  # xy
+                        // y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]  # wh
+                        float dx = sigmoid(feat_blob.channel(q * feat_offset + 0).row(i)[j]);
+                        float dy = sigmoid(feat_blob.channel(q * feat_offset + 1).row(i)[j]);
+                        float dw = sigmoid(feat_blob.channel(q * feat_offset + 2).row(i)[j]);
+                        float dh = sigmoid(feat_blob.channel(q * feat_offset + 3).row(i)[j]);
+
+                        float cx = (dx * 2.f - 0.5f + j) * stride;  //center x coordinate
+                        float cy = (dy * 2.f - 0.5f + i) * stride;  //cennter y coordinate
+                        float bw = pow(dw * 2.f, 2) * anchor_w;     //box width
+                        float bh = pow(dh * 2.f, 2) * anchor_h;     //box height
+
+                        // transform candidate box (center-x,center-y,w,h) to (x0,y0,x1,y1)
+                        float x0 = cx - bw * 0.5f;
+                        float y0 = cy - bh * 0.5f;
+                        float x1 = cx + bw * 0.5f;
+                        float y1 = cy + bh * 0.5f;
+
+                        // collect candidates
+                        Object obj;
+                        obj.rect.x = x0;
+                        obj.rect.y = y0;
+                        obj.rect.width = x1 - x0;
+                        obj.rect.height = y1 - y0;
+                        obj.label = class_index;
+                        obj.prob = score;
+                        for (int c = 0; c < 32; c++)
+                            obj.mask_feat.push_back((float)feat_blob.channel(q * feat_offset + 5 + num_class + c).row(i)[j]);
                         objects.push_back(obj);
                     }
                 }

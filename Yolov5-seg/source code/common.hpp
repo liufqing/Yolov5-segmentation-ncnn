@@ -22,6 +22,9 @@ struct Object {
 
 extern const unsigned char colors[81][3];
 
+extern std::vector<std::string> IMG_FORMATS;
+extern std::vector<std::string> VID_FORMATS;
+
 void matPrint(const ncnn::Mat& m);
 
 void matVisualize(const char* title, const ncnn::Mat& m, bool save = 0);
@@ -50,6 +53,16 @@ float fast_exp(float x);
 
 float sigmoid(float x);
 
+float relu(float x);
+
+// For using permute output layer
 void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& in_pad, const ncnn::Mat& feat_blob, float prob_threshold, std::vector<Object>& objects);
 
+// For using convolution output layer
+void generate_proposals(const ncnn::Mat& anchors,int stride, const ncnn::Mat& feat_blob, float prob_threshold, std::vector<Object>& objects);
+
 void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vector<int>& picked, float nms_threshold, bool agnostic = true);
+
+bool isImage(const std::string& path);
+
+bool isVideo(const std::string& path);

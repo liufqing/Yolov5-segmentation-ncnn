@@ -3,6 +3,12 @@
 Yolo::Yolo() {
 	net.opt.use_vulkan_compute = false;
 	net.opt.num_threads = 4;
+    in_blob   = "in0";
+    out_blob  = "out0";
+    out1_blob = "out1";
+    out2_blob = "out2";
+    out3_blob = "out3";
+    seg_blob  = "seg";
 }
 
 Yolo::~Yolo() {
@@ -39,6 +45,7 @@ void Yolo::get_blob_name(std::string in, std::string out, std::string out1, std:
 }
 
 int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
+    clock_t tStart = clock();
     // load image, resize and pad to 640x640
     const int img_w = bgr.cols;
     const int img_h = bgr.rows;
@@ -151,13 +158,15 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
             proposals.push_back(obj);
         }
     }
+    
+    inference_time = (double)(clock() - tStart) / CLOCKS_PER_SEC ;
 
     // sort all candidates by score from highest to lowest
     qsort_descent_inplace(proposals);
 
     // apply non max suppression
     std::vector<int> picked;
-    nms_sorted_bboxes(proposals, picked, nms_threshold), agnostic;
+    nms_sorted_bboxes(proposals, picked, nms_threshold, agnostic);
 
     // collect final result after nms
     const int count = picked.size();
@@ -170,9 +179,9 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
     ncnn::Mat mask_pred_result;
     decode_mask(mask_feat, img_w, img_h, mask_proto, in_pad, wpad, hpad, mask_pred_result);
 
-    objects.resize(count);
-    for (int i = 0; i < count; i++)
-    {
+    int objCount = (count > max_object) ? max_object : count;
+    objects.resize(objCount);
+    for (int i = 0; i < objCount; i++){
         objects[i] = proposals[picked[i]];
 
         // adjust offset to original unpadded
@@ -201,6 +210,8 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
 }
 
 int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
+    clock_t tStart = clock();
+
     // load image, resize and letterbox pad to multiple of MAX_STRIDE
     int img_w = bgr.cols;
     int img_h = bgr.rows;
@@ -238,12 +249,12 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     ncnn::Extractor ex = net.create_extractor();
     ex.input(in_blob.c_str(), in_pad);
 
-    ncnn::Mat out0;
     ncnn::Mat out1;
     ncnn::Mat out2;
-    ex.extract(out1_blob.c_str(), out0);
-    ex.extract(out2_blob.c_str(), out1);
-    ex.extract(out3_blob.c_str(), out2);
+    ncnn::Mat out3;
+    ex.extract(out1_blob.c_str(), out1);
+    ex.extract(out2_blob.c_str(), out2);
+    ex.extract(out3_blob.c_str(), out3);
     /*
     The out blob would be a 3-dim tensor with w=dynamic h=dynamic c=255=85*3
     We view it as [grid_w,grid_h,85,3] for 3 anchor ratio types
@@ -284,6 +295,58 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
               \ |   .                              |
                \|   .                              |
                 +-------------------------- // ----+
+
+    The out blob would be a 3-dim tensor with w=dynamic h=dynamic c=(80 + 5 + 32)*3 = 351
+    We view it as [grid_w,grid_h,117,3] for 3 anchor ratio types
+
+                |<--   dynamic anchor grids     -->|
+                |   larger image yields more grids |
+                +-------------------------- // ----+
+               /| center-x                         |
+              / | center-y                         |
+             /  | box-w                            |
+     anchor-0   | box-h                            |
+      +-----+   | box score(1)                     |
+      |     |   +----------------                  |
+      |     |   | per-class scores(80)             |
+      +-----+\  |   .                              |
+              \ |   .                              |
+               \|   .                              |
+                | mask_feat(32)                    |
+                |   .                              |
+                |   .                              |
+                |   .                              |
+                +-------------------------- // ----+
+               /| center-x                         |
+              / | center-y                         |
+             /  | box-w                            |
+     anchor-1   | box-h                            |
+      +-----+   | box score(1)                     |
+      |     |   +----------------                  |
+      +-----+   | per-class scores(80)             |
+             \  |   .                              |
+              \ |   .                              |
+               \|   .                              |
+                | mask_feat(32)                    |
+                |   .                              |
+                |   .                              |
+                |   .                              |
+                +-------------------------- // ----+
+               /| center-x                         |
+              / | center-y                         |
+             /  | box-w                            |
+     anchor-2   | box-h                            |
+      +--+      | box score(1)                     |
+      |  |      +----------------                  |
+      |  |      | per-class scores(80)             |
+      +--+   \  |   .                              |
+              \ |   .                              |
+               \|   .                              |
+                | mask_feat(32)                    |
+                |   .                              |
+                |   .                              |
+                |   .                              |
+                +-------------------------- // ----+
     */
 
     ncnn::Mat mask_proto;
@@ -304,7 +367,11 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         anchors[5] = 23.f;
 
         std::vector<Object> objects;
-        generate_proposals(anchors, 8, in_pad, out0, prob_threshold, objects); 
+#if PERMUTE
+        generate_proposals(anchors, 8, in_pad, out1, prob_threshold, objects);
+#else
+        generate_proposals(anchors, 8, out1, prob_threshold, objects);
+#endif // PERMUTE
 
         proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
@@ -320,7 +387,11 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         anchors[5] = 119.f;
 
         std::vector<Object> objects;
-        generate_proposals(anchors, 16, in_pad, out1, prob_threshold, objects);
+#if PERMUTE
+        generate_proposals(anchors, 16, in_pad, out2, prob_threshold, objects);
+#else
+        generate_proposals(anchors, 16, out2, prob_threshold, objects);
+#endif // PERMUTE
 
         proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
@@ -336,10 +407,16 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         anchors[5] = 326.f;
 
         std::vector<Object> objects;
-        generate_proposals(anchors, 32, in_pad, out2, prob_threshold, objects);
+#if PERMUTE
+        generate_proposals(anchors, 32, in_pad, out3, prob_threshold, objects);
+#else
+        generate_proposals(anchors, 32, out3, prob_threshold, objects);
+#endif // PERMUTE
 
         proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
+
+    inference_time = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 
     // sort all proposals by score from highest to lowest
     qsort_descent_inplace(proposals);
@@ -388,23 +465,31 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     return 0;
 }
 
-void Yolo::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int mode) {
-    int color_index = 0;
+cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int mode) {
+    cv::Mat out = bgr.clone();
+    int objCount  = objects.size();
+    std::cout << "Objects count = " << objCount <<std::endl;
 
-    for (size_t i = 0; i < objects.size(); i++) {
+    int color_index = 0;
+    for (size_t i = 0; i < objCount; i++) {
         const Object& obj = objects[i];
-        fprintf(stderr, "%d = %.5f at %.2f %.2f %.2f x %.2f (%s)\n", obj.label, obj.prob, obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height, class_names[obj.label].c_str());
+
+        char line[256];
+        //class-index confident center-x center-y box-width box-height
+        sprintf_s(line, "%i %f %i %i %i %i", obj.label, obj.prob, (int)round(obj.rect.tl().x), (int)round(obj.rect.tl().y), (int)round(obj.rect.br().x), (int)round(obj.rect.br().y));
+
+        std::cout << line << std::endl;
 
         if(mode == 0)
             color_index = obj.label;
+
         const unsigned char* color = colors[color_index];
         cv::Scalar cc(color[0], color[1], color[2]);
+
         if(mode == 1)
-            color_index++;
+            color_index = i;
 
-        draw_segment(bgr, obj.cv_mask, color);
-
-        cv::rectangle(bgr, obj.rect, cc, 1);
+        cv::rectangle(out, obj.rect, cc, 1);
 
         std::string text = class_names[obj.label] + " " + cv::format("%.2f", obj.prob * 100) + "%";
 
@@ -415,12 +500,78 @@ void Yolo::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int mo
         int y = obj.rect.y - label_size.height - baseLine;
         if (y < 0)
             y = 0;
-        if (x + label_size.width > bgr.cols)
-            x = bgr.cols - label_size.width;
+        if (x + label_size.width > out.cols)
+            x = out.cols - label_size.width;
 
-        cv::rectangle(bgr, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
-        cv::putText(bgr, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+        cv::rectangle(out, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
+        cv::putText(out, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+
+        cv::Mat binMask;
+        cv::threshold(obj.cv_mask, binMask, 0.5, 1, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
+
+        std::string maskDir = "../output/seg/masks/mask_" + std::to_string(i) + ".jpg";
+
+        //cv::imwrite(maskDir,binMask*255);
+
+        //cv::Mat segment = mask2segment(binMask);
+
+        //cv::polylines(out, segment, true, cc, 2);
+                
+        draw_segment(out, obj.cv_mask, color);
+
+        //Write labels to file
+        if (saveTxt) {
+            std::string fileName = outputFolder + "/labels/" + inputNameWithoutExt +".txt";
+            std::ofstream labelFile;
+            labelFile.open(fileName, std::ios_base::app);
+            std::cout << "Labels saved to : " << fileName << std::endl;
+
+            labelFile << line << std::endl;
+
+            labelFile.close();
+        }
+        if (crop)
+            crop_object(bgr, binMask, obj.rect);
     }
+    return out;
+}
+
+void Yolo::crop_object(cv::Mat& bgr, cv::Mat mask, cv::Rect rect){
+    cv::Mat RoI         (bgr,  rect); //Region Of Interest
+    cv::Mat mask_cropped(mask, rect);
+    cv::imshow("RoI",          RoI);
+    cv::imshow("Mask Cropped", mask_cropped);
+}
+
+cv::Mat Yolo::mask2segment(cv::Mat &mask, int strategy){
+    cv::Mat maskCopy;
+    mask.convertTo(maskCopy, CV_8U);
+
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(maskCopy, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+    cv::Mat segment;
+    if (!contours.empty()) {
+        if (!strategy) {
+            std::vector<cv::Point> concatenatedPoints;
+            for (std::vector<cv::Point> contour : contours) {
+                concatenatedPoints.insert(concatenatedPoints.end(), contour.begin(), contour.end());
+            }
+            segment = cv::Mat(concatenatedPoints).reshape(2);
+        }
+        else {
+            std::vector<cv::Point> largestContour = *std::max_element(contours.begin(), contours.end(),
+                [](const std::vector<cv::Point>& a, const std::vector<cv::Point>& b) {
+                    return a.size() < b.size();
+                });
+            segment = cv::Mat(largestContour).reshape(2);
+        }
+    }
+    else {
+        segment = cv::Mat();
+    }
+
+    return segment;
 }
 
 void Yolo::draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
@@ -438,21 +589,27 @@ void Yolo::draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) 
     }
 }
 
-void Yolo::image(cv::Mat in, std::string outputPath) {
-    std::vector<Object> objects;
+void Yolo::image(std::string inputPath) {
+    cv::Mat in = cv::imread(inputPath);
     if (dynamic)
         detect_dynamic(in, objects);
     else
         detect(in, objects);
-    cv::Mat out = in.clone();
 
-    draw_objects(out, objects, 1);
+    std::cout << "Inference time = " << inference_time << " (seconds)\n";
+
+    std::string inputName = inputPath.substr(inputPath.find_last_of("/\\") + 1);
+    std::string outputName = outputFolder + "/" + inputName;
+    inputNameWithoutExt = inputName.substr(0, inputName.find_last_of("."));
+
+    cv::Mat out = draw_objects(in, objects ,0);
+
     cv::imshow("Detect", out);
     cv::waitKey();
 
     if (save) {
-        cv::imwrite(outputPath, out);
-        std::cout << "\nOutput saved at " << outputPath;
+        cv::imwrite(outputName, out);
+        std::cout << "\nOutput saved at " << outputName;
     }
 }
 
@@ -461,8 +618,6 @@ void Yolo::video(cv::VideoCapture capture) {
         std::cout << "Object Detection Started...." << std::endl;
 
         cv::Mat frame, out;
-        std::vector<Object> objects;
-
         do {
             capture >> frame; //extract frame by frame
             if (dynamic)

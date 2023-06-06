@@ -11,6 +11,9 @@
 #include <float.h>
 #include <vector>
 #include <fstream>
+#include <time.h>
+#include <cmath>
+#include <filesystem>
 
 #include "common.hpp"
 
@@ -25,6 +28,17 @@ public:
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
 
     void draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color);
+
+    void crop_object(cv::Mat &bgr, cv::Mat mask, cv::Rect rect);
+
+    /**
+    * @brief
+    * strategy = 1 : select largest segment
+    * strategy = 0 : concatenate all segments
+    */
+
+    cv::Mat mask2segment(cv::Mat& mask, int strategy = 1); // unstable, just dont use
+
     /**
      * @brief 
      * 
@@ -36,11 +50,11 @@ public:
      * mode = 0 : color object by class index
      * mode = 1 : color object by object number index
      */
-    void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int mode = 1);
+    cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int mode = 1);
 
     void video(cv::VideoCapture capture);
 
-    void image(cv::Mat in, std::string outputPath);
+    void image(std::string inputPath);
 
     void get_class_names(std::string data);
 
@@ -49,18 +63,25 @@ public:
     bool dynamic         = false;
     bool save            = false;
     bool noseg           = false;
-    bool agnostic        = true;
+    bool agnostic        = false;
+    bool crop            = false;
+    bool saveTxt         = false;
     int target_size      = 640;
-    float prob_threshold = 0.25;
-    float nms_threshold  = 0.45;
+    float prob_threshold = 0.25f;
+    float nms_threshold  = 0.45f;
+    int max_object       = 100;
+    std::string outputFolder;
 private:
     ncnn::Net net;
     std::vector<std::string> class_names;
+    std::vector<Object> objects;
     int class_count=0;
+    double inference_time;
     std::string in_blob;
     std::string out_blob;
     std::string out1_blob;
     std::string out2_blob;
     std::string out3_blob;
     std::string seg_blob;
+    std::string inputNameWithoutExt;
 };
