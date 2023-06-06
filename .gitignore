@@ -374,3 +374,5 @@ Yolov5-seg/source code/ncnn.cpp
 /models/seg/yolov5x-seg.ncnn.bin
 /models/yolov5x.ncnn.param
 /models/yolov5x.ncnn.bin
+/output/seg/labels
+/output/seg/masks
