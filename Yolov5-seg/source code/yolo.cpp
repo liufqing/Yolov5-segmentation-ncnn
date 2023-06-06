@@ -579,7 +579,7 @@ void Yolo::draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) 
         uchar* image_ptr = bgr.ptr(y);
         const float* mask_ptr = mask.ptr<float>(y);
         for (int x = 0; x < bgr.cols; x++) {
-            if (mask_ptr[x] >= mask_conf) {
+            if (mask_ptr[x] >= 0.5) {
                 image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
                 image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
                 image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
