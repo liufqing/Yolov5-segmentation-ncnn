@@ -13,7 +13,7 @@ Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmenta
 2. Put inference image to "./input" folder
 3. Run yolov5-seg.exe in cmd ( assumed that the *.bin and *.param are both in models folder )
 ```cmd
-yolov5-seg [-model] [-data] [-input] [-size] [-conf] [-nms] [-dynamic] [-save]
+yoloncnn [-model] [-data] [-input] [-size] [-conf] [-nms] [-dynamic] [-save]
 ```
 -model : ncnn model name. Default yolov5s-seg.ncnn
 
@@ -33,7 +33,7 @@ yolov5-seg [-model] [-data] [-input] [-size] [-conf] [-nms] [-dynamic] [-save]
 
 For example :
 ```cmd
-yolov5-seg -input woman.jpg -model yolov5x-seg.ncnn -dynamic -save
+yoloncnn -input woman.jpg -model yolov5x-seg.ncnn -dynamic -save
 ```
 ![output](./output/seg/woman.jpg)
 
@@ -45,3 +45,9 @@ Currently, there's 2 ways to convert a pytorch model to ncnn model :
 2. pytorch >> torchscript >> ncnn (via [pnnx](https://github.com/pnnx/pnnx))
 
 The author himself( or maybe her ) ([nihui](https://github.com/nihui)) recommended the **second method** (refer to [this comment](https://github.com/Tencent/ncnn/issues/4488#issuecomment-1434299765))
+
+# MEME PLACE
+Scientists : AI is going to take over the world.
+
+Mean while AI :
+![output](./output/seg/meme.jpg)

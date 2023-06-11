@@ -11,26 +11,24 @@ int main(int argc, char* argv[]) {
     std::string dataFolder      = "../data";
 
     //set default argument
-    std::string model     =           argument.setDefaultArgument("-model", "yolov5s-seg.ncnn");
-    std::string data      =           argument.setDefaultArgument("-data", "coco128.txt");
-    std::string input     =           argument.setDefaultArgument("-input", "test.bmp");
-    std::string in_blob   =           argument.setDefaultArgument("-in", "in0");
-    std::string out_blob  =           argument.setDefaultArgument("-out", "out0");
-    std::string out1_blob =           argument.setDefaultArgument("-out1", "out1");
-    std::string out2_blob =           argument.setDefaultArgument("-out2", "out2");
-    std::string out3_blob =           argument.setDefaultArgument("-out3", "out3");
-    std::string seg_blob  =           argument.setDefaultArgument("-seg", "seg");
-    int size              = std::stoi(argument.setDefaultArgument("-size", "640"));
-    float conf            = std::stof(argument.setDefaultArgument("-conf", "0.25"));
-    float nms             = std::stof(argument.setDefaultArgument("-nms", "0.45"));
-    bool dynamic          =           argument.cmdOptionExists("-dynamic");
-    bool save             =           argument.cmdOptionExists("-save");
-    bool noseg            =           argument.cmdOptionExists("-noseg");
+    std::string model     = argument.setDefaultArgument("--model", "yolov5s-seg-idcard-2.ncnn");
+    std::string data      = argument.setDefaultArgument("--data", "idcard.txt");
+    std::string input     = argument.setDefaultArgument("--source", "cmnd/7.jpg");
+    std::string output	  = argument.setDefaultArgument("--output", outputFolder);
+    int size              = argument.setDefaultArgument("--size", 640);
+    float conf            = argument.setDefaultArgument("--conf", 0.25f);
+    float nms             = argument.setDefaultArgument("--nms", 0.45f);
+    int maxObj            = argument.setDefaultArgument("--max-obj", 100);
+    bool dynamic          = argument.cmdOptionExists("--dynamic");
+    bool noseg            = argument.cmdOptionExists("--noseg");
+    bool agnostic         = argument.cmdOptionExists("--agnostic");
+    bool crop             = argument.cmdOptionExists("--crop");
+    bool save             = argument.cmdOptionExists("--save");
+    bool saveTxt          = argument.cmdOptionExists("--save-txt");
 
     std::cout << argument.argNum() << " argument(s) passed";
 
     std::string inputPath  = inputFolder  +   "/" + input;
-    std::string outputPath = outputFolder +   "/" + input;
     std::string dataPath   = dataFolder   +   "/" + data;
     std::string bin        = modelFolder  +   "/" + model + ".bin";
     std::string param      = modelFolder  +   "/" + model + ".param";
@@ -39,48 +37,55 @@ int main(int argc, char* argv[]) {
                 << "\nparam     = " << param 
                 << "\ninput     = " << inputPath
                 << "\ndata      = " << dataPath
-                << "\nin_blob   = " << in_blob
-                << "\nout_blob  = " << out_blob
-                << "\nout1_blob = " << out1_blob
-                << "\nout2_blob = " << out2_blob
-                << "\nout3_blob = " << out3_blob
-                << "\nseg_blob  = " << seg_blob
                 << "\nsize      = " << size
                 << "\nconf      = " << conf
                 << "\nnms       = " << nms
+                << "\nmaxObj    = " << maxObj
                 << "\ndynamic   = " << dynamic
-                << "\nsave      = " << save 
-                << "\nnoseg     = " << noseg << std::endl;
+                << "\nnoseg     = " << noseg
+                << "\nagnostic  = " << agnostic
+                << "\ncrop      = " << crop
+                << "\nsave      = " << save
+                << "\nsaveTxt   = " << saveTxt
+                << "\n------------------------------------------------" <<std::endl;
 
     Yolo Yolov5;
 
+    // load param and bin, assuming param and bin file has the same name
     if (Yolov5.load(bin, param)) {
         return -1;
     }
     Yolov5.get_class_names(dataPath);
-    Yolov5.get_blob_name(in_blob,out_blob,out1_blob,out2_blob,out3_blob,seg_blob);
-    Yolov5.dynamic = dynamic;
-    Yolov5.save = save;
-    Yolov5.target_size = size;
+
+    Yolov5.dynamic        = dynamic;
+    Yolov5.save           = save;
+    Yolov5.target_size    = size;
     Yolov5.prob_threshold = conf;
-    Yolov5.nms_threshold = nms;
-    Yolov5.noseg = noseg;
+    Yolov5.nms_threshold  = nms;
+    Yolov5.noseg          = noseg;
+    Yolov5.agnostic       = agnostic;
+    Yolov5.max_object     = maxObj;
+    Yolov5.saveTxt		  = saveTxt;
+    Yolov5.crop			  = crop;
+    Yolov5.outputFolder   = outputFolder;
 
     if (input == "0") {
         cv::VideoCapture capture;
         capture.open(0);
         Yolov5.video(capture);
-        return 0;
+        return EXIT_SUCCESS;
     }
-    cv::Mat in = cv::imread(inputPath, 1);
-    if (!in.empty()) {
-        Yolov5.image(in, outputPath);
-        return 0;
+    if (isImage(inputPath)) {
+        Yolov5.image(inputPath);
+        return EXIT_SUCCESS;
     }
-    else {
+    if (isVideo(inputPath)) {
         cv::VideoCapture capture;
         capture.open(inputPath);
         Yolov5.video(capture);
+        return EXIT_SUCCESS;
     }
-    return 0;
+
+    std::cout << "input type not supported";
+    return EXIT_FAILURE;
 }

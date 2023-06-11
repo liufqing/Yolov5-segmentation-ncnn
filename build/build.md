@@ -24,7 +24,7 @@ Setup for windows, using visual studio 2022
 ![screenshot6](./screenshots/Screenshot6.png)
 
 ### 4. Install The Tencent's NCNN framework [NCNN Github repository](https://github.com/Tencent/ncnn)
-To build for Visual Studio, refer to [this](https://github.com/Tencent/ncnn/wiki/build-for-VisualStudio.en#compile-and-install-ncnn-library-and-model-conversion-tool) tutorial
+To build for Visual Studio, refer to [this](https://github.com/Tencent/ncnn/wiki/build-for-VisualStudio.en/2941284c57b791f65cf1dcb5ec5bbf36fcf4cb1e) tutorial
 
 ## Setup Visual Studio Project
 1. Create a New Visual Studio project C++ console

@@ -1,6 +1,6 @@
 #include "parser.hpp"
 
-InputParser::InputParser(int& argc, char** argv){
+InputParser::InputParser(int& argc, char* argv[]){
     for (int i = 1; i < argc; ++i)
         this->tokens.push_back(std::string(argv[i]));
 }
@@ -26,6 +26,20 @@ const std::string& InputParser::setDefaultArgument(const std::string& option, co
         return getCmdOption(option);
     else
         return def;
+}
+
+const int InputParser::setDefaultArgument(const std::string& option, const int& def) {
+    if (cmdOptionExists(option))
+		return std::stoi(getCmdOption(option));
+	else
+		return def;
+}
+
+const float InputParser::setDefaultArgument(const std::string& option, const float& def){
+    if (cmdOptionExists(option))
+		return std::stof(getCmdOption(option));
+	else
+		return def;
 }
 
 int InputParser::argNum() {
