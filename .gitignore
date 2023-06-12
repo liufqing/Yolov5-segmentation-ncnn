@@ -377,3 +377,4 @@ Yolov5-seg/source code/ncnn.cpp
 /Yolov5-seg/yoloncnn.exe
 /output/seg/labels
 /output/seg/masks
+/Yolov5-seg/yoloncnn.exe
