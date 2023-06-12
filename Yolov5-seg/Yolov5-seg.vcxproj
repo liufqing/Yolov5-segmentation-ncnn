@@ -85,11 +85,13 @@
     <OutDir>$(ProjectDir)</OutDir>
     <IncludePath>C:\Users\Admin\Libraries\opencv\build\include;C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include</IncludePath>
     <LibraryPath>C:\Users\Admin\Libraries\opencv\build\x64\vc16\lib;C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
+    <TargetName>yoloncnn</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Users\Admin\Libraries\opencv\build\include;C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include</IncludePath>
     <LibraryPath>C:\Users\Admin\Libraries\opencv\build\x64\vc16\lib;C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)</OutDir>
+    <TargetName>yoloncnn</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

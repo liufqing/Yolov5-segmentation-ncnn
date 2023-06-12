@@ -11,9 +11,9 @@ int main(int argc, char* argv[]) {
     std::string dataFolder      = "../data";
 
     //set default argument
-    std::string model     = argument.setDefaultArgument("--model", "yolov5s-seg-idcard-2.ncnn");
-    std::string data      = argument.setDefaultArgument("--data", "idcard.txt");
-    std::string input     = argument.setDefaultArgument("--source", "cmnd/7.jpg");
+    std::string model     = argument.setDefaultArgument("--model", "yolov5s-seg.ncnn");
+    std::string data      = argument.setDefaultArgument("--data", "coco128.txt");
+    std::string input     = argument.setDefaultArgument("--source", "test.bmp");
     std::string output	  = argument.setDefaultArgument("--output", outputFolder);
     int size              = argument.setDefaultArgument("--size", 640);
     float conf            = argument.setDefaultArgument("--conf", 0.25f);
