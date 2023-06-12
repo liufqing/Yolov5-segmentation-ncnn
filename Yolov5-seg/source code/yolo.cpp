@@ -509,10 +509,10 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         cv::Mat binMask;
         cv::threshold(obj.cv_mask, binMask, 0.5, 1, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
 
-        std::string maskDir = "../output/seg/masks/mask_" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
-
-        cv::imwrite(maskDir,binMask*255);
-
+        if (saveMask) {
+            std::string maskDir = "../output/seg/masks/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
+            cv::imwrite(maskDir,binMask*255);
+        }
         //cv::Mat segment = mask2segment(binMask);
 
         //cv::polylines(out, segment, true, cc, 2);
