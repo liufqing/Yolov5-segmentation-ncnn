@@ -510,7 +510,9 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         cv::threshold(obj.cv_mask, binMask, 0.5, 1, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
 
         if (saveMask) {
-            std::string maskDir = "../output/seg/masks/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
+            std::string masksFolder = outputFolder + "/masks";
+            cv::utils::fs::createDirectory(masksFolder);
+            std::string maskDir = masksFolder + "/" +inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
             cv::imwrite(maskDir,binMask*255);
         }
         //cv::Mat segment = mask2segment(binMask);
@@ -521,10 +523,12 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
 
         //Write labels to file
         if (saveTxt) {
-            std::string fileName = outputFolder + "/labels/" + inputNameWithoutExt +".txt";
+            std::string labelsFolder = outputFolder + "/labels";
+            cv::utils::fs::createDirectory(labelsFolder);
+            std::string labelDir = labelsFolder + "/" + inputNameWithoutExt +".txt";
             std::ofstream labelFile;
-            labelFile.open(fileName, std::ios_base::app);
-            std::cout << "Labels saved to : " << fileName << std::endl;
+            labelFile.open(labelDir, std::ios::app);
+            //std::cout << "Labels saved to : " << labelDir << std::endl;
 
             labelFile << line << std::endl;
 
@@ -599,6 +603,7 @@ void Yolo::image(std::string inputPath) {
     std::cout << "Inference time = " << inference_time << " (seconds)\n";
 
     std::string inputName = inputPath.substr(inputPath.find_last_of("/\\") + 1);
+    cv::utils::fs::createDirectory(outputFolder);
     std::string outputName = outputFolder + "/" + inputName;
     inputNameWithoutExt = inputName.substr(0, inputName.find_last_of("."));
 

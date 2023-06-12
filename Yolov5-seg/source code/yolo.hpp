@@ -4,6 +4,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/utils/filesystem.hpp>
 
 #include <iostream>
 #include <stdio.h>
@@ -14,6 +15,7 @@
 #include <time.h>
 #include <cmath>
 #include <filesystem>
+#include <windows.h>
 
 #include "common.hpp"
 
