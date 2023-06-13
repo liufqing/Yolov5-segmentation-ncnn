@@ -515,11 +515,12 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
             std::string maskDir = masksFolder + "/" +inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
             cv::imwrite(maskDir,binMask*255);
         }
+
         //cv::Mat segment = mask2segment(binMask);
 
         //cv::polylines(out, segment, true, cc, 2);
                 
-        draw_segment(out, obj.cv_mask, color);
+        draw_mask(out, obj.cv_mask, color);
 
         //Write labels to file
         if (saveTxt) {
@@ -578,7 +579,7 @@ cv::Mat Yolo::mask2segment(cv::Mat &mask, int strategy){
     return segment;
 }
 
-void Yolo::draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
+void Yolo::draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
     for (int y = 0; y < bgr.rows; y++) {
         uchar* image_ptr = bgr.ptr(y);
         const float* mask_ptr = mask.ptr<float>(y);

@@ -4,7 +4,7 @@
 int main(int argc, char* argv[]) {
     InputParser argument(argc, argv);
 
-    //set folder
+    //set folder path
     std::string inputFolder     = "../input";
     std::string outputFolder    = "../output/seg";
     std::string modelFolder     = "../models/seg";

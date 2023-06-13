@@ -29,7 +29,7 @@ public:
 
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
 
-    void draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color);
+    void draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color);
 
     void crop_object(cv::Mat &bgr, cv::Mat mask, cv::Rect rect);
 
