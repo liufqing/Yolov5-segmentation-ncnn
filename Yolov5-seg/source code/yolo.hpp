@@ -4,6 +4,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/utils/filesystem.hpp>
 
 #include <iostream>
 #include <stdio.h>
@@ -14,6 +15,7 @@
 #include <time.h>
 #include <cmath>
 #include <filesystem>
+#include <windows.h>
 
 #include "common.hpp"
 
@@ -27,7 +29,7 @@ public:
 
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
 
-    void draw_segment(cv::Mat& bgr, cv::Mat mask, const unsigned char* color);
+    void draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color);
 
     void crop_object(cv::Mat &bgr, cv::Mat mask, cv::Rect rect);
 
@@ -65,6 +67,7 @@ public:
     bool agnostic        = false;
     bool crop            = false;
     bool saveTxt         = false;
+    bool saveMask         = false;
     int target_size      = 640;
     float prob_threshold = 0.25f;
     float nms_threshold  = 0.45f;

@@ -18,17 +18,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source code\common.cpp" />
-    <ClCompile Include="source code\parser.cpp" />
-    <ClCompile Include="source code\yolo.cpp" />
-    <ClCompile Include="source code\yolov5-seg.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="source code\common.hpp" />
-    <ClInclude Include="source code\parser.hpp" />
-    <ClInclude Include="source code\yolo.hpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -82,16 +71,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)</OutDir>
-    <IncludePath>C:\Users\Admin\Libraries\opencv\build\include;C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include</IncludePath>
-    <LibraryPath>C:\Users\Admin\Libraries\opencv\build\x64\vc16\lib;C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
-    <TargetName>yoloncnn</TargetName>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include</IncludePath>
+    <LibraryPath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Admin\Libraries\opencv\build\include;C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include</IncludePath>
-    <LibraryPath>C:\Users\Admin\Libraries\opencv\build\x64\vc16\lib;C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)</OutDir>
-    <TargetName>yoloncnn</TargetName>
+    <IncludePath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include</IncludePath>
+    <LibraryPath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgUseStatic>false</VcpkgUseStatic>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgUseStatic>false</VcpkgUseStatic>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -133,7 +126,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_world470d.lib;ncnnd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ncnnd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -152,9 +145,20 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_world470.lib;ncnn.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ncnn.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="source code\common.cpp" />
+    <ClCompile Include="source code\parser.cpp" />
+    <ClCompile Include="source code\yolo.cpp" />
+    <ClCompile Include="source code\yolov5-seg.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source code\common.hpp" />
+    <ClInclude Include="source code\parser.hpp" />
+    <ClInclude Include="source code\yolo.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

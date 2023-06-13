@@ -4,7 +4,7 @@
 int main(int argc, char* argv[]) {
     InputParser argument(argc, argv);
 
-    //set folder
+    //set folder path
     std::string inputFolder     = "../input";
     std::string outputFolder    = "../output/seg";
     std::string modelFolder     = "../models/seg";
@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
     bool crop             = argument.cmdOptionExists("--crop");
     bool save             = argument.cmdOptionExists("--save");
     bool saveTxt          = argument.cmdOptionExists("--save-txt");
+    bool saveMask		  = argument.cmdOptionExists("--save-mask");
 
     std::cout << argument.argNum() << " argument(s) passed";
 
@@ -47,6 +48,7 @@ int main(int argc, char* argv[]) {
                 << "\ncrop      = " << crop
                 << "\nsave      = " << save
                 << "\nsaveTxt   = " << saveTxt
+                << "\nsaveMask  = " << saveMask
                 << "\n------------------------------------------------" <<std::endl;
 
     Yolo Yolov5;
@@ -67,6 +69,7 @@ int main(int argc, char* argv[]) {
     Yolov5.max_object     = maxObj;
     Yolov5.saveTxt		  = saveTxt;
     Yolov5.crop			  = crop;
+    Yolov5.saveMask		  = saveMask;
     Yolov5.outputFolder   = outputFolder;
 
     if (input == "0") {
