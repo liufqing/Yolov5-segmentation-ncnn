@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     //set default argument
     std::string model     = argument.setDefaultArgument("--model", "yolov5s-seg-idcard-2.ncnn");
     std::string data      = argument.setDefaultArgument("--data", "idcard.txt");
-    std::string input     = argument.setDefaultArgument("--source", "cmnd/7.jpg");
+    std::string input     = argument.setDefaultArgument("--source", "7.jpg");
     std::string output	  = argument.setDefaultArgument("--output", outputFolder);
     int size              = argument.setDefaultArgument("--size", 640);
     float conf            = argument.setDefaultArgument("--conf", 0.25f);

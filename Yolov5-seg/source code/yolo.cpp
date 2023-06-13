@@ -515,10 +515,6 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
             std::string maskDir = masksFolder + "/" +inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
             cv::imwrite(maskDir,binMask*255);
         }
-
-        //cv::Mat segment = mask2segment(binMask);
-
-        //cv::polylines(out, segment, true, cc, 2);
                 
         draw_mask(out, obj.cv_mask, color);
 
