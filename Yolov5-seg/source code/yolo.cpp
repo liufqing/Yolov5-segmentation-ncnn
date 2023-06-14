@@ -509,6 +509,33 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         cv::Mat binMask;
         cv::threshold(obj.cv_mask, binMask, 0.5, 1, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
 
+        cv::Mat maskCopy;
+        binMask.convertTo(maskCopy, CV_8U);
+        cv::Mat applyMask;
+        bgr.copyTo(applyMask, maskCopy);
+        //cv::imshow("Apply Mask", applyMask);
+
+        std::vector<cv::Point> contour = mask2segment(binMask);
+        //std::vector<std::vector<cv::Point>> contours;
+        //std::vector<cv::Vec4i> hierarchy;
+        //cv::findContours(maskCopy, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE); // Find Contours
+        //cv::polylines(applyMask, contour, true, cc, 2);
+        //cv::imshow("contour", applyMask);
+
+        cv::Point2f vertices[4];
+        cv::RotatedRect box = cv::minAreaRect(contour);
+        box.points(vertices);
+        //for (int i = 0; i < 4; i++) {
+        //    cv::line(applyMask, vertices[i], vertices[(i + 1) % 4], cc, 2);
+        //}
+        //cv::imshow("Rotated Rectangle", applyMask);
+
+        cv::Mat final = getRotatedRectImg(bgr, box);
+        //cv::imshow("final", final);
+        std::string finalDir = outputFolder + "/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
+        cv::imwrite(finalDir, final);
+
+
         if (saveMask) {
             std::string masksFolder = outputFolder + "/masks";
             cv::utils::fs::createDirectory(masksFolder);
@@ -541,6 +568,10 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
     return out;
 }
 
+void Yolo::applyMask(cv::Mat& bgr, cv::Mat mask, cv::Rect rect) {
+
+}
+
 void Yolo::crop_object(cv::Mat& bgr, cv::Mat mask, cv::Rect rect){
     cv::Mat RoI         (bgr,  rect); //Region Of Interest
     cv::Mat mask_cropped(mask, rect);
@@ -548,35 +579,28 @@ void Yolo::crop_object(cv::Mat& bgr, cv::Mat mask, cv::Rect rect){
     cv::imshow("Mask Cropped", mask_cropped);
 }
 
-cv::Mat Yolo::mask2segment(cv::Mat &mask, int strategy){
+std::vector<cv::Point> Yolo::mask2segment(cv::Mat &mask, int strategy){
     cv::Mat maskCopy;
     mask.convertTo(maskCopy, CV_8U);
 
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(maskCopy, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-    cv::Mat segment;
-    if (!contours.empty()) {
-        if (!strategy) {
-            std::vector<cv::Point> concatenatedPoints;
-            for (std::vector<cv::Point> contour : contours) {
-                concatenatedPoints.insert(concatenatedPoints.end(), contour.begin(), contour.end());
-            }
-            segment = cv::Mat(concatenatedPoints).reshape(2);
-        }
-        else {
-            std::vector<cv::Point> largestContour = *std::max_element(contours.begin(), contours.end(),
-                [](const std::vector<cv::Point>& a, const std::vector<cv::Point>& b) {
-                    return a.size() < b.size();
-                });
-            segment = cv::Mat(largestContour).reshape(2);
+    std::vector<cv::Point> contour;
+
+    if (strategy == concatenatedContour) {
+        for (std::vector<cv::Point> concatenatedPoints : contours) {
+            contour.insert(contour.end(), concatenatedPoints.begin(), concatenatedPoints.end());
         }
     }
     else {
-        segment = cv::Mat();
+        contour = *std::max_element(contours.begin(), contours.end(),
+            [](const std::vector<cv::Point>& a, const std::vector<cv::Point>& b) {
+                return a.size() < b.size();
+            });
     }
 
-    return segment;
+    return contour;
 }
 
 void Yolo::draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
@@ -643,4 +667,24 @@ void Yolo::video(cv::VideoCapture capture) {
     else {
         std::cout << "Could not Open Camera/Video";
     }
+}
+
+cv::Mat Yolo::getAffineTransformForRotatedRect(cv::RotatedRect rr) {
+    float angle = rr.angle * M_PI / 180.0;
+    // angle += M_PI; // you may want rotate it upsidedown
+    float sinA = sin(angle), cosA = cos(angle);
+    float data[6] = {
+         cosA, sinA, rr.size.width / 2.0f - cosA * rr.center.x - sinA * rr.center.y,
+        -sinA, cosA, rr.size.height / 2.0f - cosA * rr.center.y + sinA * rr.center.x };
+    cv::Mat rot_mat(2, 3, CV_32FC1, data);
+    return rot_mat.clone();
+}
+
+cv::Mat Yolo::getRotatedRectImg(const cv::Mat& mat, cv::RotatedRect rr) {
+    cv::Mat M, result;
+    M = getAffineTransformForRotatedRect(rr);
+
+    warpAffine(mat, result, M, rr.size, cv::INTER_CUBIC);
+
+    return result;
 }

@@ -19,6 +19,19 @@
 
 #include "common.hpp"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+enum strategy {
+    concatenatedContour = 0,    //concatenate all segments
+    largestContour      = 1     //select largest segment
+};
+
+enum colorMode {
+    byClass = 0,                //color object by class index
+    byIndex = 1                 //color object by object number index 
+};
+
 class Yolo {
 public:
     Yolo();
@@ -53,7 +66,13 @@ public:
      */
     cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int mode = 1);
 
+    void applyMask(cv::Mat& bgr, cv::Mat mask, cv::Rect rect);
+
     void video(cv::VideoCapture capture);
+
+    cv::Mat getAffineTransformForRotatedRect(cv::RotatedRect rr);
+
+    cv::Mat getRotatedRectImg(const cv::Mat& mat, cv::RotatedRect rr);
 
     void image(std::string inputPath);
 
