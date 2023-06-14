@@ -515,7 +515,6 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
             std::string maskDir = masksFolder + "/" +inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
             cv::imwrite(maskDir,binMask*255);
         }
-        //cv::RotatedRect r = cv::minAreaRect(binMask);
                 
         draw_mask(out, obj.cv_mask, color);
 
@@ -543,6 +542,37 @@ void Yolo::crop_object(cv::Mat& bgr, cv::Mat mask, cv::Rect rect){
     cv::Mat mask_cropped(mask, rect);
     cv::imshow("RoI",          RoI);
     cv::imshow("Mask Cropped", mask_cropped);
+}
+
+cv::Mat Yolo::mask2segment(cv::Mat &mask, int strategy){
+    cv::Mat maskCopy;
+    mask.convertTo(maskCopy, CV_8U);
+
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(maskCopy, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+    cv::Mat segment;
+    if (!contours.empty()) {
+        if (!strategy) {
+            std::vector<cv::Point> concatenatedPoints;
+            for (std::vector<cv::Point> contour : contours) {
+                concatenatedPoints.insert(concatenatedPoints.end(), contour.begin(), contour.end());
+            }
+            segment = cv::Mat(concatenatedPoints).reshape(2);
+        }
+        else {
+            std::vector<cv::Point> largestContour = *std::max_element(contours.begin(), contours.end(),
+                [](const std::vector<cv::Point>& a, const std::vector<cv::Point>& b) {
+                    return a.size() < b.size();
+                });
+            segment = cv::Mat(largestContour).reshape(2);
+        }
+    }
+    else {
+        segment = cv::Mat();
+    }
+
+    return segment;
 }
 
 void Yolo::draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {

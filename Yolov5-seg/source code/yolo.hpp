@@ -34,6 +34,13 @@ public:
     void crop_object(cv::Mat &bgr, cv::Mat mask, cv::Rect rect);
 
     /**
+    * @brief
+    * strategy = 1 : select largest segment
+    * strategy = 0 : concatenate all segments
+    */
+    cv::Mat mask2segment(cv::Mat& mask, int strategy = 1); // unstable, just dont use
+
+    /**
      * @brief 
      * 
      * @param bgr : background image to be draw on
