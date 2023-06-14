@@ -465,7 +465,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     return 0;
 }
 
-cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int mode) {
+cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode) {
     cv::Mat out = bgr.clone();
     int objCount  = objects.size();
     std::cout << "Objects count = " << objCount <<std::endl;
@@ -480,13 +480,13 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
 
         std::cout << line << std::endl;
 
-        if(mode == 0)
+        if(colorMode == byClass)
             color_index = obj.label;
 
         const unsigned char* color = colors[color_index];
         cv::Scalar cc(color[0], color[1], color[2]);
 
-        if(mode == 1)
+        if(colorMode == byIndex)
             color_index = i;
 
         cv::rectangle(out, obj.rect, cc, 1);

@@ -19,6 +19,16 @@
 
 #include "common.hpp"
 
+enum strategy {
+    concatenatedContour = 0,    //concatenate all segments
+    largestContour      = 1     //select largest segment
+};
+
+enum colorMode {
+    byClass = 0,                //color object by class index
+    byIndex = 1                 //color object by object number index 
+};
+
 class Yolo {
 public:
     Yolo();
@@ -33,25 +43,16 @@ public:
 
     void crop_object(cv::Mat &bgr, cv::Mat mask, cv::Rect rect);
 
-    /**
-    * @brief
-    * strategy = 1 : select largest segment
-    * strategy = 0 : concatenate all segments
-    */
-    cv::Mat mask2segment(cv::Mat& mask, int strategy = 1); // unstable, just dont use
+    std::vector<cv::Point> mask2segment(cv::Mat& mask, int strategy = largestContour);
 
     /**
      * @brief 
      * 
      * @param bgr : background image to be draw on
      * @param objects : object vector contain all the detected object in the image
-     * @param mode : determine the color for each object to be draw ( bounding box and feature mask ) - default = 1 
-     * @note
-     * 
-     * mode = 0 : color object by class index
-     * mode = 1 : color object by object number index
+     * @param colorMode : determine the color for each object to be draw ( bounding box and feature mask )
      */
-    cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int mode = 1);
+    cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode = byIndex);
 
     void video(cv::VideoCapture capture);
 
