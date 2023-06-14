@@ -6,12 +6,12 @@ int main(int argc, char* argv[]) {
 
     //set folder path
     std::string inputFolder     = "../input";
-    std::string outputFolder    = "../output/seg";
-    std::string modelFolder     = "../models/seg";
+    std::string outputFolder    = "../output";
+    std::string modelFolder     = "../models";
     std::string dataFolder      = "../data";
 
     //set default argument
-    std::string model     = argument.setDefaultArgument("--model", "yolov5s-seg-idcard-2.ncnn");
+    std::string model     = argument.setDefaultArgument("--model", "seg/yolov5s-seg-idcard-2.ncnn");
     std::string data      = argument.setDefaultArgument("--data", "idcard.txt");
     std::string input     = argument.setDefaultArgument("--source", "7.jpg");
     std::string output	  = argument.setDefaultArgument("--output", outputFolder);
@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
     Yolov5.outputFolder   = outputFolder;
 
     if (input == "all") {
-        std::cout << "Input is empty, running on default input folder" ;
+        std::cout << "Auto running on all images input folder" ;
         for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(inputFolder)) {
 			std::string path = entry.path().string();
             std::cout << "\n------------------------------------------------" << std::endl;
