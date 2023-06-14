@@ -19,6 +19,9 @@
 
 #include "common.hpp"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 enum strategy {
     concatenatedContour = 0,    //concatenate all segments
     largestContour      = 1     //select largest segment
@@ -54,7 +57,13 @@ public:
      */
     cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode = byIndex);
 
+    void applyMask(cv::Mat& bgr, cv::Mat mask, cv::Rect rect);
+
     void video(cv::VideoCapture capture);
+
+    cv::Mat getAffineTransformForRotatedRect(cv::RotatedRect rr);
+
+    cv::Mat getRotatedRectImg(const cv::Mat& mat, cv::RotatedRect rr);
 
     void image(std::string inputPath);
 
