@@ -507,16 +507,16 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         cv::putText(out, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
 
         cv::Mat binMask;
-        cv::threshold(obj.cv_mask, binMask, 0.5, 1, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
+        cv::threshold(obj.cv_mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
 
         if (saveMask) {
             std::string masksFolder = outputFolder + "/masks";
             cv::utils::fs::createDirectory(masksFolder);
             std::string maskDir = masksFolder + "/" +inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
-            cv::imwrite(maskDir,binMask*255);
+            cv::imwrite(maskDir,binMask);
         }
                 
-        draw_mask(out, obj.cv_mask, color);
+        draw_mask(out, binMask, color);
 
         //Write labels to file
         if (saveTxt) {
@@ -580,7 +580,7 @@ void Yolo::draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
         uchar* image_ptr = bgr.ptr(y);
         const float* mask_ptr = mask.ptr<float>(y);
         for (int x = 0; x < bgr.cols; x++) {
-            if (mask_ptr[x] >= 0.5) {
+            if (mask_ptr[x]) {
                 image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
                 image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
                 image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
