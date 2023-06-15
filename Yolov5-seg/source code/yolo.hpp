@@ -59,8 +59,6 @@ public:
 
     void applyMask(cv::Mat& bgr, cv::Mat mask, cv::Rect rect);
 
-    void applyMask(cv::Mat& bgr, cv::Mat mask, cv::Rect rect);
-
     void video(cv::VideoCapture capture);
 
     cv::Mat getAffineTransformForRotatedRect(cv::RotatedRect rr);

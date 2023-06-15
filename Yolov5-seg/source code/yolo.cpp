@@ -530,38 +530,10 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         //}
         //cv::imshow("Rotated Rectangle", applyMask);
 
-        cv::Mat final = getRotatedRectImg(bgr, box);
+        cv::Mat final = getRotatedRectImg(applyMask, box);
         //cv::imshow("final", final);
         std::string finalDir = outputFolder + "/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
         cv::imwrite(finalDir, final);
-
-
-        cv::Mat maskCopy;
-        binMask.convertTo(maskCopy, CV_8U);
-        cv::Mat applyMask;
-        bgr.copyTo(applyMask, maskCopy);
-        //cv::imshow("Apply Mask", applyMask);
-
-        std::vector<cv::Point> contour = mask2segment(binMask);
-        //std::vector<std::vector<cv::Point>> contours;
-        //std::vector<cv::Vec4i> hierarchy;
-        //cv::findContours(maskCopy, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE); // Find Contours
-        //cv::polylines(applyMask, contour, true, cc, 2);
-        //cv::imshow("contour", applyMask);
-
-        cv::Point2f vertices[4];
-        cv::RotatedRect box = cv::minAreaRect(contour);
-        box.points(vertices);
-        //for (int i = 0; i < 4; i++) {
-        //    cv::line(applyMask, vertices[i], vertices[(i + 1) % 4], cc, 2);
-        //}
-        //cv::imshow("Rotated Rectangle", applyMask);
-
-        cv::Mat final = getRotatedRectImg(bgr, box);
-        //cv::imshow("final", final);
-        std::string finalDir = outputFolder + "/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
-        cv::imwrite(finalDir, final);
-
 
         if (saveMask) {
             std::string masksFolder = outputFolder + "/masks";
