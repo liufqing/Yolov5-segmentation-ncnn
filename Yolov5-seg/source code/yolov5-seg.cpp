@@ -81,6 +81,9 @@ int main(int argc, char* argv[]) {
             if (isImage(path)) {
 			    Yolov5.image(path);
 			}
+            else {
+                std::cout << "skipping non image file";
+            }
 		}
 		return EXIT_SUCCESS;
     }
