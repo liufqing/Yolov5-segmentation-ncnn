@@ -6,8 +6,8 @@ int main(int argc, char* argv[]) {
 
     //set folder path
     std::string inputFolder     = "../input";
-    std::string outputFolder    = "../output/seg";
-    std::string modelFolder     = "../models/seg";
+    std::string outputFolder    = "../output";
+    std::string modelFolder     = "../models";
     std::string dataFolder      = "../data";
 
     //set default argument
@@ -72,7 +72,20 @@ int main(int argc, char* argv[]) {
     Yolov5.saveMask		  = saveMask;
     Yolov5.outputFolder   = outputFolder;
 
-    if (input == "0") {
+    if (input == "all") {
+        std::cout << "Auto running on all images input folder" ;
+        for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(inputFolder)) {
+			std::string path = entry.path().string();
+            std::cout << "\n------------------------------------------------" << std::endl;
+            std::cout << path << std::endl;
+            if (isImage(path)) {
+			    Yolov5.image(path);
+			}
+		}
+		return EXIT_SUCCESS;
+    }
+
+    if (input == "cam") {
         cv::VideoCapture capture;
         capture.open(0);
         Yolov5.video(capture);

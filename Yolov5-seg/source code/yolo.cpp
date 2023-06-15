@@ -465,7 +465,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     return 0;
 }
 
-cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int mode) {
+cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode) {
     cv::Mat out = bgr.clone();
     int objCount  = objects.size();
     std::cout << "Objects count = " << objCount <<std::endl;
@@ -480,13 +480,13 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
 
         std::cout << line << std::endl;
 
-        if(mode == 0)
+        if(colorMode == byClass)
             color_index = obj.label;
 
         const unsigned char* color = colors[color_index];
         cv::Scalar cc(color[0], color[1], color[2]);
 
-        if(mode == 1)
+        if(colorMode == byIndex)
             color_index = i;
 
         cv::rectangle(out, obj.rect, cc, 1);
@@ -507,7 +507,34 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         cv::putText(out, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
 
         cv::Mat binMask;
-        cv::threshold(obj.cv_mask, binMask, 0.5, 1, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
+        cv::threshold(obj.cv_mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
+
+        cv::Mat maskCopy;
+        binMask.convertTo(maskCopy, CV_8U);
+        cv::Mat applyMask;
+        bgr.copyTo(applyMask, maskCopy);
+        //cv::imshow("Apply Mask", applyMask);
+
+        std::vector<cv::Point> contour = mask2segment(binMask);
+        //std::vector<std::vector<cv::Point>> contours;
+        //std::vector<cv::Vec4i> hierarchy;
+        //cv::findContours(maskCopy, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE); // Find Contours
+        //cv::polylines(applyMask, contour, true, cc, 2);
+        //cv::imshow("contour", applyMask);
+
+        cv::Point2f vertices[4];
+        cv::RotatedRect box = cv::minAreaRect(contour);
+        box.points(vertices);
+        //for (int i = 0; i < 4; i++) {
+        //    cv::line(applyMask, vertices[i], vertices[(i + 1) % 4], cc, 2);
+        //}
+        //cv::imshow("Rotated Rectangle", applyMask);
+
+        cv::Mat final = getRotatedRectImg(bgr, box);
+        //cv::imshow("final", final);
+        std::string finalDir = outputFolder + "/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
+        cv::imwrite(finalDir, final);
+
 
         cv::Mat maskCopy;
         binMask.convertTo(maskCopy, CV_8U);
@@ -540,14 +567,10 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
             std::string masksFolder = outputFolder + "/masks";
             cv::utils::fs::createDirectory(masksFolder);
             std::string maskDir = masksFolder + "/" +inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
-            cv::imwrite(maskDir,binMask*255);
+            cv::imwrite(maskDir,binMask);
         }
-
-        //cv::Mat segment = mask2segment(binMask);
-
-        //cv::polylines(out, segment, true, cc, 2);
                 
-        draw_mask(out, obj.cv_mask, color);
+        draw_mask(out, binMask, color);
 
         //Write labels to file
         if (saveTxt) {
@@ -608,7 +631,7 @@ void Yolo::draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
         uchar* image_ptr = bgr.ptr(y);
         const float* mask_ptr = mask.ptr<float>(y);
         for (int x = 0; x < bgr.cols; x++) {
-            if (mask_ptr[x] >= 0.5) {
+            if (mask_ptr[x]) {
                 image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
                 image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
                 image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
