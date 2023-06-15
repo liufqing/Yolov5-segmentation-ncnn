@@ -522,6 +522,8 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         //cv::polylines(applyMask, contour, true, cc, 2);
         //cv::imshow("contour", applyMask);
 
+        if(contour.size() < 3)
+			continue;
         cv::Point2f vertices[4];
         cv::RotatedRect box = cv::minAreaRect(contour);
         box.points(vertices);
@@ -533,7 +535,7 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         cv::Mat final = getRotatedRectImg(bgr, box);
         //cv::imshow("final", final);
         std::string finalDir = outputFolder + "/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
-        cv::imwrite(finalDir, final);
+        //cv::imwrite(finalDir, final);
 
 
         if (saveMask) {
@@ -583,6 +585,9 @@ std::vector<cv::Point> Yolo::mask2segment(cv::Mat &mask, int strategy){
     cv::findContours(maskCopy, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
     std::vector<cv::Point> contour;
+
+    if(!contours.size())
+		return contour;
 
     if (strategy == concatenatedContour) {
         for (std::vector<cv::Point> concatenatedPoints : contours) {
