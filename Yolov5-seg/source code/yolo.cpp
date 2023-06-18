@@ -185,10 +185,10 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
         objects[i] = proposals[picked[i]];
 
         // adjust offset to original unpadded
-        float x0 = (objects[i].rect.x - (wpad / 2)) / scale;
-        float y0 = (objects[i].rect.y - (hpad / 2)) / scale;
-        float x1 = (objects[i].rect.x + objects[i].rect.width - (wpad / 2)) / scale;
-        float y1 = (objects[i].rect.y + objects[i].rect.height - (hpad / 2)) / scale;
+        float x0 = (objects[i].rect.x - (wpad / 2.0)) / scale;
+        float y0 = (objects[i].rect.y - (hpad / 2.0)) / scale;
+        float x1 = (objects[i].rect.x + objects[i].rect.width - (wpad / 2.0)) / scale;
+        float y1 = (objects[i].rect.y + objects[i].rect.height - (hpad / 2.0)) / scale;
 
         // clip
         x0 = std::max(std::min(x0, (float)(img_w - 1)), 0.f);
@@ -441,10 +441,10 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         objects[i] = proposals[picked[i]];
 
         // adjust offset to original unpadded
-        float x0 = (objects[i].rect.x - (wpad / 2)) / scale;
-        float y0 = (objects[i].rect.y - (hpad / 2)) / scale;
-        float x1 = (objects[i].rect.x + objects[i].rect.width - (wpad / 2)) / scale;
-        float y1 = (objects[i].rect.y + objects[i].rect.height - (hpad / 2)) / scale;
+        float x0 = (objects[i].rect.x - (wpad / 2.0)) / scale;
+        float y0 = (objects[i].rect.y - (hpad / 2.0)) / scale;
+        float x1 = (objects[i].rect.x + objects[i].rect.width - (wpad / 2.0)) / scale;
+        float y1 = (objects[i].rect.y + objects[i].rect.height - (hpad / 2.0)) / scale;
 
         // clip
         x0 = std::max(std::min(x0, (float)(img_w - 1)), 0.f);
