@@ -9,10 +9,12 @@ Yolo::Yolo() {
     out2_blob = "out2";
     out3_blob = "out3";
     seg_blob  = "seg";
+    std::cout << "net init" << std::endl;
 }
 
 Yolo::~Yolo() {
     net.clear();
+    std::cout << "net clear" << std::endl;
 }
 
 int Yolo::load(const std::string& bin, const std::string& param) {
@@ -20,6 +22,16 @@ int Yolo::load(const std::string& bin, const std::string& param) {
         return -1;
     }
     if (net.load_model(bin.c_str())){
+        return -1;
+    }
+    return 0;
+}
+
+int Yolo::load(const std::filesystem::path bin, const std::filesystem::path param) {
+    if (net.load_param(param.string().c_str())) {
+		return -1;
+	}
+    if (net.load_model(bin.string().c_str())) {
         return -1;
     }
     return 0;
@@ -35,6 +47,18 @@ void Yolo::get_class_names(std::string data) {
     }
     class_count = count;
 }
+
+void Yolo::get_class_names(std::filesystem::path data) {
+    std::ifstream file(data);
+    std::string name = "";
+    int count = 0;
+    while (std::getline(file, name)) {
+        class_names.push_back(name);
+        count++;
+    }
+    class_count = count;
+}
+
 void Yolo::get_blob_name(std::string in, std::string out, std::string out1, std::string out2, std::string out3, std::string seg){
     in_blob = in;
     out_blob = out;
@@ -513,14 +537,11 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         binMask.convertTo(maskCopy, CV_8U);
         cv::Mat applyMask;
         bgr.copyTo(applyMask, maskCopy);
-        //cv::imshow("Apply Mask", applyMask);
+        cv::imshow("Apply Mask", applyMask);
 
         std::vector<cv::Point> contour = mask2segment(binMask);
-        //std::vector<std::vector<cv::Point>> contours;
-        //std::vector<cv::Vec4i> hierarchy;
-        //cv::findContours(maskCopy, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE); // Find Contours
-        //cv::polylines(applyMask, contour, true, cc, 2);
-        //cv::imshow("contour", applyMask);
+        cv::polylines(applyMask, contour, true, cc, 2);
+        cv::imshow("contour", applyMask);
 
         if(contour.size() < 3)
 			continue;
@@ -620,6 +641,7 @@ void Yolo::draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
 
 void Yolo::image(std::string inputPath) {
     cv::Mat in = cv::imread(inputPath);
+    std::vector<Object> objects;
     if (dynamic)
         detect_dynamic(in, objects);
     else
@@ -629,23 +651,76 @@ void Yolo::image(std::string inputPath) {
 
     std::string inputName = inputPath.substr(inputPath.find_last_of("/\\") + 1);
     cv::utils::fs::createDirectory(outputFolder);
-    std::string outputName = outputFolder + "/" + inputName;
+    std::string outputName = outputFolder + "\\" + inputName;
     inputNameWithoutExt = inputName.substr(0, inputName.find_last_of("."));
+    
+    const int objCount = objects.size();
+    std::cout << "Objects count = " << objCount << std::endl;
 
-    cv::Mat out = draw_objects(in, objects ,0);
+    int color_index = 0;
+    cv::Mat out = in.clone();
+    for(int i = 0 ; i < objCount ; i++){
+        const Object& obj = objects[i];
+        char line[256];
+        //class-index confident center-x center-y box-width box-height
+        sprintf_s(line, "%i %f %i %i %i %i", obj.label, obj.prob, (int)round(obj.rect.tl().x), (int)round(obj.rect.tl().y), (int)round(obj.rect.br().x), (int)round(obj.rect.br().y));
 
-    cv::imshow("Detect", out);
-    cv::waitKey();
-
-    if (save) {
-        cv::imwrite(outputName, out);
-        std::cout << "\nOutput saved at " << outputName;
+        std::cout << line << std::endl;
     }
+ 
+    //cv::imshow("Detect", out);
+    //cv::waitKey();
+
+    //if (save) {
+    //    cv::imwrite(outputName, out);
+    //    std::cout << "\nOutput saved at " << outputName;
+    //}
+}
+
+void Yolo::image(std::filesystem::path inputPath) {
+    cv::Mat in = cv::imread(inputPath.string());
+    std::vector<Object> objects;
+    if (dynamic)
+		detect_dynamic(in, objects);
+	else
+		detect(in, objects);
+
+	std::cout << "Inference time = " << inference_time << " (seconds)\n";
+
+	std::string inputName = inputPath.filename().string();
+	cv::utils::fs::createDirectory(outputFolder);
+	std::string outputName = outputFolder + "\\" + inputName;
+    	inputNameWithoutExt = inputName.substr(0, inputName.find_last_of("."));
+	
+	const int objCount = objects.size();
+	std::cout << "Objects count = " << objCount << std::endl;
+
+	int color_index = 0;
+	cv::Mat out = in.clone();
+    for (int i = 0; i < objCount; i++) {
+		const Object& obj = objects[i];
+		char line[256];
+		//class-index confident center-x center-y box-width box-height
+		sprintf_s(line, "%i %f %i %i %i %i", obj.label, obj.prob, (int)round(obj.rect.tl().x), (int)round(obj.rect.tl().y), (int)round(obj.rect.br().x), (int)round(obj.rect.br().y));
+
+		std::cout << line << std::endl;
+	}
+ 
+	//cv::imshow("Detect", out);
+	//cv::waitKey();
+
+	//if (save) {
+	//    cv::imwrite(outputName, out);
+	//    std::cout << "\nOutput saved at " << outputName;
+	//}
+
 }
 
 void Yolo::video(cv::VideoCapture capture) {
     if (capture.isOpened()) {
         std::cout << "Object Detection Started...." << std::endl;
+
+        std::vector<Object> objects;
 
         cv::Mat frame, out;
         do {

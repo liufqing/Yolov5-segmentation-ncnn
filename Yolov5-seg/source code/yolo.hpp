@@ -38,6 +38,8 @@ public:
     ~Yolo();
     int load(const std::string& bin, const std::string& param);
 
+    int load(const std::filesystem::path bin, const std::filesystem::path param);
+
     int detect(const cv::Mat& bgr, std::vector<Object>& objects);
 
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
@@ -67,7 +69,11 @@ public:
 
     void image(std::string inputPath);
 
+    void image(std::filesystem::path inputPath);
+
     void get_class_names(std::string data);
+
+    void get_class_names(std::filesystem::path data);
 
     void get_blob_name(std::string in, std::string out, std::string out0, std::string out1, std::string out2,std::string seg);
 
@@ -86,7 +92,6 @@ public:
 private:
     ncnn::Net net;
     std::vector<std::string> class_names;
-    std::vector<Object> objects;
     int class_count=0;
     double inference_time;
     std::string in_blob;

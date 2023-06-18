@@ -5,13 +5,13 @@ int main(int argc, char* argv[]) {
     InputParser argument(argc, argv);
 
     //set folder path
-    std::string inputFolder     = "../input";
-    std::string outputFolder    = "../output";
-    std::string modelFolder     = "../models";
-    std::string dataFolder      = "../data";
+    std::string inputFolder     = "..\\input";
+    std::string outputFolder    = "..\\output";
+    std::string modelFolder     = "..\\models";
+    std::string dataFolder      = "..\\data";
 
     //set default argument
-    std::string model     = argument.setDefaultArgument("--model", "seg/yolov5s-seg.ncnn");
+    std::string model     = argument.setDefaultArgument("--model", "seg\\yolov5s-seg.ncnn");
     std::string data      = argument.setDefaultArgument("--data", "coco128.txt");
     std::string input     = argument.setDefaultArgument("--source", "test.bmp");
     std::string output	  = argument.setDefaultArgument("--output", outputFolder);
@@ -29,15 +29,15 @@ int main(int argc, char* argv[]) {
 
     std::cout << argument.argNum() << " argument(s) passed";
 
-    std::string inputPath  = inputFolder  +   "/" + input;
-    std::string dataPath   = dataFolder   +   "/" + data;
-    std::string bin        = modelFolder  +   "/" + model + ".bin";
-    std::string param      = modelFolder  +   "/" + model + ".param";
+    std::filesystem::path inputPath  = inputFolder  +   "\\" + input;
+    std::filesystem::path dataPath   = dataFolder   +   "\\" + data;
+    std::filesystem::path bin        = modelFolder  +   "\\" + model + ".bin";
+    std::filesystem::path param      = modelFolder  +   "\\" + model + ".param";
 
-    std::cout   << "\nmodel     = " << bin
-                << "\nparam     = " << param 
-                << "\ninput     = " << inputPath
-                << "\ndata      = " << dataPath
+    std::cout   << "\nmodel     = " << bin.string()
+                << "\nparam     = " << param.string()
+                << "\ninput     = " << inputPath.string()
+                << "\ndata      = " << dataPath.string()
                 << "\nsize      = " << size
                 << "\nconf      = " << conf
                 << "\nnms       = " << nms
@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
     }
     if (isVideo(inputPath)) {
         cv::VideoCapture capture;
-        capture.open(inputPath);
+        capture.open(inputPath.string());
         Yolov5.video(capture);
         return EXIT_SUCCESS;
     }
