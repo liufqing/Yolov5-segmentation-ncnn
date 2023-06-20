@@ -660,7 +660,9 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 		//class-index confident center-x center-y box-width box-height
 		sprintf_s(line, "%i %f %i %i %i %i", obj.label, obj.prob, (int)round(obj.rect.tl().x), (int)round(obj.rect.tl().y), (int)round(obj.rect.br().x), (int)round(obj.rect.br().y));
 		std::cout << line << std::endl;
-        labels = labels + line + "\n";
+        labels.append(line);
+        if(i!=objCount-1)
+			labels.append("\n");
 
         cv::rectangle(out, obj.rect, cc);
         draw_label(out, obj.rect, class_names[obj.label] + " " + cv::format("%.2f", obj.prob * 100) + "%");
@@ -702,8 +704,6 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
  
     cv::imshow("Detect", out);
 	cv::waitKey();
-
-    std::cout << labels;
 
 	if (save) {
         cv::utils::fs::createDirectory(outputFolder.string());
