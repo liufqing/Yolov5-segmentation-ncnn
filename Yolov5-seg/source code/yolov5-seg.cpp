@@ -75,18 +75,25 @@ int main(int argc, char* argv[]) {
     Yolov5.rotate		  = rotate;
 
     if (input == ".") {
-        std::cout << "Auto running on all images input folder" ;
+        std::cout << "Auto running on all images in the input folder" ;
+        int count = 0;
+        clock_t tStart = clock();
         for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(inputFolder)) {
 			std::string path = entry.path().string();
             std::cout << "\n------------------------------------------------" << std::endl;
             std::cout << path << std::endl;
             if (isImage(path)) {
-			    Yolov5.image(entry.path(), outputPath);
+                count++;
+			    Yolov5.image(entry.path(), outputPath, true);
 			}
             else {
                 std::cout << "skipping non image file";
             }
 		}
+        auto total = (double)(clock() - tStart) / CLOCKS_PER_SEC;
+		std::cout << "\n------------------------------------------------" << std::endl;
+        std::cout << "Total time taken: " << total << " seconds" << std::endl;
+		std::cout << count << " images processed" << std::endl;
 		return EXIT_SUCCESS;
     }
 

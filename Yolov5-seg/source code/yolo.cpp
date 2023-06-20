@@ -613,7 +613,7 @@ void Yolo::draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rr, const cv::S
 		cv::line(bgr, vertices[i], vertices[(i + 1) % 4], cc, thickness);
 }
 
-void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder) {
+void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous) {
     cv::Mat in = cv::imread(inputPath.string());
     std::vector<Object> objects;
     if (dynamic)
@@ -652,7 +652,6 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 		char line[256];
 		//class-index confident center-x center-y box-width box-height
 		sprintf_s(line, "%i %f %i %i %i %i", obj.label, obj.prob, (int)round(obj.rect.tl().x), (int)round(obj.rect.tl().y), (int)round(obj.rect.br().x), (int)round(obj.rect.br().y));
-		std::cout << line << std::endl;
         labels.append(line);
         if(i!=objCount-1)
 			labels.append("\n");
@@ -694,9 +693,14 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
             cv::imwrite(maskPath, binMask);
         }
 	}
+
+    std::cout << labels;
+
+    if (!continuous) {
+        cv::imshow("Detect", out);
+        cv::waitKey();
+    }
  
-    cv::imshow("Detect", out);
-	cv::waitKey();
 
 	if (save) {
         cv::utils::fs::createDirectory(outputFolder.string());

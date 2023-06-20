@@ -69,7 +69,7 @@ public:
 
     cv::Mat getRotatedRectImg(const cv::Mat& mat, cv::RotatedRect rr);
 
-    void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder);
+    void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous = false);
 
     void get_class_names(const std::string& data);
 
