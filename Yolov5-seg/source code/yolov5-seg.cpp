@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
     std::filesystem::path dataPath   = dataFolder   +   "\\" + data;
     std::filesystem::path bin        = modelFolder  +   "\\" + model + ".bin";
     std::filesystem::path param      = modelFolder  +   "\\" + model + ".param";
+    std::filesystem::path outputPath = output;
 
     std::cout   << "\nmodel     = " << bin.string()
                 << "\nparam     = " << param.string()
@@ -70,16 +71,15 @@ int main(int argc, char* argv[]) {
     Yolov5.saveTxt		  = saveTxt;
     Yolov5.crop			  = crop;
     Yolov5.saveMask		  = saveMask;
-    Yolov5.outputFolder   = outputFolder;
 
-    if (input == "all") {
+    if (input == ".") {
         std::cout << "Auto running on all images input folder" ;
         for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(inputFolder)) {
 			std::string path = entry.path().string();
             std::cout << "\n------------------------------------------------" << std::endl;
             std::cout << path << std::endl;
             if (isImage(path)) {
-			    Yolov5.image(path);
+			    Yolov5.image(entry.path(), outputPath);
 			}
             else {
                 std::cout << "skipping non image file";
@@ -88,14 +88,14 @@ int main(int argc, char* argv[]) {
 		return EXIT_SUCCESS;
     }
 
-    if (input == "cam") {
+    if (input == "0") {
         cv::VideoCapture capture;
         capture.open(0);
         Yolov5.video(capture);
         return EXIT_SUCCESS;
     }
     if (isImage(inputPath)) {
-        Yolov5.image(inputPath);
+        Yolov5.image(inputPath, outputPath);
         return EXIT_SUCCESS;
     }
     if (isVideo(inputPath)) {

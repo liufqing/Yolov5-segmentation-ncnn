@@ -9,12 +9,12 @@ Yolo::Yolo() {
     out2_blob = "out2";
     out3_blob = "out3";
     seg_blob  = "seg";
-    std::cout << "net init" << std::endl;
+    //std::cout << "net init" << std::endl;
 }
 
 Yolo::~Yolo() {
     net.clear();
-    std::cout << "net clear" << std::endl;
+    //std::cout << "net clear" << std::endl;
 }
 
 int Yolo::load(const std::string& bin, const std::string& param) {
@@ -27,7 +27,7 @@ int Yolo::load(const std::string& bin, const std::string& param) {
     return 0;
 }
 
-int Yolo::load(const std::filesystem::path bin, const std::filesystem::path param) {
+int Yolo::load(const std::filesystem::path& bin, const std::filesystem::path& param) {
     if (net.load_param(param.string().c_str())) {
 		return -1;
 	}
@@ -37,8 +37,8 @@ int Yolo::load(const std::filesystem::path bin, const std::filesystem::path para
     return 0;
 }
 
-void Yolo::get_class_names(std::string data) {
-    std::ifstream file(data);
+void Yolo::get_class_names(const std::string& dataFile) {
+    std::ifstream file(dataFile);
     std::string name = "";
     int count = 0;
     while (std::getline(file, name)) {
@@ -48,7 +48,7 @@ void Yolo::get_class_names(std::string data) {
     class_count = count;
 }
 
-void Yolo::get_class_names(std::filesystem::path data) {
+void Yolo::get_class_names(const std::filesystem::path& data) {
     std::ifstream file(data);
     std::string name = "";
     int count = 0;
@@ -529,77 +529,49 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
 
         cv::rectangle(out, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
         cv::putText(out, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
-
-        cv::Mat binMask;
-        cv::threshold(obj.cv_mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
-
-        cv::Mat maskCopy;
-        binMask.convertTo(maskCopy, CV_8U);
-        cv::Mat applyMask;
-        bgr.copyTo(applyMask, maskCopy);
-        cv::imshow("Apply Mask", applyMask);
-
-        std::vector<cv::Point> contour = mask2segment(binMask);
-        cv::polylines(applyMask, contour, true, cc, 2);
-        cv::imshow("contour", applyMask);
-
-        if(contour.size() < 3)
-			continue;
-        cv::Point2f vertices[4];
-        cv::RotatedRect box = cv::minAreaRect(contour);
-        box.points(vertices);
-        //for (int i = 0; i < 4; i++) {
-        //    cv::line(applyMask, vertices[i], vertices[(i + 1) % 4], cc, 2);
-        //}
-        //cv::imshow("Rotated Rectangle", applyMask);
-
-        cv::Mat final = getRotatedRectImg(applyMask, box);
-        //cv::imshow("final", final);
-        std::string finalDir = outputFolder + "/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
-        //cv::imwrite(finalDir, final);
-
-        if (saveMask) {
-            std::string masksFolder = outputFolder + "/masks";
-            cv::utils::fs::createDirectory(masksFolder);
-            std::string maskDir = masksFolder + "/" +inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
-            cv::imwrite(maskDir,binMask);
-        }
                 
-        draw_mask(out, binMask, color);
-
-        //Write labels to file
-        if (saveTxt) {
-            std::string labelsFolder = outputFolder + "/labels";
-            cv::utils::fs::createDirectory(labelsFolder);
-            std::string labelDir = labelsFolder + "/" + inputNameWithoutExt +".txt";
-            std::ofstream labelFile;
-            labelFile.open(labelDir, std::ios::app);
-            //std::cout << "Labels saved to : " << labelDir << std::endl;
-
-            labelFile << line << std::endl;
-
-            labelFile.close();
-        }
-        if (crop)
-            crop_object(bgr, binMask, obj.rect);
+        draw_mask(out, obj.cv_mask, color);
     }
     return out;
 }
 
-void Yolo::applyMask(cv::Mat& bgr, cv::Mat mask, cv::Rect rect) {
+void Yolo::draw_label(cv::Mat& bgr,const cv::Rect2f& rect, std::string label) {
+    int baseLine = 0;
+    cv::Size label_size = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 
+    int x = rect.x;
+    int y = rect.y - label_size.height - baseLine;
+    if (y < 0)
+        y = 0;
+    if (x + label_size.width > bgr.cols)
+        x = bgr.cols - label_size.width;
+
+    cv::rectangle(bgr, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
+    cv::putText(bgr, label, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
 }
 
-void Yolo::crop_object(cv::Mat& bgr, cv::Mat mask, cv::Rect rect){
+cv::Mat Yolo::applyMask(const cv::Mat& bgr, const cv::Mat& mask) {
+    cv::Mat binMask;
+    cv::threshold(mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
+    cv::Mat maskCopy;
+    binMask.convertTo(maskCopy, CV_8U);
+    cv::Mat applyMask;
+    bgr.copyTo(applyMask, maskCopy);
+    return applyMask;
+}
+
+void Yolo::crop_object(cv::Mat& bgr,const cv::Mat& mask, cv::Rect rect){
     cv::Mat RoI         (bgr,  rect); //Region Of Interest
     cv::Mat mask_cropped(mask, rect);
     cv::imshow("RoI",          RoI);
     cv::imshow("Mask Cropped", mask_cropped);
 }
 
-std::vector<cv::Point> Yolo::mask2segment(cv::Mat &mask, int strategy){
+std::vector<cv::Point> Yolo::mask2segment(const cv::Mat &mask, int strategy){
+    cv::Mat binMask;
+    cv::threshold(mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
     cv::Mat maskCopy;
-    mask.convertTo(maskCopy, CV_8U);
+    binMask.convertTo(maskCopy, CV_8U);
 
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(maskCopy, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
@@ -624,60 +596,31 @@ std::vector<cv::Point> Yolo::mask2segment(cv::Mat &mask, int strategy){
     return contour;
 }
 
-void Yolo::draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color) {
+void Yolo::draw_mask(cv::Mat& bgr,const cv::Mat& mask, const unsigned char* color) {
+    cv::Mat binMask;
+    cv::threshold(mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
     for (int y = 0; y < bgr.rows; y++) {
         uchar* image_ptr = bgr.ptr(y);
-        const float* mask_ptr = mask.ptr<float>(y);
+        const float* mask_ptr = binMask.ptr<float>(y);
         for (int x = 0; x < bgr.cols; x++) {
             if (mask_ptr[x]) {
-                image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[2] * 0.5);
+                image_ptr[0] = cv::saturate_cast<uchar>(image_ptr[0] * 0.5 + color[0] * 0.5);
                 image_ptr[1] = cv::saturate_cast<uchar>(image_ptr[1] * 0.5 + color[1] * 0.5);
-                image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[0] * 0.5);
+                image_ptr[2] = cv::saturate_cast<uchar>(image_ptr[2] * 0.5 + color[2] * 0.5);
             }
             image_ptr += 3;
         }
     }
 }
 
-void Yolo::image(std::string inputPath) {
-    cv::Mat in = cv::imread(inputPath);
-    std::vector<Object> objects;
-    if (dynamic)
-        detect_dynamic(in, objects);
-    else
-        detect(in, objects);
-
-    std::cout << "Inference time = " << inference_time << " (seconds)\n";
-
-    std::string inputName = inputPath.substr(inputPath.find_last_of("/\\") + 1);
-    cv::utils::fs::createDirectory(outputFolder);
-    std::string outputName = outputFolder + "\\" + inputName;
-    inputNameWithoutExt = inputName.substr(0, inputName.find_last_of("."));
-    
-    const int objCount = objects.size();
-    std::cout << "Objects count = " << objCount << std::endl;
-
-    int color_index = 0;
-    cv::Mat out = in.clone();
-    for(int i = 0 ; i < objCount ; i++){
-        const Object& obj = objects[i];
-        char line[256];
-        //class-index confident center-x center-y box-width box-height
-        sprintf_s(line, "%i %f %i %i %i %i", obj.label, obj.prob, (int)round(obj.rect.tl().x), (int)round(obj.rect.tl().y), (int)round(obj.rect.br().x), (int)round(obj.rect.br().y));
-
-        std::cout << line << std::endl;
-    }
- 
-    //cv::imshow("Detect", out);
-    //cv::waitKey();
-
-    //if (save) {
-    //    cv::imwrite(outputName, out);
-    //    std::cout << "\nOutput saved at " << outputName;
-    //}
+void Yolo::draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rr, const cv::Scalar& cc, int thickness) {
+	cv::Point2f vertices[4];
+	rr.points(vertices);
+	for (int i = 0; i < 4; i++)
+		cv::line(bgr, vertices[i], vertices[(i + 1) % 4], cc, thickness);
 }
 
-void Yolo::image(std::filesystem::path inputPath) {
+void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder) {
     cv::Mat in = cv::imread(inputPath.string());
     std::vector<Object> objects;
     if (dynamic)
@@ -687,33 +630,73 @@ void Yolo::image(std::filesystem::path inputPath) {
 
 	std::cout << "Inference time = " << inference_time << " (seconds)\n";
 
-	std::string inputName = inputPath.filename().string();
-	cv::utils::fs::createDirectory(outputFolder);
-	std::string outputName = outputFolder + "\\" + inputName;
-    	inputNameWithoutExt = inputName.substr(0, inputName.find_last_of("."));
+	std::string fileName = inputPath.filename().string();
+    std::string stem = inputPath.stem().string();
+	std::string outputPath = outputFolder.string() + "\\" + fileName;
+    std::string labelsFolder = outputFolder.string() + "\\labels";
+    std::string labelsPath = labelsFolder + "\\" + stem + ".txt";
 	
 	const int objCount = objects.size();
 	std::cout << "Objects count = " << objCount << std::endl;
 
 	int color_index = 0;
 	cv::Mat out = in.clone();
+    int colorMode = byIndex;
+    std::string labels;
     for (int i = 0; i < objCount; i++) {
 		const Object& obj = objects[i];
+        if (colorMode == byClass)
+            color_index = obj.label;
+        if (colorMode == byIndex)
+            color_index = i;
+
+        const unsigned char* color = colors[color_index % 80];
+        cv::Scalar cc(color[0], color[1], color[2]);
+
 		char line[256];
 		//class-index confident center-x center-y box-width box-height
 		sprintf_s(line, "%i %f %i %i %i %i", obj.label, obj.prob, (int)round(obj.rect.tl().x), (int)round(obj.rect.tl().y), (int)round(obj.rect.br().x), (int)round(obj.rect.br().y));
-
 		std::cout << line << std::endl;
+        labels = labels + line + "\n";
+
+        cv::rectangle(out, obj.rect, cc);
+        draw_label(out, obj.rect, class_names[obj.label] + " " + cv::format("%.2f", obj.prob * 100) + "%");
+        draw_mask(out, obj.cv_mask, color);
+
+        std::vector<cv::Point> contour = mask2segment(obj.cv_mask);
+
+        if (contour.size() < 3)
+            continue;
+        //cv::polylines(out, contour, true, cc, 1);
+        //cv::imshow("contour", out);
+        cv::RotatedRect rr = cv::minAreaRect(contour);
+        //draw_RotatedRect(out, rr, cc);
+
+        cv::Mat rotatedCrop = getRotatedRectImg(in, rr);
+        //cv::imshow("rotatedCrop", rotatedCrop);
+        //cv::waitKey(0);
+        //std::string finalDir = outputFolder + "/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
+        //cv::imwrite(finalDir, final);
 	}
  
-	//cv::imshow("Detect", out);
-	//cv::waitKey();
+    cv::imshow("Detect", out);
+	cv::waitKey();
 
-	//if (save) {
-	//    cv::imwrite(outputName, out);
-	//    std::cout << "\nOutput saved at " << outputName;
-	//}
+    std::cout << labels;
 
+	if (save) {
+        cv::utils::fs::createDirectory(outputFolder.string());
+	    cv::imwrite(outputPath, out);
+	    std::cout << "\nOutput saved at " << outputPath;
+	}
+
+    if (saveTxt) {
+        cv::utils::fs::createDirectory(labelsFolder);
+		std::ofstream txtFile(labelsPath);
+		txtFile << labels;
+		txtFile.close();
+		std::cout << "\nLabels saved at " << labelsPath;
+	}
 }
 
 void Yolo::video(cv::VideoCapture capture) {

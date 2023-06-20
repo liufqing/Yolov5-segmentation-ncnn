@@ -38,17 +38,19 @@ public:
     ~Yolo();
     int load(const std::string& bin, const std::string& param);
 
-    int load(const std::filesystem::path bin, const std::filesystem::path param);
+    int load(const std::filesystem::path& bin, const std::filesystem::path& param);
 
     int detect(const cv::Mat& bgr, std::vector<Object>& objects);
 
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
 
-    void draw_mask(cv::Mat& bgr, cv::Mat mask, const unsigned char* color);
+    void draw_mask(cv::Mat& bgr, const cv::Mat& mask, const unsigned char* color);
 
-    void crop_object(cv::Mat &bgr, cv::Mat mask, cv::Rect rect);
+    void draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rect, const cv::Scalar& cc, int thickness = 1);
 
-    std::vector<cv::Point> mask2segment(cv::Mat& mask, int strategy = largestContour);
+    void crop_object(cv::Mat &bgr, const cv::Mat& mask, cv::Rect rect);
+
+    std::vector<cv::Point> mask2segment(const cv::Mat& mask, int strategy = largestContour);
 
     /**
      * @brief 
@@ -59,7 +61,9 @@ public:
      */
     cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode = byIndex);
 
-    void applyMask(cv::Mat& bgr, cv::Mat mask, cv::Rect rect);
+    void draw_label(cv::Mat& bgr,const cv::Rect2f& rect, std::string label);
+
+    cv::Mat applyMask(const cv::Mat& bgr, const cv::Mat& mask);
 
     void video(cv::VideoCapture capture);
 
@@ -67,13 +71,11 @@ public:
 
     cv::Mat getRotatedRectImg(const cv::Mat& mat, cv::RotatedRect rr);
 
-    void image(std::string inputPath);
+    void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder);
 
-    void image(std::filesystem::path inputPath);
+    void get_class_names(const std::string& data);
 
-    void get_class_names(std::string data);
-
-    void get_class_names(std::filesystem::path data);
+    void get_class_names(const std::filesystem::path& data);
 
     void get_blob_name(std::string in, std::string out, std::string out0, std::string out1, std::string out2,std::string seg);
 
@@ -88,7 +90,6 @@ public:
     float prob_threshold = 0.25f;
     float nms_threshold  = 0.45f;
     int max_object       = 100;
-    std::string outputFolder;
 private:
     ncnn::Net net;
     std::vector<std::string> class_names;
@@ -100,5 +101,4 @@ private:
     std::string out2_blob;
     std::string out3_blob;
     std::string seg_blob;
-    std::string inputNameWithoutExt;
 };
