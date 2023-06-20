@@ -5,13 +5,13 @@ int main(int argc, char* argv[]) {
     InputParser argument(argc, argv);
 
     //set folder path
-    std::string inputFolder     = "../input";
-    std::string outputFolder    = "../output";
-    std::string modelFolder     = "../models";
-    std::string dataFolder      = "../data";
+    std::string inputFolder     = "..\\input";
+    std::string outputFolder    = "..\\output";
+    std::string modelFolder     = "..\\models";
+    std::string dataFolder      = "..\\data";
 
     //set default argument
-    std::string model     = argument.setDefaultArgument("--model", "seg/yolov5s-seg-idcard-2.ncnn");
+    std::string model     = argument.setDefaultArgument("--model", "seg\\yolov5s-seg-idcard-2.ncnn");
     std::string data      = argument.setDefaultArgument("--data", "idcard.txt");
     std::string input     = argument.setDefaultArgument("--source", "7.jpg");
     std::string output	  = argument.setDefaultArgument("--output", outputFolder);
@@ -26,18 +26,20 @@ int main(int argc, char* argv[]) {
     bool save             = argument.cmdOptionExists("--save");
     bool saveTxt          = argument.cmdOptionExists("--save-txt");
     bool saveMask		  = argument.cmdOptionExists("--save-mask");
+    bool rotate			  = argument.cmdOptionExists("--rotate");
 
     std::cout << argument.argNum() << " argument(s) passed";
 
-    std::string inputPath  = inputFolder  +   "/" + input;
-    std::string dataPath   = dataFolder   +   "/" + data;
-    std::string bin        = modelFolder  +   "/" + model + ".bin";
-    std::string param      = modelFolder  +   "/" + model + ".param";
+    std::filesystem::path inputPath  = inputFolder  +   "\\" + input;
+    std::filesystem::path dataPath   = dataFolder   +   "\\" + data;
+    std::filesystem::path bin        = modelFolder  +   "\\" + model + ".bin";
+    std::filesystem::path param      = modelFolder  +   "\\" + model + ".param";
+    std::filesystem::path outputPath = output;
 
-    std::cout   << "\nmodel     = " << bin
-                << "\nparam     = " << param 
-                << "\ninput     = " << inputPath
-                << "\ndata      = " << dataPath
+    std::cout   << "\nmodel     = " << bin.string()
+                << "\nparam     = " << param.string()
+                << "\ninput     = " << inputPath.string()
+                << "\ndata      = " << dataPath.string()
                 << "\nsize      = " << size
                 << "\nconf      = " << conf
                 << "\nnms       = " << nms
@@ -70,34 +72,44 @@ int main(int argc, char* argv[]) {
     Yolov5.saveTxt		  = saveTxt;
     Yolov5.crop			  = crop;
     Yolov5.saveMask		  = saveMask;
-    Yolov5.outputFolder   = outputFolder;
+    Yolov5.rotate		  = rotate;
 
-    if (input == "all") {
-        std::cout << "Auto running on all images input folder" ;
+    if (input == ".") {
+        std::cout << "Auto running on all images in the input folder" ;
+        int count = 0;
+        clock_t tStart = clock();
         for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(inputFolder)) {
 			std::string path = entry.path().string();
             std::cout << "\n------------------------------------------------" << std::endl;
             std::cout << path << std::endl;
             if (isImage(path)) {
-			    Yolov5.image(path);
+                count++;
+			    Yolov5.image(entry.path(), outputPath, true);
 			}
+            else {
+                std::cout << "skipping non image file";
+            }
 		}
+        auto total = (double)(clock() - tStart) / CLOCKS_PER_SEC;
+		std::cout << "\n------------------------------------------------" << std::endl;
+        std::cout << "Total time taken: " << total << " seconds" << std::endl;
+		std::cout << count << " images processed" << std::endl;
 		return EXIT_SUCCESS;
     }
 
-    if (input == "cam") {
+    if (input == "0") {
         cv::VideoCapture capture;
         capture.open(0);
         Yolov5.video(capture);
         return EXIT_SUCCESS;
     }
     if (isImage(inputPath)) {
-        Yolov5.image(inputPath);
+        Yolov5.image(inputPath, outputPath);
         return EXIT_SUCCESS;
     }
     if (isVideo(inputPath)) {
         cv::VideoCapture capture;
-        capture.open(inputPath);
+        capture.open(inputPath.string());
         Yolov5.video(capture);
         return EXIT_SUCCESS;
     }

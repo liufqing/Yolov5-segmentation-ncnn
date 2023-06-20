@@ -5,7 +5,11 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include <iostream>
+#include <string>
+#include <filesystem>
+#include <algorithm>
+#include <vector>
+#include <cctype>
 
 #define MAX_STRIDE 64
 #define PERMUTE 0 // Using the permute layer output
@@ -65,4 +69,8 @@ void nms_sorted_bboxes(const std::vector<Object>& faceobjects, std::vector<int>&
 
 bool isImage(const std::string& path);
 
+bool isImage(const std::filesystem::path& path);
+
 bool isVideo(const std::string& path);
+
+bool isVideo(const std::filesystem::path& path);
