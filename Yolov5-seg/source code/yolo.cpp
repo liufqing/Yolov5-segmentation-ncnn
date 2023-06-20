@@ -560,13 +560,6 @@ cv::Mat Yolo::applyMask(const cv::Mat& bgr, const cv::Mat& mask) {
     return applyMask;
 }
 
-void Yolo::crop_object(cv::Mat& bgr,const cv::Mat& mask, cv::Rect rect){
-    cv::Mat RoI         (bgr,  rect); //Region Of Interest
-    cv::Mat mask_cropped(mask, rect);
-    cv::imshow("RoI",          RoI);
-    cv::imshow("Mask Cropped", mask_cropped);
-}
-
 std::vector<cv::Point> Yolo::mask2segment(const cv::Mat &mask, int strategy){
     cv::Mat binMask;
     cv::threshold(mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization

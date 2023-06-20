@@ -48,13 +48,11 @@ public:
 
     void draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rect, const cv::Scalar& cc, int thickness = 1);
 
-    void crop_object(cv::Mat &bgr, const cv::Mat& mask, cv::Rect rect);
-
     std::vector<cv::Point> mask2segment(const cv::Mat& mask, int strategy = largestContour);
 
     /**
      * @brief 
-     * 
+     * Draw all the objects at once
      * @param bgr : background image to be draw on
      * @param objects : object vector contain all the detected object in the image
      * @param colorMode : determine the color for each object to be draw ( bounding box and feature mask )
