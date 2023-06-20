@@ -644,7 +644,7 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 
 	int color_index = 0;
 	cv::Mat out = in.clone();
-    int colorMode = byIndex;
+    int colorMode = byClass;
     std::string labels;
     for (int i = 0; i < objCount; i++) {
 		const Object& obj = objects[i];
