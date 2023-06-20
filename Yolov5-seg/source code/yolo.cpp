@@ -635,6 +635,9 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 	std::string outputPath = outputFolder.string() + "\\" + fileName;
     std::string labelsFolder = outputFolder.string() + "\\labels";
     std::string labelsPath = labelsFolder + "\\" + stem + ".txt";
+    std::string cropFolder = outputFolder.string() + "\\crop";
+    std::string maskFolder = outputFolder.string() + "\\mask";
+    std::string rotateFolder = outputFolder.string() + "\\rotate";
 	
 	const int objCount = objects.size();
 	std::cout << "Objects count = " << objCount << std::endl;
@@ -661,6 +664,10 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 
         cv::rectangle(out, obj.rect, cc);
         draw_label(out, obj.rect, class_names[obj.label] + " " + cv::format("%.2f", obj.prob * 100) + "%");
+
+        cv::Mat binMask;
+        cv::threshold(obj.cv_mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
+
         draw_mask(out, obj.cv_mask, color);
 
         std::vector<cv::Point> contour = mask2segment(obj.cv_mask);
@@ -672,11 +679,25 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
         cv::RotatedRect rr = cv::minAreaRect(contour);
         //draw_RotatedRect(out, rr, cc);
 
-        cv::Mat rotatedCrop = getRotatedRectImg(in, rr);
-        //cv::imshow("rotatedCrop", rotatedCrop);
-        //cv::waitKey(0);
-        //std::string finalDir = outputFolder + "/" + inputNameWithoutExt + "_" + std::to_string(i) + ".jpg";
-        //cv::imwrite(finalDir, final);
+        if (rotate) {
+			cv::utils::fs::createDirectory(rotateFolder);
+			cv::Mat rotated = getRotatedRectImg(in, rr);
+			std::string rotatePath = rotateFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+			cv::imwrite(rotatePath, rotated);
+		}
+
+        if (crop) {
+            cv::utils::fs::createDirectory(cropFolder);
+            cv::Mat RoI(in, obj.rect); //Region Of Interest
+            std::string cropPath = cropFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+            cv::imwrite(cropPath, RoI);
+        }
+
+        if (saveMask) {
+            cv::utils::fs::createDirectory(maskFolder);
+            std::string maskPath = maskFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+            cv::imwrite(maskPath, binMask);
+        }
 	}
  
     cv::imshow("Detect", out);

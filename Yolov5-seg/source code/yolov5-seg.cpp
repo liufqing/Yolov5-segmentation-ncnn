@@ -26,6 +26,7 @@ int main(int argc, char* argv[]) {
     bool save             = argument.cmdOptionExists("--save");
     bool saveTxt          = argument.cmdOptionExists("--save-txt");
     bool saveMask		  = argument.cmdOptionExists("--save-mask");
+    bool rotate			  = argument.cmdOptionExists("--rotate");
 
     std::cout << argument.argNum() << " argument(s) passed";
 
@@ -71,6 +72,7 @@ int main(int argc, char* argv[]) {
     Yolov5.saveTxt		  = saveTxt;
     Yolov5.crop			  = crop;
     Yolov5.saveMask		  = saveMask;
+    Yolov5.rotate		  = rotate;
 
     if (input == ".") {
         std::cout << "Auto running on all images input folder" ;
