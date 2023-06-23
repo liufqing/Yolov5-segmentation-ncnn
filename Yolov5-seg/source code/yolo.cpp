@@ -665,18 +665,22 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
         draw_mask(out, obj.cv_mask, color);
 
         std::vector<cv::Point> contour = mask2segment(obj.cv_mask);
-
-        if (contour.size() < 3)
-            continue;
         //cv::polylines(out, contour, true, cc, 1);
         //cv::imshow("contour", out);
-        cv::RotatedRect rr = cv::minAreaRect(contour);
-        //draw_RotatedRect(out, rr, cc);
+
+        std::string saveFileName = stem + "_" + std::to_string(i) + "_" + class_names[obj.label] + ".jpg";
 
         if (rotate) {
+            cv::Mat rotated;
+            if (contour.size() < 3)
+                rotated = in(obj.rect);
+            else {
+                cv::RotatedRect rr = cv::minAreaRect(contour);
+                //draw_RotatedRect(out, rr, cc);
+                rotated = getRotatedRectImg(in, rr);
+            }
 			cv::utils::fs::createDirectory(rotateFolder);
-            cv::Mat rotated = getRotatedRectImg(in, rr);
-			std::string rotatePath = rotateFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+            std::string rotatePath = rotateFolder + "\\" + saveFileName;
             if(!continuous)
                 cv::imshow("rotated", rotated);
 			cv::imwrite(rotatePath, rotated);
@@ -685,13 +689,13 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
         if (crop) {
             cv::utils::fs::createDirectory(cropFolder);
             cv::Mat RoI(in, obj.rect); //Region Of Interest
-            std::string cropPath = cropFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+            std::string cropPath = cropFolder + "\\" + saveFileName;
             cv::imwrite(cropPath, RoI);
         }
 
         if (saveMask) {
             cv::utils::fs::createDirectory(maskFolder);
-            std::string maskPath = maskFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+            std::string maskPath = maskFolder + "\\" + saveFileName;
             cv::imwrite(maskPath, binMask);
         }
 	}
@@ -702,7 +706,6 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
         cv::imshow("Detect", out);
         cv::waitKey();
     }
- 
 
 	if (save) {
         cv::utils::fs::createDirectory(outputFolder.string());
@@ -747,7 +750,7 @@ void Yolo::video(cv::VideoCapture capture) {
     }
 }
 
-cv::Mat Yolo::getRotatedRectImg(const cv::Mat& mat, const cv::RotatedRect& rr) {
+cv::Mat Yolo::getRotatedRectImg(const cv::Mat& src, const cv::RotatedRect& rr) {
     float angle = rr.angle;
     float width = rr.size.width;
     float height = rr.size.height;
@@ -780,8 +783,8 @@ cv::Mat Yolo::getRotatedRectImg(const cv::Mat& mat, const cv::RotatedRect& rr) {
     */
     //cv::Mat forRotation = cv::getRotationMatrix2D(rr.center, rr.angle, 1.0);
     cv::Mat result;
-    //cv::warpAffine(mat, rotated, forRotation, mat.size(), cv::INTER_CUBIC);
-    cv::warpAffine(mat, result, forRotation, cv::Size2f(width,height), cv::INTER_CUBIC);
+    //cv::warpAffine(src, rotated, forRotation, src.size(), cv::INTER_CUBIC);
+    cv::warpAffine(src, result, forRotation, cv::Size2f(width,height), cv::INTER_CUBIC);
 
     return result;
 }

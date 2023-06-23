@@ -96,5 +96,5 @@ private:
 
     cv::Mat applyMask(const cv::Mat& bgr, const cv::Mat& mask);
 
-    cv::Mat getRotatedRectImg(const cv::Mat& mat, const cv::RotatedRect& rr);
+    cv::Mat getRotatedRectImg(const cv::Mat& src, const cv::RotatedRect& rr);
 };
