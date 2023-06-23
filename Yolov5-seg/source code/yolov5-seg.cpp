@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     int size              = argument.setDefaultArgument("--size", 640);
     float conf            = argument.setDefaultArgument("--conf", 0.25f);
     float nms             = argument.setDefaultArgument("--nms", 0.45f);
-    int maxObj            = argument.setDefaultArgument("--max-obj", 100);
+    int maxObj            = argument.setDefaultArgument("--max-obj", 1);
     bool dynamic          = argument.cmdOptionExists("--dynamic");
     bool noseg            = argument.cmdOptionExists("--noseg");
     bool agnostic         = argument.cmdOptionExists("--agnostic");

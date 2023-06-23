@@ -661,7 +661,7 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 
         cv::Mat binMask;
         cv::threshold(obj.cv_mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
-
+        
         draw_mask(out, obj.cv_mask, color);
 
         std::vector<cv::Point> contour = mask2segment(obj.cv_mask);
@@ -675,8 +675,10 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 
         if (rotate) {
 			cv::utils::fs::createDirectory(rotateFolder);
-			cv::Mat rotated = getRotatedRectImg(in, rr);
+            cv::Mat rotated = getRotatedRectImg(in, rr);
 			std::string rotatePath = rotateFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+            if(!continuous)
+                cv::imshow("rotated", rotated);
 			cv::imwrite(rotatePath, rotated);
 		}
 
@@ -745,22 +747,41 @@ void Yolo::video(cv::VideoCapture capture) {
     }
 }
 
-cv::Mat Yolo::getAffineTransformForRotatedRect(cv::RotatedRect rr) {
-    float angle = rr.angle * M_PI / 180.0;
+cv::Mat Yolo::getRotatedRectImg(const cv::Mat& mat, const cv::RotatedRect& rr) {
+    float angle = rr.angle;
+    float width = rr.size.width;
+    float height = rr.size.height;
+
+    if (rr.size.width < rr.size.height) {
+        std::swap(width, height);
+        angle = angle - 90;
+    }
+    //else {
+    //    angle = -angle;
+    //}
+
+    float radianAngle = angle * M_PI / 180.0;
     // angle += M_PI; // you may want rotate it upsidedown
-    float sinA = sin(angle), cosA = cos(angle);
+    float sinA = sin(radianAngle), cosA = cos(radianAngle);
     float data[6] = {
-         cosA, sinA, rr.size.width / 2.0f - cosA * rr.center.x - sinA * rr.center.y,
-        -sinA, cosA, rr.size.height / 2.0f - cosA * rr.center.y + sinA * rr.center.x };
-    cv::Mat rot_mat(2, 3, CV_32FC1, data);
-    return rot_mat.clone();
-}
+         cosA, sinA, width / 2.0f - cosA * rr.center.x - sinA * rr.center.y,
+        -sinA, cosA, height / 2.0f - cosA * rr.center.y + sinA * rr.center.x };
+    cv::Mat forRotation(2, 3, CV_32FC1, data);
 
-cv::Mat Yolo::getRotatedRectImg(const cv::Mat& mat, cv::RotatedRect rr) {
-    cv::Mat M, result;
-    M = getAffineTransformForRotatedRect(rr);
-
-    warpAffine(mat, result, M, rr.size, cv::INTER_CUBIC);
+    /*
+    Alternate way to get forRotation matrix
+    cv::Mat forRotation(2, 3, CV_32FC1);
+    forRotation.at<float>(0, 0) = cosA;
+    forRotation.at<float>(0, 1) = sinA;
+    forRotation.at<float>(0, 2) = width / 2.0f - cosA * rr.center.x - sinA * rr.center.y;
+    forRotation.at<float>(1, 0) = -sinA;
+    forRotation.at<float>(1, 1) = cosA;
+    forRotation.at<float>(1, 2) = height / 2.0f - cosA * rr.center.y + sinA * rr.center.x;
+    */
+    //cv::Mat forRotation = cv::getRotationMatrix2D(rr.center, rr.angle, 1.0);
+    cv::Mat result;
+    //cv::warpAffine(mat, rotated, forRotation, mat.size(), cv::INTER_CUBIC);
+    cv::warpAffine(mat, result, forRotation, cv::Size2f(width,height), cv::INTER_CUBIC);
 
     return result;
 }

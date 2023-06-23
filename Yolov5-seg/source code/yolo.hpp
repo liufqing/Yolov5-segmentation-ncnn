@@ -44,30 +44,7 @@ public:
 
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
 
-    void draw_mask(cv::Mat& bgr, const cv::Mat& mask, const unsigned char* color);
-
-    void draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rect, const cv::Scalar& cc, int thickness = 1);
-
-    std::vector<cv::Point> mask2segment(const cv::Mat& mask, int strategy = largestContour);
-
-    /**
-     * @brief 
-     * Draw all the objects at once
-     * @param bgr : background image to be draw on
-     * @param objects : object vector contain all the detected object in the image
-     * @param colorMode : determine the color for each object to be draw ( bounding box and feature mask )
-     */
-    cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode = byIndex);
-
-    void draw_label(cv::Mat& bgr,const cv::Rect2f& rect, std::string label);
-
-    cv::Mat applyMask(const cv::Mat& bgr, const cv::Mat& mask);
-
     void video(cv::VideoCapture capture);
-
-    cv::Mat getAffineTransformForRotatedRect(cv::RotatedRect rr);
-
-    cv::Mat getRotatedRectImg(const cv::Mat& mat, cv::RotatedRect rr);
 
     void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous = false);
 
@@ -100,4 +77,24 @@ private:
     std::string out2_blob;
     std::string out3_blob;
     std::string seg_blob;
+private:
+    /// @brief Draw all the objects at once.
+    /// This function is a combination of draw_mask, draw_label and cv::rectangle
+    /// @param bgr background image to be draw on. This function will makes a clone of the background image to avoid drawing on the original image
+    /// @param objects object vector contain all the detected object in the image
+    /// @param colorMode determine the color for each object to be draw ( bounding box and feature mask )
+    /// @return image with all the objects draw on
+    cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode = byIndex);
+
+    void draw_mask(cv::Mat& bgr, const cv::Mat& mask, const unsigned char* color);
+
+    void draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rect, const cv::Scalar& cc, int thickness = 1);
+
+    std::vector<cv::Point> mask2segment(const cv::Mat& mask, int strategy = largestContour);
+
+    void draw_label(cv::Mat& bgr, const cv::Rect2f& rect, std::string label);
+
+    cv::Mat applyMask(const cv::Mat& bgr, const cv::Mat& mask);
+
+    cv::Mat getRotatedRectImg(const cv::Mat& mat, const cv::RotatedRect& rr);
 };
