@@ -44,7 +44,7 @@ public:
 
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
 
-    void video(cv::VideoCapture capture);
+    void video(std::string inputPath);
 
     void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous = false);
 

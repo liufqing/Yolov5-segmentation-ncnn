@@ -97,20 +97,12 @@ int main(int argc, char* argv[]) {
 		return EXIT_SUCCESS;
     }
 
-    if (input == "0") {
-        cv::VideoCapture capture;
-        capture.open(0);
-        Yolov5.video(capture);
-        return EXIT_SUCCESS;
-    }
     if (isImage(inputPath)) {
         Yolov5.image(inputPath, outputPath);
         return EXIT_SUCCESS;
     }
-    if (isVideo(inputPath)) {
-        cv::VideoCapture capture;
-        capture.open(inputPath.string());
-        Yolov5.video(capture);
+    if (input == "0" or isVideo(inputPath)) {
+        Yolov5.video(inputPath.string());
         return EXIT_SUCCESS;
     }
 

@@ -722,7 +722,14 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 	}
 }
 
-void Yolo::video(cv::VideoCapture capture) {
+void Yolo::video(std::string inputPath) {
+    cv::VideoCapture capture;
+    if (inputPath == "0") {
+        capture.open(0);
+    }
+    else {
+		capture.open(inputPath);
+	}
     if (capture.isOpened()) {
         std::cout << "Object Detection Started...." << std::endl;
 
