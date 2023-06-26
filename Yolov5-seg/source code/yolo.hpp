@@ -13,7 +13,6 @@
 #include <vector>
 #include <fstream>
 #include <time.h>
-#include <cmath>
 #include <filesystem>
 #include <windows.h>
 

@@ -475,8 +475,8 @@ void generate_proposals(const ncnn::Mat& anchors, int stride, const ncnn::Mat& i
 
                         float cx = (dx * 2.f - 0.5f + j) * stride;  //center x coordinate
                         float cy = (dy * 2.f - 0.5f + i) * stride;  //cennter y coordinate
-                        float bw = pow(dw * 2.f, 2) * anchor_w;     //box width
-                        float bh = pow(dh * 2.f, 2) * anchor_h;     //box height
+                        float bw = pow(dw * 2.f, 2.f) * anchor_w;     //box width
+                        float bh = pow(dh * 2.f, 2.f) * anchor_h;     //box height
 
                         // transform candidate box (center-x,center-y,w,h) to (x0,y0,x1,y1)
                         float x0 = cx - bw * 0.5f;
@@ -546,8 +546,8 @@ void generate_proposals(const ncnn::Mat& anchors,int stride, const ncnn::Mat& fe
 
                         float cx = (dx * 2.f - 0.5f + j) * stride;  //center x coordinate
                         float cy = (dy * 2.f - 0.5f + i) * stride;  //cennter y coordinate
-                        float bw = pow(dw * 2.f, 2) * anchor_w;     //box width
-                        float bh = pow(dh * 2.f, 2) * anchor_h;     //box height
+                        float bw = pow(dw * 2.f, 2.f) * anchor_w;     //box width
+                        float bh = pow(dh * 2.f, 2.f) * anchor_h;     //box height
 
                         // transform candidate box (center-x,center-y,w,h) to (x0,y0,x1,y1)
                         float x0 = cx - bw * 0.5f;

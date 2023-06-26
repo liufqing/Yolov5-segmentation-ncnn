@@ -491,7 +491,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
 
 cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode) {
     cv::Mat out = bgr.clone();
-    int objCount  = objects.size();
+    size_t objCount  = objects.size();
     std::cout << "Objects count = " << objCount <<std::endl;
 
     int color_index = 0;
@@ -632,7 +632,7 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
     std::string maskFolder = outputFolder.string() + "\\mask";
     std::string rotateFolder = outputFolder.string() + "\\rotate";
 	
-	const int objCount = objects.size();
+	const size_t objCount = objects.size();
 	std::cout << "Objects count = " << objCount << std::endl;
 
 	int color_index = 0;
@@ -766,32 +766,29 @@ cv::Mat Yolo::getRotatedRectImg(const cv::Mat& src, const cv::RotatedRect& rr) {
         std::swap(width, height);
         angle = angle - 90;
     }
-    //else {
-    //    angle = -angle;
-    //}
 
-    float radianAngle = angle * M_PI / 180.0;
+    float radianAngle = angle * CV_PI / 180;
     // angle += M_PI; // you may want rotate it upsidedown
     float sinA = sin(radianAngle), cosA = cos(radianAngle);
     float data[6] = {
          cosA, sinA, width / 2.0f - cosA * rr.center.x - sinA * rr.center.y,
         -sinA, cosA, height / 2.0f - cosA * rr.center.y + sinA * rr.center.x };
-    cv::Mat forRotation(2, 3, CV_32FC1, data);
+    cv::Mat affineMatrix(2, 3, CV_32FC1, data);
 
     /*
-    Alternate way to get forRotation matrix
-    cv::Mat forRotation(2, 3, CV_32FC1);
-    forRotation.at<float>(0, 0) = cosA;
-    forRotation.at<float>(0, 1) = sinA;
-    forRotation.at<float>(0, 2) = width / 2.0f - cosA * rr.center.x - sinA * rr.center.y;
-    forRotation.at<float>(1, 0) = -sinA;
-    forRotation.at<float>(1, 1) = cosA;
-    forRotation.at<float>(1, 2) = height / 2.0f - cosA * rr.center.y + sinA * rr.center.x;
+    Alternate way to get affineMatrix matrix
+    cv::Mat affineMatrix(2, 3, CV_32FC1);
+    affineMatrix.at<float>(0, 0) = cosA;
+    affineMatrix.at<float>(0, 1) = sinA;
+    affineMatrix.at<float>(0, 2) = width / 2.0f - cosA * rr.center.x - sinA * rr.center.y;
+    affineMatrix.at<float>(1, 0) = -sinA;
+    affineMatrix.at<float>(1, 1) = cosA;
+    affineMatrix.at<float>(1, 2) = height / 2.0f - cosA * rr.center.y + sinA * rr.center.x;
     */
-    //cv::Mat forRotation = cv::getRotationMatrix2D(rr.center, rr.angle, 1.0);
+    //cv::Mat affineMatrix = cv::getRotationMatrix2D(rr.center, rr.angle, 1.0);
+    //cv::warpAffine(src, result, affineMatrix, src.size(), cv::INTER_CUBIC);
     cv::Mat result;
-    //cv::warpAffine(src, rotated, forRotation, src.size(), cv::INTER_CUBIC);
-    cv::warpAffine(src, result, forRotation, cv::Size2f(width,height), cv::INTER_CUBIC);
+    cv::warpAffine(src, result, affineMatrix, cv::Size2f(width,height), cv::INTER_CUBIC);
 
     return result;
 }
