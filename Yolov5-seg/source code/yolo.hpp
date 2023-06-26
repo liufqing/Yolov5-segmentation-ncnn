@@ -84,7 +84,11 @@ private:
     /// @param colorMode determine the color for each object to be draw ( bounding box and feature mask )
     /// @return image with all the objects draw on
     cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode = byIndex);
-
+    
+    /// @brief draw color mask on the background image.
+    /// @param bgr background image to be draw on.
+    /// @param mask gray scale mask
+    /// @param color color to be draw on the mask
     void draw_mask(cv::Mat& bgr, const cv::Mat& mask, const unsigned char* color);
 
     void draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rect, const cv::Scalar& cc, int thickness = 1);

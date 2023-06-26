@@ -460,8 +460,9 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     ncnn::Mat mask_pred_result;
     decode_mask(mask_feat, img_w, img_h, mask_proto, in_pad, wpad, hpad, mask_pred_result);
 
-    objects.resize(count);
-    for (int i = 0; i < count; i++) {
+    int objCount = (count > max_object) ? max_object : count;
+    objects.resize(objCount);
+    for (int i = 0; i < objCount; i++) {
         objects[i] = proposals[picked[i]];
 
         // adjust offset to original unpadded

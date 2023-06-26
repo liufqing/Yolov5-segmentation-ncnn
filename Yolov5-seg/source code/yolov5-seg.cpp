@@ -91,9 +91,11 @@ int main(int argc, char* argv[]) {
             }
 		}
         auto total = (double)(clock() - tStart) / CLOCKS_PER_SEC;
+        double average = total / count;
 		std::cout << "\n------------------------------------------------" << std::endl;
-        std::cout << "Total time taken: " << total << " seconds" << std::endl;
 		std::cout << count << " images processed" << std::endl;
+        std::cout << "Total time taken: " << total << " seconds" << std::endl;
+        std::cout << "Average time taken: " << average << " seconds" << std::endl;
 		return EXIT_SUCCESS;
     }
 
