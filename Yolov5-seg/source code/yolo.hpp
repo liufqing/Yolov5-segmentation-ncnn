@@ -55,7 +55,7 @@ public:
 
     bool dynamic         = false;
     bool save            = false;
-    bool noseg           = false;
+    bool drawContour         = false;
     bool agnostic        = false;
     bool crop            = false;
     bool saveTxt         = false;

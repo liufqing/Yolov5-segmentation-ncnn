@@ -663,11 +663,11 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
         cv::Mat binMask;
         cv::threshold(obj.cv_mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
         
-        draw_mask(out, obj.cv_mask, color);
-
         std::vector<cv::Point> contour = mask2segment(obj.cv_mask);
-        //cv::polylines(out, contour, true, cc, 1);
-        //cv::imshow("contour", out);
+        if(drawContour)
+            cv::polylines(out, contour, true, cc, 1);
+        else
+            draw_mask(out, obj.cv_mask, color);
 
         std::string saveFileName = stem + "_" + std::to_string(i) + "_" + class_names[obj.label] + ".jpg";
 
