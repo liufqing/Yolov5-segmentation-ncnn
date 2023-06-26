@@ -1,10 +1,87 @@
 #include "opencv2/opencv.hpp"
 #include <vector>
+#include <iostream>
 using namespace std;
 using namespace cv;
-//----------------------------------------------------------
-//
-//----------------------------------------------------------
+
+void getQuadrangleSubPix_8u32f_CnR(const uchar* src, size_t src_step, Size src_size,
+		float* dst, size_t dst_step, Size win_size,
+		const double* matrix, int cn);
+
+void myGetQuadrangleSubPix(const Mat& src, Mat& dst, Mat& m);
+
+void getRotRectImg(cv::RotatedRect rr, Mat& img, Mat& dst);
+
+void onTrackbar(int, void*);
+
+int x;
+int y;
+int angle;
+Mat src;
+Mat dst;
+
+int main(int argc, char* argv[])
+{
+	const char* inputPath = argv[1];
+	src = imread(inputPath);
+	src.convertTo(src, CV_32FC3, 1.0 / 255.0);
+
+	angle = 0;
+	x = 0;
+	y = 0;
+	
+	const char* windowname = "src";
+
+	namedWindow(windowname, WINDOW_AUTOSIZE);
+	cv::createTrackbar("angle", windowname, &angle, 12, onTrackbar);
+	cv::createTrackbar("x", windowname, &x, 10, onTrackbar);
+	cv::createTrackbar("y", windowname, &y, 10, onTrackbar);
+
+	onTrackbar(0, 0);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
+
+	return 0;
+}
+
+void onTrackbar(int, void*) {
+	Mat dst, srcCopy = src.clone();
+	int newangle = angle * 30;
+	cv::RotatedRect rr(cv::Point2f(200, 200), Size(300, 300), newangle);
+
+	//Draw rotated rectangle
+	Point2f rect_points[4];
+	rr.points(rect_points);
+	for (int j = 0; j < 4; j++)
+	{
+		line(srcCopy, rect_points[j], rect_points[(j + 1) % 4], Scalar(0, 1, 0), 1);
+	}
+
+	float sinA = sin(newangle * CV_PI / 180.0);
+	float cosA = cos(newangle * CV_PI / 180.0);
+	float width = rr.size.width;
+	float height = rr.size.height;
+	float xShift = width / 2.0f - cosA * rr.center.x - sinA * rr.center.y;
+	float yShift = height / 2.0f - cosA * rr.center.y + sinA * rr.center.x;
+	float data[6] = {
+		 cosA, sinA, xShift,
+		-sinA, cosA, yShift };
+	cv::Mat affineMatrix(2, 3, CV_32FC1, data);
+	//Mat affineMatrix = cv::getRotationMatrix2D(rr.center, rr.angle, 1.0);
+
+	cv::warpAffine(src, dst, affineMatrix, rr.size, cv::INTER_CUBIC);
+	//cv::drawMarker(srcCopy, cv::Point(x*10,y*10), cv::Scalar(0,0,1));
+
+	system("cls");
+	cout << "sinA = " << sinA << endl;
+	cout << "cosA = " << cosA << endl;
+	cout << "angle = " << newangle << endl;
+	cout << "rr.angle = " << rr.angle << endl;
+	cout << affineMatrix << endl;
+	imshow("src", srcCopy);
+	imshow("dst", dst);
+}
+
 void getQuadrangleSubPix_8u32f_CnR(const uchar* src, size_t src_step, Size src_size,
 	float* dst, size_t dst_step, Size win_size,
 	const double* matrix, int cn)
@@ -96,9 +173,6 @@ void getQuadrangleSubPix_8u32f_CnR(const uchar* src, size_t src_step, Size src_s
 	}
 }
 
-//----------------------------------------------------------
-// 
-//----------------------------------------------------------
 void myGetQuadrangleSubPix(const Mat& src, Mat& dst, Mat& m)
 {
 	CV_Assert(src.channels() == dst.channels());
@@ -124,9 +198,7 @@ void myGetQuadrangleSubPix(const Mat& src, Mat& dst, Mat& m)
 			cv::BORDER_REPLICATE);
 	}
 }
-//----------------------------------------------------------
-// 
-//----------------------------------------------------------
+
 void getRotRectImg(cv::RotatedRect rr, Mat& img, Mat& dst)
 {
 	Mat m(2, 3, CV_64FC1);
@@ -138,32 +210,4 @@ void getRotRectImg(cv::RotatedRect rr, Mat& img, Mat& dst)
 	m.at<double>(0, 2) = rr.center.x;
 	m.at<double>(1, 2) = rr.center.y;
 	myGetQuadrangleSubPix(img, dst, m);
-}
-
-//----------------------------------------------------------
-// 
-//----------------------------------------------------------
-int main(int argc, char* argv[])
-{
-	Mat img = imread("../input/28.jpg");
-	img.convertTo(img, CV_32FC3, 1.0 / 255.0);
-
-	cv::RotatedRect rr(cv::Point2f(200, 200), Size(300, 300), -30);
-
-	// rotated rectangle
-	Point2f rect_points[4];
-	rr.points(rect_points);
-
-	for (int j = 0; j < 4; j++)
-	{
-		line(img, rect_points[j], rect_points[(j + 1) % 4], Scalar(0, 1, 0), 1);
-	}
-
-	imshow("colImg", img);
-	Mat dst(rr.size, CV_32FC3);
-	getRotRectImg(rr, img, dst);
-	imshow("rotImg", dst);
-	cv::waitKey(0);
-	cv::destroyAllWindows();
-	return 0;
 }
