@@ -1,0 +1,625 @@
+3 argument(s) passed
+model     = ..\models\seg\yolov5s-seg-idcard-2.ncnn.bin
+param     = ..\models\seg\yolov5s-seg-idcard-2.ncnn.param
+input     = ..\input\.
+data      = ..\data\idcard.txt
+size      = 640
+conf      = 0.25
+nms       = 0.45
+maxObj    = 1
+dynamic   = 0
+noseg     = 0
+agnostic  = 0
+crop      = 0
+save      = 1
+saveTxt   = 0
+saveMask  = 0
+------------------------------------------------
+Auto running on all images in the input folder
+------------------------------------------------
+..\input\00.jpg
+Inference time = 0.191 (seconds)
+Objects count = 1
+1 0.971689 113 141 756 536
+Output saved at ..\output\00.jpg
+------------------------------------------------
+..\input\01.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+0 0.976334 68 86 880 584
+Output saved at ..\output\01.jpg
+------------------------------------------------
+..\input\02.jpg
+Inference time = 0.19 (seconds)
+Objects count = 1
+5 0.979557 50 160 792 617
+Output saved at ..\output\02.jpg
+------------------------------------------------
+..\input\03.jpg
+Inference time = 0.197 (seconds)
+Objects count = 1
+5 0.978492 126 195 689 552
+Output saved at ..\output\03.jpg
+------------------------------------------------
+..\input\04.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+4 0.968734 140 116 754 511
+Output saved at ..\output\04.jpg
+------------------------------------------------
+..\input\05.jpg
+Inference time = 0.187 (seconds)
+Objects count = 1
+5 0.968117 210 86 746 427
+Output saved at ..\output\05.jpg
+------------------------------------------------
+..\input\06.jpg
+Inference time = 0.179 (seconds)
+Objects count = 1
+1 0.919373 250 241 1182 827
+Output saved at ..\output\06.jpg
+------------------------------------------------
+..\input\07.jpg
+Inference time = 0.186 (seconds)
+Objects count = 1
+1 0.977235 110 157 827 619
+Output saved at ..\output\07.jpg
+------------------------------------------------
+..\input\08.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+1 0.982388 105 53 880 532
+Output saved at ..\output\08.jpg
+------------------------------------------------
+..\input\09.jpg
+Inference time = 0.185 (seconds)
+Objects count = 1
+1 0.972743 132 110 797 532
+Output saved at ..\output\09.jpg
+------------------------------------------------
+..\input\10.jpg
+Inference time = 0.182 (seconds)
+Objects count = 1
+1 0.966120 95 144 781 570
+Output saved at ..\output\10.jpg
+------------------------------------------------
+..\input\11.jpg
+Inference time = 0.191 (seconds)
+Objects count = 1
+1 0.982854 60 52 831 536
+Output saved at ..\output\11.jpg
+------------------------------------------------
+..\input\12.jpg
+Inference time = 0.184 (seconds)
+Objects count = 1
+1 0.980179 130 70 864 536
+Output saved at ..\output\12.jpg
+------------------------------------------------
+..\input\13.jpg
+Inference time = 0.18 (seconds)
+Objects count = 1
+1 0.981214 85 66 842 536
+Output saved at ..\output\13.jpg
+------------------------------------------------
+..\input\14.jpg
+Inference time = 0.19 (seconds)
+Objects count = 1
+1 0.947457 111 168 751 574
+Output saved at ..\output\14.jpg
+------------------------------------------------
+..\input\15.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+0 0.963081 74 331 579 645
+Output saved at ..\output\15.jpg
+------------------------------------------------
+..\input\16.jpg
+Inference time = 0.205 (seconds)
+Objects count = 1
+0 0.971098 229 131 759 449
+Output saved at ..\output\16.jpg
+------------------------------------------------
+..\input\17.jpg
+Inference time = 0.199 (seconds)
+Objects count = 1
+0 0.975203 34 113 772 602
+Output saved at ..\output\17.jpg
+------------------------------------------------
+..\input\18.jpg
+Inference time = 0.206 (seconds)
+Objects count = 1
+0 0.982229 66 31 895 553
+Output saved at ..\output\18.jpg
+------------------------------------------------
+..\input\19.jpg
+Inference time = 0.186 (seconds)
+Objects count = 1
+0 0.976469 110 108 875 577
+Output saved at ..\output\19.jpg
+------------------------------------------------
+..\input\20.jpg
+Inference time = 0.182 (seconds)
+Objects count = 1
+0 0.963198 86 91 768 526
+Output saved at ..\output\20.jpg
+------------------------------------------------
+..\input\21.jpg
+Inference time = 0.21 (seconds)
+Objects count = 1
+0 0.970423 69 65 859 577
+Output saved at ..\output\21.jpg
+------------------------------------------------
+..\input\22.jpg
+Inference time = 0.199 (seconds)
+Objects count = 1
+0 0.970827 128 111 723 495
+Output saved at ..\output\22.jpg
+------------------------------------------------
+..\input\23.jpg
+Inference time = 0.19 (seconds)
+Objects count = 1
+5 0.962043 135 94 818 530
+Output saved at ..\output\23.jpg
+------------------------------------------------
+..\input\24.jpg
+Inference time = 0.195 (seconds)
+Objects count = 1
+1 0.875779 1 353 716 812
+Output saved at ..\output\24.jpg
+------------------------------------------------
+..\input\25.jpg
+Inference time = 0.199 (seconds)
+Objects count = 1
+4 0.982260 15 48 861 570
+Output saved at ..\output\25.jpg
+------------------------------------------------
+..\input\26.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+5 0.986741 42 49 876 571
+Output saved at ..\output\26.jpg
+------------------------------------------------
+..\input\27.jpg
+Inference time = 0.198 (seconds)
+Objects count = 1
+5 0.965668 165 151 779 531
+Output saved at ..\output\27.jpg
+------------------------------------------------
+..\input\28.jpg
+Inference time = 0.2 (seconds)
+Objects count = 1
+4 0.968519 61 62 603 406
+Output saved at ..\output\28.jpg
+------------------------------------------------
+..\input\29.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+1 0.976117 45 17 669 446
+Output saved at ..\output\29.jpg
+------------------------------------------------
+..\input\30.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+0 0.965781 16 35 640 491
+Output saved at ..\output\30.jpg
+------------------------------------------------
+..\input\31.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+1 0.965495 94 156 641 526
+Output saved at ..\output\31.jpg
+------------------------------------------------
+..\input\32.jpg
+Inference time = 0.197 (seconds)
+Objects count = 1
+1 0.974306 93 83 542 413
+Output saved at ..\output\32.jpg
+------------------------------------------------
+..\input\33.jpg
+Inference time = 0.19 (seconds)
+Objects count = 1
+2 0.964779 50 108 1080 885
+Output saved at ..\output\33.jpg
+------------------------------------------------
+..\input\34.jpg
+Inference time = 0.196 (seconds)
+Objects count = 1
+0 0.979399 105 95 970 1059
+Output saved at ..\output\34.jpg
+------------------------------------------------
+..\input\35.jpg
+Inference time = 0.21 (seconds)
+Objects count = 1
+5 0.988175 34 30 1059 1040
+Output saved at ..\output\35.jpg
+------------------------------------------------
+..\input\36.jpg
+Inference time = 0.195 (seconds)
+Objects count = 1
+5 0.975088 91 150 970 1012
+Output saved at ..\output\36.jpg
+------------------------------------------------
+..\input\37.jpg
+Inference time = 0.199 (seconds)
+Objects count = 1
+3 0.975635 209 224 901 1026
+Output saved at ..\output\37.jpg
+------------------------------------------------
+..\input\38.jpg
+Inference time = 0.186 (seconds)
+Objects count = 1
+5 0.983712 135 103 1058 912
+Output saved at ..\output\38.jpg
+------------------------------------------------
+..\input\39.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+4 0.962902 460 333 4331 4715
+Output saved at ..\output\39.jpg
+------------------------------------------------
+..\input\40.jpg
+Inference time = 0.189 (seconds)
+Objects count = 1
+1 0.990967 43 65 961 1106
+Output saved at ..\output\40.jpg
+------------------------------------------------
+..\input\41.jpg
+Inference time = 0.206 (seconds)
+Objects count = 1
+1 0.985405 102 124 977 829
+Output saved at ..\output\41.jpg
+------------------------------------------------
+..\input\42.jpg
+Inference time = 0.229 (seconds)
+Objects count = 1
+3 0.868242 17 25 935 740
+Output saved at ..\output\42.jpg
+------------------------------------------------
+..\input\43.jpg
+Inference time = 0.211 (seconds)
+Objects count = 1
+4 0.973594 47 86 972 754
+Output saved at ..\output\43.jpg
+------------------------------------------------
+..\input\44.jpg
+Inference time = 0.197 (seconds)
+Objects count = 1
+4 0.971467 94 89 1097 955
+Output saved at ..\output\44.jpg
+------------------------------------------------
+..\input\45.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+1 0.674620 266 267 1242 960
+Output saved at ..\output\45.jpg
+------------------------------------------------
+..\input\46.jpg
+Inference time = 0.194 (seconds)
+Objects count = 1
+1 0.960926 206 897 2943 2939
+Output saved at ..\output\46.jpg
+------------------------------------------------
+..\input\47.jpg
+Inference time = 0.2 (seconds)
+Objects count = 1
+1 0.977296 57 49 1099 957
+Output saved at ..\output\47.jpg
+------------------------------------------------
+..\input\48.jpg
+Inference time = 0.211 (seconds)
+Objects count = 1
+1 0.968635 175 221 909 860
+Output saved at ..\output\48.jpg
+------------------------------------------------
+..\input\49.jpg
+Inference time = 0.204 (seconds)
+Objects count = 1
+1 0.980920 66 60 1008 784
+Output saved at ..\output\49.jpg
+------------------------------------------------
+..\input\50.jpg
+Inference time = 0.201 (seconds)
+Objects count = 1
+1 0.977734 105 169 886 746
+Output saved at ..\output\50.jpg
+------------------------------------------------
+..\input\51.jpg
+Inference time = 0.217 (seconds)
+Objects count = 1
+1 0.983288 61 80 934 621
+Output saved at ..\output\51.jpg
+------------------------------------------------
+..\input\52.jpg
+Inference time = 0.197 (seconds)
+Objects count = 1
+1 0.966699 54 54 899 591
+Output saved at ..\output\52.jpg
+------------------------------------------------
+..\input\53.jpg
+Inference time = 0.199 (seconds)
+Objects count = 1
+1 0.981439 134 287 710 667
+Output saved at ..\output\53.jpg
+------------------------------------------------
+..\input\54.jpg
+Inference time = 0.207 (seconds)
+Objects count = 1
+1 0.954031 30 29 918 599
+Output saved at ..\output\54.jpg
+------------------------------------------------
+..\input\55.jpg
+Inference time = 0.187 (seconds)
+Objects count = 1
+1 0.975774 34 39 904 571
+Output saved at ..\output\55.jpg
+------------------------------------------------
+..\input\56.jpg
+Inference time = 0.194 (seconds)
+Objects count = 1
+1 0.977073 110 157 827 618
+Output saved at ..\output\56.jpg
+------------------------------------------------
+..\input\57.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+1 0.979058 75 82 859 559
+Output saved at ..\output\57.jpg
+------------------------------------------------
+..\input\58.jpg
+Inference time = 0.196 (seconds)
+Objects count = 1
+1 0.985243 54 45 854 558
+Output saved at ..\output\58.jpg
+------------------------------------------------
+..\input\59.jpg
+Inference time = 0.177 (seconds)
+Objects count = 1
+1 0.977576 82 120 832 597
+Output saved at ..\output\59.jpg
+------------------------------------------------
+..\input\60.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+1 0.979562 89 68 851 550
+Output saved at ..\output\60.jpg
+------------------------------------------------
+..\input\61.jpg
+Inference time = 0.199 (seconds)
+Objects count = 1
+1 0.981897 45 40 916 576
+Output saved at ..\output\61.jpg
+------------------------------------------------
+..\input\62.jpg
+Inference time = 0.197 (seconds)
+Objects count = 1
+1 0.949514 0 581 955 1223
+Output saved at ..\output\62.jpg
+------------------------------------------------
+..\input\63.jpg
+Inference time = 0.2 (seconds)
+Objects count = 1
+3 0.840839 99 96 349 335
+Output saved at ..\output\63.jpg
+------------------------------------------------
+..\input\64.jpg
+Inference time = 0.201 (seconds)
+Objects count = 1
+2 0.874770 27 27 656 657
+Output saved at ..\output\64.jpg
+------------------------------------------------
+..\input\65.jpg
+Inference time = 0.205 (seconds)
+Objects count = 1
+3 0.943706 50 55 440 449
+Output saved at ..\output\65.jpg
+------------------------------------------------
+..\input\66.jpg
+Inference time = 0.203 (seconds)
+Objects count = 1
+2 0.945327 48 51 826 831
+Output saved at ..\output\66.jpg
+------------------------------------------------
+..\input\67.jpg
+Inference time = 0.191 (seconds)
+Objects count = 1
+5 0.923003 143 146 986 992
+Output saved at ..\output\67.jpg
+------------------------------------------------
+..\input\68.jpg
+Inference time = 0.21 (seconds)
+Objects count = 1
+5 0.974685 126 193 945 1027
+Output saved at ..\output\68.jpg
+------------------------------------------------
+..\input\69.jpg
+Inference time = 0.208 (seconds)
+Objects count = 1
+4 0.959810 146 99 1118 1009
+Output saved at ..\output\69.jpg
+------------------------------------------------
+..\input\70.jpg
+Inference time = 0.195 (seconds)
+Objects count = 1
+4 0.973594 75 96 1056 1090
+Output saved at ..\output\70.jpg
+------------------------------------------------
+..\input\71.jpg
+Inference time = 0.196 (seconds)
+Objects count = 1
+1 0.319719 994 1035 1467 1473
+Output saved at ..\output\71.jpg
+------------------------------------------------
+..\input\72.jpg
+Inference time = 0.21 (seconds)
+Objects count = 1
+1 0.959415 361 353 1474 1467
+Output saved at ..\output\72.jpg
+------------------------------------------------
+..\input\73.jpg
+Inference time = 0.184 (seconds)
+Objects count = 1
+0 0.975310 319 303 1270 1234
+Output saved at ..\output\73.jpg
+------------------------------------------------
+..\input\74.jpg
+Inference time = 0.212 (seconds)
+Objects count = 1
+0 0.959877 932 1091 3324 3605
+Output saved at ..\output\74.jpg
+------------------------------------------------
+..\input\75.jpg
+Inference time = 0.19 (seconds)
+Objects count = 1
+3 0.959322 110 74 989 1098
+Output saved at ..\output\75.jpg
+------------------------------------------------
+..\input\76.jpg
+Inference time = 0.194 (seconds)
+Objects count = 1
+2 0.977420 55 40 747 846
+Output saved at ..\output\76.jpg
+------------------------------------------------
+..\input\77.jpg
+Inference time = 0.193 (seconds)
+Objects count = 1
+2 0.971743 32 34 617 705
+Output saved at ..\output\77.jpg
+------------------------------------------------
+..\input\78.jpg
+Inference time = 0.2 (seconds)
+Objects count = 1
+3 0.977545 51 52 780 891
+Output saved at ..\output\78.jpg
+------------------------------------------------
+..\input\79.jpg
+Inference time = 0.206 (seconds)
+Objects count = 1
+5 0.975241 126 94 969 1014
+Output saved at ..\output\79.jpg
+------------------------------------------------
+..\input\80.jpg
+Inference time = 0.201 (seconds)
+Objects count = 1
+5 0.967386 96 164 860 1030
+Output saved at ..\output\80.jpg
+------------------------------------------------
+..\input\81.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+4 0.959815 151 178 880 1040
+Output saved at ..\output\81.jpg
+------------------------------------------------
+..\input\82.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+4 0.975799 33 72 938 1072
+Output saved at ..\output\82.jpg
+------------------------------------------------
+..\input\83.jpg
+Inference time = 0.186 (seconds)
+Objects count = 1
+1 0.935897 86 92 958 1052
+Output saved at ..\output\83.jpg
+------------------------------------------------
+..\input\84.jpg
+Inference time = 0.185 (seconds)
+Objects count = 1
+1 0.970501 43 47 976 1108
+Output saved at ..\output\84.jpg
+------------------------------------------------
+..\input\85.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+0 0.972835 360 232 1198 1219
+Output saved at ..\output\85.jpg
+------------------------------------------------
+..\input\86.jpg
+Inference time = 0.186 (seconds)
+Objects count = 1
+0 0.967991 338 232 843 808
+Output saved at ..\output\86.jpg
+------------------------------------------------
+..\input\87.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+5 0.948477 63 46 576 379
+Output saved at ..\output\87.jpg
+------------------------------------------------
+..\input\88.jpg
+Inference time = 0.179 (seconds)
+Objects count = 1
+4 0.978442 63 61 930 631
+Output saved at ..\output\88.jpg
+------------------------------------------------
+..\input\89.jpg
+Inference time = 0.19 (seconds)
+Objects count = 1
+5 0.969086 74 91 617 454
+Output saved at ..\output\89.jpg
+------------------------------------------------
+..\input\90.jpg
+Inference time = 0.191 (seconds)
+Objects count = 1
+4 0.969634 403 3 1006 947
+Output saved at ..\output\90.jpg
+------------------------------------------------
+..\input\91.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+4 0.951321 25 15 920 619
+Output saved at ..\output\91.jpg
+------------------------------------------------
+..\input\92.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+0 0.967867 33 1326 2694 2984
+Output saved at ..\output\92.jpg
+------------------------------------------------
+..\input\93.jpg
+Inference time = 0.186 (seconds)
+Objects count = 1
+1 0.919794 249 240 1181 828
+Output saved at ..\output\93.jpg
+------------------------------------------------
+..\input\94.jpg
+Inference time = 0.184 (seconds)
+Objects count = 1
+1 0.960412 23 908 2447 2406
+Output saved at ..\output\94.jpg
+------------------------------------------------
+..\input\95.jpg
+Inference time = 0.184 (seconds)
+Objects count = 1
+1 0.950170 1 653 935 1213
+Output saved at ..\output\95.jpg
+------------------------------------------------
+..\input\96.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+1 0.970062 18 1185 2900 2866
+Output saved at ..\output\96.jpg
+------------------------------------------------
+..\input\97.jpg
+Inference time = 0.183 (seconds)
+Objects count = 1
+1 0.972281 19 326 950 922
+Output saved at ..\output\97.jpg
+------------------------------------------------
+..\input\98.jpg
+Inference time = 0.176 (seconds)
+Objects count = 1
+1 0.956716 30 1049 2945 2907
+Output saved at ..\output\98.jpg
+------------------------------------------------
+..\input\99.jpg
+Inference time = 0.191 (seconds)
+Objects count = 1
+1 0.970850 8 500 949 1134
+Output saved at ..\output\99.jpg
+------------------------------------------------
+100 images processed
+Total time taken: 27.051 seconds
+Average time taken: 0.27051 seconds
+
+D:\Projects\Random_Project\Yolo\x64\Release\Yolov5-seg.exe (process 20772) exited with code 0.
+Press any key to close this window . . .
