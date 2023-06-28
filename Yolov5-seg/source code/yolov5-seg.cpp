@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     float nms             = argument.setDefaultArgument("--nms", 0.45f);
     int maxObj            = argument.setDefaultArgument("--max-obj", 100);
     bool dynamic          = argument.cmdOptionExists("--dynamic");
-    bool noseg            = argument.cmdOptionExists("--noseg");
+    bool contour            = argument.cmdOptionExists("--contour");
     bool agnostic         = argument.cmdOptionExists("--agnostic");
     bool crop             = argument.cmdOptionExists("--crop");
     bool save             = argument.cmdOptionExists("--save");
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
                 << "\nnms       = " << nms
                 << "\nmaxObj    = " << maxObj
                 << "\ndynamic   = " << dynamic
-                << "\nnoseg     = " << noseg
+                << "\nnoseg     = " << contour
                 << "\nagnostic  = " << agnostic
                 << "\ncrop      = " << crop
                 << "\nsave      = " << save
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     Yolov5.target_size    = size;
     Yolov5.prob_threshold = conf;
     Yolov5.nms_threshold  = nms;
-    Yolov5.noseg          = noseg;
+    Yolov5.drawContour    = contour;
     Yolov5.agnostic       = agnostic;
     Yolov5.max_object     = maxObj;
     Yolov5.saveTxt		  = saveTxt;
@@ -91,26 +91,20 @@ int main(int argc, char* argv[]) {
             }
 		}
         auto total = (double)(clock() - tStart) / CLOCKS_PER_SEC;
+        double average = total / count;
 		std::cout << "\n------------------------------------------------" << std::endl;
-        std::cout << "Total time taken: " << total << " seconds" << std::endl;
 		std::cout << count << " images processed" << std::endl;
+        std::cout << "Total time taken: " << total << " seconds" << std::endl;
+        std::cout << "Average time taken: " << average << " seconds" << std::endl;
 		return EXIT_SUCCESS;
     }
 
-    if (input == "0") {
-        cv::VideoCapture capture;
-        capture.open(0);
-        Yolov5.video(capture);
-        return EXIT_SUCCESS;
-    }
     if (isImage(inputPath)) {
         Yolov5.image(inputPath, outputPath);
         return EXIT_SUCCESS;
     }
-    if (isVideo(inputPath)) {
-        cv::VideoCapture capture;
-        capture.open(inputPath.string());
-        Yolov5.video(capture);
+    if (input == "0" or isVideo(inputPath)) {
+        Yolov5.video(inputPath.string());
         return EXIT_SUCCESS;
     }
 

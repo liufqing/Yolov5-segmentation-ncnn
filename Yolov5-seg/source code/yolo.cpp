@@ -460,8 +460,9 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     ncnn::Mat mask_pred_result;
     decode_mask(mask_feat, img_w, img_h, mask_proto, in_pad, wpad, hpad, mask_pred_result);
 
-    objects.resize(count);
-    for (int i = 0; i < count; i++) {
+    int objCount = (count > max_object) ? max_object : count;
+    objects.resize(objCount);
+    for (int i = 0; i < objCount; i++) {
         objects[i] = proposals[picked[i]];
 
         // adjust offset to original unpadded
@@ -491,7 +492,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
 
 cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode) {
     cv::Mat out = bgr.clone();
-    int objCount  = objects.size();
+    size_t objCount  = objects.size();
     std::cout << "Objects count = " << objCount <<std::endl;
 
     int color_index = 0;
@@ -632,7 +633,7 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
     std::string maskFolder = outputFolder.string() + "\\mask";
     std::string rotateFolder = outputFolder.string() + "\\rotate";
 	
-	const int objCount = objects.size();
+	const size_t objCount = objects.size();
 	std::cout << "Objects count = " << objCount << std::endl;
 
 	int color_index = 0;
@@ -661,35 +662,41 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 
         cv::Mat binMask;
         cv::threshold(obj.cv_mask, binMask, 0.5, 255, cv::ThresholdTypes::THRESH_BINARY); // Mask Binarization
-
-        draw_mask(out, obj.cv_mask, color);
-
+        
         std::vector<cv::Point> contour = mask2segment(obj.cv_mask);
+        if(drawContour)
+            cv::polylines(out, contour, true, cc, 1);
+        else
+            draw_mask(out, obj.cv_mask, color);
 
-        if (contour.size() < 3)
-            continue;
-        //cv::polylines(out, contour, true, cc, 1);
-        //cv::imshow("contour", out);
-        cv::RotatedRect rr = cv::minAreaRect(contour);
-        //draw_RotatedRect(out, rr, cc);
+        std::string saveFileName = stem + "_" + std::to_string(i) + "_" + class_names[obj.label] + ".jpg";
 
         if (rotate) {
+            cv::Mat rotated;
+            if (contour.size() < 3)
+                rotated = in(obj.rect);
+            else {
+                cv::RotatedRect rr = cv::minAreaRect(contour);
+                //draw_RotatedRect(out, rr, cc);
+                rotated = getRotatedRectImg(in, rr);
+            }
 			cv::utils::fs::createDirectory(rotateFolder);
-			cv::Mat rotated = getRotatedRectImg(in, rr);
-			std::string rotatePath = rotateFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+            std::string rotatePath = rotateFolder + "\\" + saveFileName;
+            if(!continuous)
+                cv::imshow("rotated", rotated);
 			cv::imwrite(rotatePath, rotated);
 		}
 
         if (crop) {
             cv::utils::fs::createDirectory(cropFolder);
             cv::Mat RoI(in, obj.rect); //Region Of Interest
-            std::string cropPath = cropFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+            std::string cropPath = cropFolder + "\\" + saveFileName;
             cv::imwrite(cropPath, RoI);
         }
 
         if (saveMask) {
             cv::utils::fs::createDirectory(maskFolder);
-            std::string maskPath = maskFolder + "\\" + stem + "_" + std::to_string(i) + ".jpg";
+            std::string maskPath = maskFolder + "\\" + saveFileName;
             cv::imwrite(maskPath, binMask);
         }
 	}
@@ -700,7 +707,6 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
         cv::imshow("Detect", out);
         cv::waitKey();
     }
- 
 
 	if (save) {
         cv::utils::fs::createDirectory(outputFolder.string());
@@ -717,7 +723,14 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 	}
 }
 
-void Yolo::video(cv::VideoCapture capture) {
+void Yolo::video(std::string inputPath) {
+    cv::VideoCapture capture;
+    if (inputPath == "0") {
+        capture.open(0);
+    }
+    else {
+		capture.open(inputPath);
+	}
     if (capture.isOpened()) {
         std::cout << "Object Detection Started...." << std::endl;
 
@@ -745,22 +758,38 @@ void Yolo::video(cv::VideoCapture capture) {
     }
 }
 
-cv::Mat Yolo::getAffineTransformForRotatedRect(cv::RotatedRect rr) {
-    float angle = rr.angle * M_PI / 180.0;
+cv::Mat Yolo::getRotatedRectImg(const cv::Mat& src, const cv::RotatedRect& rr) {
+    float angle = rr.angle;
+    float width = rr.size.width;
+    float height = rr.size.height;
+
+    if (rr.size.width < rr.size.height) {
+        std::swap(width, height);
+        angle = angle - 90;
+    }
+
+    float radianAngle = angle * CV_PI / 180;
     // angle += M_PI; // you may want rotate it upsidedown
-    float sinA = sin(angle), cosA = cos(angle);
+    float sinA = sin(radianAngle), cosA = cos(radianAngle);
     float data[6] = {
-         cosA, sinA, rr.size.width / 2.0f - cosA * rr.center.x - sinA * rr.center.y,
-        -sinA, cosA, rr.size.height / 2.0f - cosA * rr.center.y + sinA * rr.center.x };
-    cv::Mat rot_mat(2, 3, CV_32FC1, data);
-    return rot_mat.clone();
-}
+         cosA, sinA, width / 2.0f - cosA * rr.center.x - sinA * rr.center.y,
+        -sinA, cosA, height / 2.0f - cosA * rr.center.y + sinA * rr.center.x };
+    cv::Mat affineMatrix(2, 3, CV_32FC1, data);
 
-cv::Mat Yolo::getRotatedRectImg(const cv::Mat& mat, cv::RotatedRect rr) {
-    cv::Mat M, result;
-    M = getAffineTransformForRotatedRect(rr);
-
-    warpAffine(mat, result, M, rr.size, cv::INTER_CUBIC);
+    /*
+    Alternate way to get affineMatrix matrix
+    cv::Mat affineMatrix(2, 3, CV_32FC1);
+    affineMatrix.at<float>(0, 0) = cosA;
+    affineMatrix.at<float>(0, 1) = sinA;
+    affineMatrix.at<float>(0, 2) = width / 2.0f - cosA * rr.center.x - sinA * rr.center.y;
+    affineMatrix.at<float>(1, 0) = -sinA;
+    affineMatrix.at<float>(1, 1) = cosA;
+    affineMatrix.at<float>(1, 2) = height / 2.0f - cosA * rr.center.y + sinA * rr.center.x;
+    */
+    //cv::Mat affineMatrix = cv::getRotationMatrix2D(rr.center, rr.angle, 1.0);
+    //cv::warpAffine(src, result, affineMatrix, src.size(), cv::INTER_CUBIC);
+    cv::Mat result;
+    cv::warpAffine(src, result, affineMatrix, cv::Size2f(width,height), cv::INTER_CUBIC);
 
     return result;
 }
