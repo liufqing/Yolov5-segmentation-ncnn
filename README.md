@@ -31,48 +31,33 @@ Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmenta
 ```  
 3. Run yolov5-seg.exe in cmd ( assumed that the *.bin and *.param are both in models folder )
 ```cmd
-yoloncnn [--model]
-         [--data]
-         [--source]
-         [--output]
-         [--size]
-         [--conf]
-         [--nms]
-         [--max-obj]
-         [--dynamic]
-         [--agnostic]
-         [--contour]
-         [--save]
-         [--save--text]
-         [--crop]
-         [--rotate]
+Usage
 
+yoloncnn [option] <value>
+
+Options
+    --model <ncnn model name>           = Explicitly specify the ncnn model name. Default yolov5s-seg.ncnn
+    --data <class names txt file>       = Explicitly specify the class names txt file. Default coco128.txt
+    --source <input source>             = Explicitly specify the input source. Default test.bmp
+    --output <output folder>            = Explicitly specify the output folder. Default output
+    --size <target size>                = Specify the target size. Default 640
+    --conf <confident threshold>        = Specify the confident threshold. Default 0.25
+    --nms <nms threshold>               = Specify the nms threshold. Default 0.45
+    --max-obj <max objects detection>   = Specify the max objects detection. Default 100
+    --dynamic                           = Dynamic inference flag. Default false
+    --agnostic                          = Agnostic nms flag. Default false
+    --contour                           = Draw contour instead of mask flag. Default false
+    --save                              = Save output flag. Default false
+    --save--text                        = Save output label to a text file flag. Default false
+    --crop                              = Crop output flag. Default false
+    --rotate                            = Rotate output flag. Default false
 ```
-model : ncnn model name. Default yolov5s-seg.ncnn
-
-data : class names txt file. Default coco128.txt
-
-source : images ( *jpg, *png,... ) ; videos ( *mp4, *mov,... ) ; 0 for webcam ; or . for run all images in input folder. Default "test.bmp"
-
-size : target size. Default 640
-
-conf : confident threshold. Default 0.25
-
-nms : nms threshold. Default 0.45
-
-dynamic : dynamic inference flag.
-
-agnostic : agnostic nms flag.
-
-contour : draw contour instead of mask flag.
-
-save : save output flag.
-
-save-text : save output label to a text file flag.
-
-crop : crop output flag.
-
-rotate : rotate output flag.
+Note :
+source can be : 
+- image path
+- videos path
+- 0 for webcam
+- . for run all images in input folder
 
 For example :
 ```cmd
