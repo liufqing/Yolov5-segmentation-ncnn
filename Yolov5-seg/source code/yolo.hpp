@@ -79,11 +79,10 @@ private:
 private:
     /// @brief Draw all the objects at once.
     /// This function is a combination of draw_mask, draw_label and cv::rectangle
-    /// @param bgr background image to be draw on. This function will makes a clone of the background image to avoid drawing on the original image
+    /// @param bgr background image to be draw on.
     /// @param objects object vector contain all the detected object in the image
     /// @param colorMode determine the color for each object to be draw ( bounding box and feature mask )
-    /// @return image with all the objects draw on
-    cv::Mat draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode = byIndex);
+    void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int colorMode = byIndex);
     
     /// @brief draw color mask on the background image.
     /// @param bgr background image to be draw on.

@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     std::string dataFolder      = "..\\data";
 
     //set default argument
-    std::string model     = argument.setDefaultArgument("--model", "seg\\yolov5s-seg-idcard-2.ncnn");
+    std::string model     = argument.setDefaultArgument("--model", "yolov5s-seg-idcard-2.ncnn");
     std::string data      = argument.setDefaultArgument("--data", "idcard.txt");
     std::string input     = argument.setDefaultArgument("--source", "01.jpg");
     std::string output	  = argument.setDefaultArgument("--output", outputFolder);

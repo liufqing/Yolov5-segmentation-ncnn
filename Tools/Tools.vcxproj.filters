@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="saveConsole.cpp">
+    <ClCompile Include="images2video.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

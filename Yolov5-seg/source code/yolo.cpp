@@ -490,8 +490,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     return 0;
 }
 
-cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int colorMode) {
-    cv::Mat out = bgr.clone();
+void Yolo::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int colorMode) {
     size_t objCount  = objects.size();
     std::cout << "Objects count = " << objCount <<std::endl;
 
@@ -514,7 +513,7 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         if(colorMode == byIndex)
             color_index = i;
 
-        cv::rectangle(out, obj.rect, cc, 1);
+        cv::rectangle(bgr, obj.rect, cc, 1);
 
         std::string text = class_names[obj.label] + " " + cv::format("%.2f", obj.prob * 100) + "%";
 
@@ -525,15 +524,14 @@ cv::Mat Yolo::draw_objects(cv::Mat bgr, const std::vector<Object>& objects, int 
         int y = obj.rect.y - label_size.height - baseLine;
         if (y < 0)
             y = 0;
-        if (x + label_size.width > out.cols)
-            x = out.cols - label_size.width;
+        if (x + label_size.width > bgr.cols)
+            x = bgr.cols - label_size.width;
 
-        cv::rectangle(out, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
-        cv::putText(out, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
+        cv::rectangle(bgr, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
+        cv::putText(bgr, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
                 
-        draw_mask(out, obj.cv_mask, color);
+        draw_mask(bgr, obj.cv_mask, color);
     }
-    return out;
 }
 
 void Yolo::draw_label(cv::Mat& bgr,const cv::Rect2f& rect, std::string label) {
@@ -733,19 +731,26 @@ void Yolo::video(std::string inputPath) {
 	}
     if (capture.isOpened()) {
         std::cout << "Object Detection Started...." << std::endl;
+        std::cout << "Press q or esc to stop" << std::endl;
 
         std::vector<Object> objects;
 
-        cv::Mat frame, out;
+        cv::Mat frame;
+        size_t frameIndex = 0;
         do {
             capture >> frame; //extract frame by frame
             if (dynamic)
                 detect_dynamic(frame, objects);
             else
                 detect(frame, objects);
-            out = frame.clone();
-            draw_objects(out, objects, 0);
-            cv::imshow("Detect", out);
+            draw_objects(frame, objects, 0);
+            cv::imshow("Detect", frame);
+            if (save) {
+                cv::utils::fs::createDirectory("..\\frame");
+                std::string saveFileName = "..\\frame\\" + std::to_string(frameIndex) + ".jpg";
+                cv::imwrite(saveFileName, frame);
+                frameIndex++;
+            }
 
             char key = (char)cv::pollKey();
 
