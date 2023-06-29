@@ -11,7 +11,7 @@ Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmenta
 1. Put NCNN model (.bin and .param) to the "models" folder.
 2. Put inference image to "input" folder
 3. Put class names text file ( *.txt ) to "data" folder ( See the tree below )
-```         
+```   
 +---data
 |       coco128.txt
 |       
@@ -31,7 +31,7 @@ Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmenta
 |       yoloncnn.exe
 ```  
 3. Run yolov5-seg.exe in cmd ( assumed that the *.bin and *.param are both in models folder )
-```cmd
+```
 Usage
 
 yoloncnn [option] <value>
@@ -61,10 +61,10 @@ source can be :
 - . for run all images in input folder
 
 For example :
-```cmd
+```
 yoloncnn --input cat.jpg --model yolov5s-seg.ncnn --dynamic --save --agnostic
 ```
-```cmd
+```
 5 argument(s) passed
 model     = ..\models\yolov5s-seg.ncnn.bin
 param     = ..\models\yolov5s-seg.ncnn.param
