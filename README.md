@@ -8,8 +8,9 @@ Setup for windows 10, using visual studio 2022. Refer to [build](./build/build.m
 Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmentation-ncnn/releases/tag/v1.0)
 
 # How to run
-1. Put NCNN model (.bin and .param) to the "../models" folder.
-2. Put inference image to "../input" folder and data file ( *.txt ) to "../data" folder ( See the tree below )
+1. Put NCNN model (.bin and .param) to the "models" folder.
+2. Put inference image to "input" folder
+3. Put class names text file ( *.txt ) to "data" folder ( See the tree below )
 ```         
 +---data
 |       coco128.txt
@@ -26,8 +27,8 @@ Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmenta
 +---output
 |       cat.jpg
 |       cat.mp4
-\---Yolov5-seg
-        yoloncnn.exe
++---Yolov5-seg
+|       yoloncnn.exe
 ```  
 3. Run yolov5-seg.exe in cmd ( assumed that the *.bin and *.param are both in models folder )
 ```cmd
