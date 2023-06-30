@@ -2,15 +2,20 @@
 
 ![cat.gif](./output/cat.gif)
 
-# Setup
+## Setup
+
 Setup for windows 10, using visual studio 2022. Refer to [build](./build/build.md)
 
 Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmentation-ncnn/releases/tag/v1.0)
 
-# How to run
-1. Put NCNN model (.bin and .param) to the "../models" folder.
-2. Put inference image to "../input" folder and data file ( *.txt ) to "../data" folder ( See the tree below )
-```         
+## How to run
+
+1. Put NCNN model (.bin and .param) to the "models" folder.
+2. Put inference image to "input" folder
+3. Put class names text file ( *.txt ) to "data" folder ( See the tree below )
+4. Run yolov5-seg.exe in cmd ( assumed that the *.bin and*.param are both in models folder )
+
+```
 +---data
 |       coco128.txt
 |       
@@ -26,59 +31,48 @@ Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmenta
 +---output
 |       cat.jpg
 |       cat.mp4
-\---Yolov5-seg
-        yoloncnn.exe
++---Yolov5-seg
+|       yoloncnn.exe
 ```  
-3. Run yolov5-seg.exe in cmd ( assumed that the *.bin and *.param are both in models folder )
-```cmd
-yoloncnn [--model]
-         [--data]
-         [--source]
-         [--output]
-         [--size]
-         [--conf]
-         [--nms]
-         [--max-obj]
-         [--dynamic]
-         [--agnostic]
-         [--contour]
-         [--save]
-         [--save--text]
-         [--crop]
-         [--rotate]
 
 ```
-model : ncnn model name. Default yolov5s-seg.ncnn
+Usage
 
-data : class names txt file. Default coco128.txt
+yoloncnn [option] <value>
 
-source : images ( *jpg, *png,... ) ; videos ( *mp4, *mov,... ) ; 0 for webcam ; or . for run all images in input folder. Default "test.bmp"
+Options
+    --model <ncnn model name>           = Explicitly specify the ncnn model name. Default yolov5s-seg.ncnn
+    --data <class names txt file>       = Explicitly specify the class names txt file. Default coco128.txt
+    --source <input source>             = Explicitly specify the input source. Default test.bmp
+    --output <output folder>            = Explicitly specify the output folder. Default output
+    --size <target size>                = Specify the target size. Default 640
+    --conf <confident threshold>        = Specify the confident threshold. Default 0.25
+    --nms <nms threshold>               = Specify the nms threshold. Default 0.45
+    --max-obj <max objects detection>   = Specify the max objects detection. Default 100
+    --dynamic                           = Dynamic inference flag. Default false
+    --agnostic                          = Agnostic nms flag. Default false
+    --contour                           = Draw contour instead of mask flag. Default false
+    --save                              = Save output flag. Default false
+    --save--text                        = Save output label to a text file flag. Default false
+    --crop                              = Crop output flag. Default false
+    --rotate                            = Rotate output flag. Default false
+```
 
-size : target size. Default 640
+Note :
+source can be :
 
-conf : confident threshold. Default 0.25
-
-nms : nms threshold. Default 0.45
-
-dynamic : dynamic inference flag.
-
-agnostic : agnostic nms flag.
-
-contour : draw contour instead of mask flag.
-
-save : save output flag.
-
-save-text : save output label to a text file flag.
-
-crop : crop output flag.
-
-rotate : rotate output flag.
+- image path
+- videos path
+- 0 for webcam
+- . for run all images in input folder
 
 For example :
-```cmd
+
+```
 yoloncnn --input cat.jpg --model yolov5s-seg.ncnn --dynamic --save --agnostic
 ```
-```cmd
+
+```
 5 argument(s) passed
 model     = ..\models\yolov5s-seg.ncnn.bin
 param     = ..\models\yolov5s-seg.ncnn.param
@@ -105,17 +99,22 @@ Objects count = 5
 45 0.308080 92 444 581 615
 Output saved at ..\output\cat.jpg
 ```
+
 ![cat.jpg](./output/cat.jpg)
 
-# How to convert pytorch model to ncnn model 
-Currently, there's 2 ways to convert a pytorch model to ncnn model : 
-1. pytorch >> onnx >> ncnn 
+## How to convert pytorch model to ncnn model
+
+Currently, there's 2 ways to convert a pytorch model to ncnn model :
+
+1. pytorch >> onnx >> ncnn
 2. pytorch >> torchscript >> ncnn (via [pnnx](https://github.com/pnnx/pnnx))
 
 The author himself( or maybe her ) ([nihui](https://github.com/nihui)) recommended the **second method** (refer to [this comment](https://github.com/Tencent/ncnn/issues/4488#issuecomment-1434299765))
 
-# MEME PLACE
+## MEME PLACE
+
 Scientists : AI is going to take over the world.
 
 Mean while AI :
+
 ![meme.jpg](./output/meme.jpg)
