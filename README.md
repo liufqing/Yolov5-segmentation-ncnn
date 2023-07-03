@@ -8,8 +8,6 @@
 
 Setup for windows 10, using visual studio 2022. Refer to [build](./build/build.md)
 
-Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmentation-ncnn/releases/tag/v1.0)
-
 ## How to run
 
 1. Put NCNN model (.bin and .param) to the "models" folder.
