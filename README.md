@@ -1,19 +1,17 @@
 # Yolov5 Segmentation with NCNN
 
-> This branch is for ID card recognition and rotation
+> This branch is specifically made for ID card recognition and rotation.
 
 ![cmnd](./output/test.jpg)
 
-## Setup
-
-Setup for windows 10, using visual studio 2022. Refer to [build](./build/build.md)
+---
 
 ## How to run
 
 1. Put NCNN model (.bin and .param) to the "models" folder.
 2. Put inference image to "input" folder
 3. Put class names text file ( *.txt ) to "data" folder ( See the tree below )
-4. Run yolov5-seg.exe in cmd ( assumed that the *.bin and*.param are both in models folder )
+4. Run yolov5-seg.exe in cmd ( assumed that the *.bin and *.param are both in models folder )
 
 ```
 +---data
@@ -64,11 +62,12 @@ Options
     --rotate                            = Rotate output flag. Default false
 ```
 
-Note :
+**Note** :
+
 source can be :
 
-- image path
-- videos path
+- image file path
+- video file path
 - 0 for webcam
 - . for run all images in input folder
 
@@ -105,11 +104,9 @@ Output saved at ..\output\test.jpg
 
 ![test_0_cmt9_front.jpg](./output/rotate/test_0_cmt9_front.jpg)
 
-## How to convert pytorch model to ncnn model
+---
 
-Currently, there's 2 ways to convert a pytorch model to ncnn model :
+## Wiki
 
-1. pytorch >> onnx >> ncnn
-2. pytorch >> torchscript >> ncnn (via [pnnx](https://github.com/pnnx/pnnx))
-
-The author himself( or maybe her ) ([nihui](https://github.com/nihui)) recommended the **second method** (refer to [this comment](https://github.com/Tencent/ncnn/issues/4488#issuecomment-1434299765))
+- [Setup for windows, using visual studio 2022](https://github.com/canh25xp/Yolov5-segmentation-ncnn/wiki/How-to-build)
+- [Convert pytorch to ncnn](https://github.com/canh25xp/Yolov5-segmentation-ncnn/wiki/Convert-pytorch-model-to-ncnn-model)
