@@ -13,14 +13,14 @@ int main(int argc, char* argv[]) {
     //set default argument
     std::string model     = argument.setDefaultArgument("--model", "yolov5s-seg-idcard-2.ncnn");
     std::string data      = argument.setDefaultArgument("--data", "idcard.txt");
-    std::string input     = argument.setDefaultArgument("--source", "01.jpg");
+    std::string input     = argument.setDefaultArgument("--source", "test.jpg");
     std::string output	  = argument.setDefaultArgument("--output", outputFolder);
     int size              = argument.setDefaultArgument("--size", 640);
     float conf            = argument.setDefaultArgument("--conf", 0.25f);
     float nms             = argument.setDefaultArgument("--nms", 0.45f);
     int maxObj            = argument.setDefaultArgument("--max-obj", 1);
     bool dynamic          = argument.cmdOptionExists("--dynamic");
-    bool contour            = argument.cmdOptionExists("--contour");
+    bool contour          = argument.cmdOptionExists("--contour");
     bool agnostic         = argument.cmdOptionExists("--agnostic");
     bool crop             = argument.cmdOptionExists("--crop");
     bool save             = argument.cmdOptionExists("--save");

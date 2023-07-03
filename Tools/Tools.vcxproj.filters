@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="images2video.cpp">
+    <ClCompile Include="rotatedRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,8 @@
 # Yolov5 Segmentation with NCNN
 
-![cat.gif](./output/cat.gif)
+> This branch is for ID card recognition and rotation
+
+![cmnd](./output/test.jpg)
 
 ## Setup
 
@@ -17,20 +19,26 @@ Or download the window x64 [release](https://github.com/canh25xp/Yolov5-segmenta
 
 ```
 +---data
-|       coco128.txt
+|       idcard.txt
 |       
 +---input
-|       test.bmp
-|       cat.jpg
-|       cat.mp4
+|       00.jpg
+|       01.jpg
+|       02.jpg
+|       ...
 |
 +---models
-|       yolov5s-seg.ncnn.bin
-|       yolov5s-seg.ncnn.param
+|       yolov5s-seg-idcard-best.ncnn.bin
+|       yolov5s-seg-idcard-best.ncnn.param
+|       yolov5s-seg-idcard-2.ncnn.bin
+|       yolov5s-seg-idcard-2.ncnn.param
 |
 +---output
-|       cat.jpg
-|       cat.mp4
+|       00.jpg
+|       01.jpg
+|       02.jpg
+|       ...
+|
 +---Yolov5-seg
 |       yoloncnn.exe
 ```  
@@ -41,14 +49,14 @@ Usage
 yoloncnn [option] <value>
 
 Options
-    --model <ncnn model name>           = Explicitly specify the ncnn model name. Default yolov5s-seg.ncnn
-    --data <class names txt file>       = Explicitly specify the class names txt file. Default coco128.txt
-    --source <input source>             = Explicitly specify the input source. Default test.bmp
+    --model <ncnn model name>           = Explicitly specify the ncnn model name. Default yolov5s-seg-idcard-2.ncnn
+    --data <class names txt file>       = Explicitly specify the class names txt file. Default idcard.txt
+    --source <input source>             = Explicitly specify the input source. Default test.jpg
     --output <output folder>            = Explicitly specify the output folder. Default output
     --size <target size>                = Specify the target size. Default 640
     --conf <confident threshold>        = Specify the confident threshold. Default 0.25
     --nms <nms threshold>               = Specify the nms threshold. Default 0.45
-    --max-obj <max objects detection>   = Specify the max objects detection. Default 100
+    --max-obj <max objects detection>   = Specify the max objects detection. Default 1
     --dynamic                           = Dynamic inference flag. Default false
     --agnostic                          = Agnostic nms flag. Default false
     --contour                           = Draw contour instead of mask flag. Default false
@@ -69,38 +77,35 @@ source can be :
 For example :
 
 ```
-yoloncnn --input cat.jpg --model yolov5s-seg.ncnn --dynamic --save --agnostic
+yoloncnn --source test.jpg --model yolov5s-seg-idcard-2.ncnn --save --rotate
 ```
 
 ```
-5 argument(s) passed
-model     = ..\models\yolov5s-seg.ncnn.bin
-param     = ..\models\yolov5s-seg.ncnn.param
-input     = ..\input\cat.jpg
-data      = ..\data\coco128.txt
+4 argument(s) passed
+model     = ..\models\yolov5s-seg-idcard-2.ncnn.bin
+param     = ..\models\yolov5s-seg-idcard-2.ncnn.param
+input     = ..\input\test.jpg
+data      = ..\data\idcard.txt
 size      = 640
 conf      = 0.25
 nms       = 0.45
-maxObj    = 100
-dynamic   = 1
-noseg     = 0
-agnostic  = 1
+maxObj    = 1
+dynamic   = 0
+contour   = 0
+agnostic  = 0
 crop      = 0
 save      = 1
 saveTxt   = 0
 saveMask  = 0
+rotate    = 1
 ------------------------------------------------
-Inference time = 0.194 (seconds)
-Objects count = 5
-42 0.775778 496 459 719 568
-15 0.551823 214 237 467 436
-41 0.381012 2 170 104 538
-42 0.318674 590 459 716 546
-45 0.308080 92 444 581 615
-Output saved at ..\output\cat.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+5 0.977652 37 87 594 591
+Output saved at ..\output\test.jpg
 ```
 
-![cat.jpg](./output/cat.jpg)
+![test_0_cmt9_front.jpg](./output/rotate/test_0_cmt9_front.jpg)
 
 ## How to convert pytorch model to ncnn model
 
@@ -110,11 +115,3 @@ Currently, there's 2 ways to convert a pytorch model to ncnn model :
 2. pytorch >> torchscript >> ncnn (via [pnnx](https://github.com/pnnx/pnnx))
 
 The author himself( or maybe her ) ([nihui](https://github.com/nihui)) recommended the **second method** (refer to [this comment](https://github.com/Tencent/ncnn/issues/4488#issuecomment-1434299765))
-
-## MEME PLACE
-
-Scientists : AI is going to take over the world.
-
-Mean while AI :
-
-![meme.jpg](./output/meme.jpg)
