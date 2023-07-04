@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="autoGenRotate.cpp">
+    <ClCompile Include="..\Tools\autoGenRotate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

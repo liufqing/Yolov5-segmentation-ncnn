@@ -30,9 +30,5 @@ int main(int argc, char* argv[]){
 	cout << max - min << " images Generated are save to " << outputFolder <<endl;
 	cout << "------------------------------------------------" << std::endl;
 
-
-	//cv::imshow("dst", dst)
-	//cv::waitKey();
-
 	return 0;
 }
