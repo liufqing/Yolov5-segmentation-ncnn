@@ -622,13 +622,14 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 
 	std::cout << "Inference time = " << inference_time << " (seconds)\n";
 
-	std::string fileName = inputPath.filename().string();
-    std::string stem = inputPath.stem().string();
-	std::string outputPath = outputFolder.string() + "\\" + fileName;
+	std::string fileName     = inputPath.filename().string();
+    std::string stem         = inputPath.stem().string();
+	std::string outputPath   = outputFolder.string() + "\\" + fileName;
     std::string labelsFolder = outputFolder.string() + "\\labels";
-    std::string labelsPath = labelsFolder + "\\" + stem + ".txt";
-    std::string cropFolder = outputFolder.string() + "\\crop";
-    std::string maskFolder = outputFolder.string() + "\\mask";
+    std::string labelsPath   = labelsFolder + "\\" + stem + ".txt";
+    std::string anglePath    = labelsFolder + "\\" + "angle.txt";
+    std::string cropFolder   = outputFolder.string() + "\\crop";
+    std::string maskFolder   = outputFolder.string() + "\\mask";
     std::string rotateFolder = outputFolder.string() + "\\rotate";
 	
 	const size_t objCount = objects.size();
@@ -669,6 +670,7 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 
         std::string saveFileName = stem + "_" + std::to_string(i) + "_" + class_names[obj.label] + ".jpg";
 
+        float rotAngle = 0;
         if (rotate) {
             cv::Mat rotated;
             if (contour.size() < 3)
@@ -676,13 +678,20 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
             else {
                 cv::RotatedRect rr = cv::minAreaRect(contour);
                 //draw_RotatedRect(out, rr, cc);
-                rotated = getRotatedRectImg(in, rr);
+                rotAngle = getRotatedRectImg(in, rotated, rr);
             }
 			cv::utils::fs::createDirectory(rotateFolder);
             std::string rotatePath = rotateFolder + "\\" + saveFileName;
             if(!continuous)
                 cv::imshow("rotated", rotated);
-			cv::imwrite(rotatePath, rotated);
+            if(save)
+			    cv::imwrite(rotatePath, rotated);
+            if (saveTxt) {
+                std::ofstream angle;
+                angle.open(anglePath, std::ios::app);
+                angle << fileName << "\t" << rotAngle << std::endl;
+                angle.close();
+            }
 		}
 
         if (crop) {
@@ -763,7 +772,7 @@ void Yolo::video(std::string inputPath) {
     }
 }
 
-cv::Mat Yolo::getRotatedRectImg(const cv::Mat& src, const cv::RotatedRect& rr) {
+float Yolo::getRotatedRectImg(const cv::Mat& src, cv::Mat& dst, const cv::RotatedRect& rr) {
     float angle = rr.angle;
     float width = rr.size.width;
     float height = rr.size.height;
@@ -793,8 +802,8 @@ cv::Mat Yolo::getRotatedRectImg(const cv::Mat& src, const cv::RotatedRect& rr) {
     */
     //cv::Mat affineMatrix = cv::getRotationMatrix2D(rr.center, rr.angle, 1.0);
     //cv::warpAffine(src, result, affineMatrix, src.size(), cv::INTER_CUBIC);
-    cv::Mat result;
-    cv::warpAffine(src, result, affineMatrix, cv::Size2f(width,height), cv::INTER_CUBIC);
 
-    return result;
+    cv::warpAffine(src, dst, affineMatrix, cv::Size2f(width,height), cv::INTER_CUBIC);
+
+    return angle;
 }

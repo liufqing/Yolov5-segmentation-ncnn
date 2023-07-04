@@ -35,8 +35,8 @@
 |       02.jpg
 |       ...
 |
-+---Yolov5-seg
-|       yoloncnn.exe
++---yoloncnn.exe
+|
 ```  
 
 ```
@@ -47,7 +47,7 @@ yoloncnn [option] <value>
 Options
     --model <ncnn model name>           = Explicitly specify the ncnn model name. Default yolov5s-seg-idcard-2.ncnn
     --data <class names txt file>       = Explicitly specify the class names txt file. Default idcard.txt
-    --source <input source>             = Explicitly specify the input source. Default test.jpg
+    --source <input source>             = Explicitly specify the input source. Default input
     --output <output folder>            = Explicitly specify the output folder. Default output
     --size <target size>                = Specify the target size. Default 640
     --conf <confident threshold>        = Specify the confident threshold. Default 0.25
@@ -69,20 +69,20 @@ source can be :
 - image file path
 - video file path
 - 0 for webcam
-- . for run all images in input folder
+- folder path for run all images in input folder
 
 For example :
 
 ```
-yoloncnn --source test.jpg --model yolov5s-seg-idcard-2.ncnn --save --rotate
+yoloncnn --source input/test.jpg --model yolov5s-seg-idcard-2.ncnn --save --rotate
 ```
 
 ```
 4 argument(s) passed
-model     = ..\models\yolov5s-seg-idcard-2.ncnn.bin
-param     = ..\models\yolov5s-seg-idcard-2.ncnn.param
-input     = ..\input\test.jpg
-data      = ..\data\idcard.txt
+model     = models\yolov5s-seg-idcard-2.ncnn.bin
+param     = models\yolov5s-seg-idcard-2.ncnn.param
+input     = input\test.jpg
+data      = data\idcard.txt
 size      = 640
 conf      = 0.25
 nms       = 0.45
@@ -96,10 +96,10 @@ saveTxt   = 0
 saveMask  = 0
 rotate    = 1
 ------------------------------------------------
-Inference time = 0.188 (seconds)
+Inference time = 0.178 (seconds)
 Objects count = 1
 5 0.977652 37 87 594 591
-Output saved at ..\output\test.jpg
+Output saved at output\test.jpg
 ```
 
 ![test_0_cmt9_front.jpg](./output/rotate/test_0_cmt9_front.jpg)

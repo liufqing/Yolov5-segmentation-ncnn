@@ -5,15 +5,15 @@ int main(int argc, char* argv[]) {
     InputParser argument(argc, argv);
 
     //set folder path
-    std::string inputFolder     = "..\\input";
-    std::string outputFolder    = "..\\output";
-    std::string modelFolder     = "..\\models";
-    std::string dataFolder      = "..\\data";
+    std::string inputFolder     = "input";
+    std::string outputFolder    = "output";
+    std::string modelFolder     = "models";
+    std::string dataFolder      = "data";
 
     //set default argument
     std::string model     = argument.setDefaultArgument("--model", "yolov5s-seg-idcard-2.ncnn");
     std::string data      = argument.setDefaultArgument("--data", "idcard.txt");
-    std::string input     = argument.setDefaultArgument("--source", "test.jpg");
+    std::string input     = argument.setDefaultArgument("--source", inputFolder);
     std::string output	  = argument.setDefaultArgument("--output", outputFolder);
     int size              = argument.setDefaultArgument("--size", 640);
     float conf            = argument.setDefaultArgument("--conf", 0.25f);
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << argument.argNum() << " argument(s) passed";
 
-    std::filesystem::path inputPath  = inputFolder  +   "\\" + input;
+    std::filesystem::path inputPath  = input;
     std::filesystem::path dataPath   = dataFolder   +   "\\" + data;
     std::filesystem::path bin        = modelFolder  +   "\\" + model + ".bin";
     std::filesystem::path param      = modelFolder  +   "\\" + model + ".param";
@@ -75,11 +75,11 @@ int main(int argc, char* argv[]) {
     Yolov5.saveMask		  = saveMask;
     Yolov5.rotate		  = rotate;
 
-    if (input == ".") {
+    if (not inputPath.has_extension()) {
         std::cout << "Auto running on all images in the input folder" ;
         int count = 0;
         clock_t tStart = clock();
-        for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(inputFolder)) {
+        for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(inputPath)) {
 			std::string path = entry.path().string();
             std::cout << "\n------------------------------------------------" << std::endl;
             std::cout << path << std::endl;

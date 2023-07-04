@@ -371,3 +371,5 @@ FodyWeavers.xsd
 /models/yolov5x.ncnn.param
 /models/yolov5x.ncnn.bin
 /screenshots
+/autogen
+/output-autogen
