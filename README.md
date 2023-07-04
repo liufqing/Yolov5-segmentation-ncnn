@@ -66,7 +66,7 @@ Options
 
 source can be :
 
-- image file path
+- image file path   
 - video file path
 - 0 for webcam
 - folder path for run all images in input folder

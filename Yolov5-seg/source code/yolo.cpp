@@ -627,10 +627,10 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 	std::string outputPath   = outputFolder.string() + "\\" + fileName;
     std::string labelsFolder = outputFolder.string() + "\\labels";
     std::string labelsPath   = labelsFolder + "\\" + stem + ".txt";
-    std::string anglePath    = outputFolder.string() + "\\" + "angle.txt";
     std::string cropFolder   = outputFolder.string() + "\\crop";
     std::string maskFolder   = outputFolder.string() + "\\mask";
     std::string rotateFolder = outputFolder.string() + "\\rotate";
+    std::string anglePath    = rotateFolder + "\\" + "angle.txt";
 	
 	const size_t objCount = objects.size();
 	std::cout << "Objects count = " << objCount << std::endl;
