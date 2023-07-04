@@ -627,7 +627,7 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 	std::string outputPath   = outputFolder.string() + "\\" + fileName;
     std::string labelsFolder = outputFolder.string() + "\\labels";
     std::string labelsPath   = labelsFolder + "\\" + stem + ".txt";
-    std::string anglePath    = labelsFolder + "\\" + "angle.txt";
+    std::string anglePath    = outputFolder.string() + "\\" + "angle.txt";
     std::string cropFolder   = outputFolder.string() + "\\crop";
     std::string maskFolder   = outputFolder.string() + "\\mask";
     std::string rotateFolder = outputFolder.string() + "\\rotate";
@@ -678,20 +678,19 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
             else {
                 cv::RotatedRect rr = cv::minAreaRect(contour);
                 //draw_RotatedRect(out, rr, cc);
-                rotAngle = getRotatedRectImg(in, rotated, rr);
+                rotAngle = - getRotatedRectImg(in, rotated, rr);
             }
 			cv::utils::fs::createDirectory(rotateFolder);
             std::string rotatePath = rotateFolder + "\\" + saveFileName;
             if(!continuous)
                 cv::imshow("rotated", rotated);
             if(save)
-			    cv::imwrite(rotatePath, rotated);
-            if (saveTxt) {
-                std::ofstream angle;
-                angle.open(anglePath, std::ios::app);
-                angle << fileName << "\t" << rotAngle << std::endl;
-                angle.close();
-            }
+                cv::imwrite(rotatePath, rotated);
+
+            std::ofstream angle, diff;
+            angle.open(anglePath, std::ios::app);
+            angle << stem << " " << rotAngle << std::endl;
+            angle.close();
 		}
 
         if (crop) {

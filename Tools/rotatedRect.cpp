@@ -25,27 +25,27 @@ int main(int argc, char* argv[])
 	const char* inputPath = argv[1];
 	src = imread(inputPath);
 	//src.convertTo(src, CV_32FC3, 1.0 / 255.0);
-	cv::Mat dst;
-	cv::Mat affineMatrix = cv::getRotationMatrix2D(cv::Point(src.cols/2, src.rows/2), 30, 0.8);
-	cv::warpAffine(src, dst, affineMatrix, src.size(),0, BORDER_REPLICATE);
-	cv::imwrite("dst.jpg", dst);
-	
-	cv::imshow("dst", dst);
-	cv::waitKey();
-	//angle = 0;
-	//x = 0;
-	//y = 0;
+	//cv::Mat dst;
+	//cv::Mat affineMatrix = cv::getRotationMatrix2D(cv::Point(src.cols/2, src.rows/2), 30, 0.8);
+	//cv::warpAffine(src, dst, affineMatrix, src.size(),0, BORDER_REPLICATE);
+	//cv::imwrite("dst.jpg", dst);
 	//
-	//const char* windowname = "src";
+	//cv::imshow("dst", dst);
+	//cv::waitKey();
+	angle = 0;
+	x = 0;
+	y = 0;
+	
+	const char* windowname = "src";
 
-	//namedWindow(windowname, WINDOW_AUTOSIZE);
-	//cv::createTrackbar("angle", windowname, &angle, 12, onTrackbar);
-	//cv::createTrackbar("x", windowname, &x, 10, onTrackbar);
-	//cv::createTrackbar("y", windowname, &y, 10, onTrackbar);
+	namedWindow(windowname, WINDOW_AUTOSIZE);
+	cv::createTrackbar("angle", windowname, &angle, 12, onTrackbar);
+	cv::createTrackbar("x", windowname, &x, 10, onTrackbar);
+	cv::createTrackbar("y", windowname, &y, 10, onTrackbar);
 
-	//onTrackbar(0, 0);
-	//cv::waitKey(0);
-	//cv::destroyAllWindows();
+	onTrackbar(0, 0);
+	cv::waitKey(0);
+	cv::destroyAllWindows();
 
 	return 0;
 }
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 void onTrackbar(int, void*) {
 	Mat dst, srcCopy = src.clone();
 	int newangle = angle * 30;
-	cv::RotatedRect rr(cv::Point2f(200, 200), Size(300, 300), newangle);
+	cv::RotatedRect rr(cv::Point2f(300, 400), Size(300, 300), newangle);
 
 	//Draw rotated rectangle
 	Point2f rect_points[4];

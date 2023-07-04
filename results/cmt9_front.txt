@@ -1,0 +1,1463 @@
+Generating -89.jpg
+Generating -88.jpg
+Generating -87.jpg
+Generating -86.jpg
+Generating -85.jpg
+Generating -84.jpg
+Generating -83.jpg
+Generating -82.jpg
+Generating -81.jpg
+Generating -80.jpg
+Generating -79.jpg
+Generating -78.jpg
+Generating -77.jpg
+Generating -76.jpg
+Generating -75.jpg
+Generating -74.jpg
+Generating -73.jpg
+Generating -72.jpg
+Generating -71.jpg
+Generating -70.jpg
+Generating -69.jpg
+Generating -68.jpg
+Generating -67.jpg
+Generating -66.jpg
+Generating -65.jpg
+Generating -64.jpg
+Generating -63.jpg
+Generating -62.jpg
+Generating -61.jpg
+Generating -60.jpg
+Generating -59.jpg
+Generating -58.jpg
+Generating -57.jpg
+Generating -56.jpg
+Generating -55.jpg
+Generating -54.jpg
+Generating -53.jpg
+Generating -52.jpg
+Generating -51.jpg
+Generating -50.jpg
+Generating -49.jpg
+Generating -48.jpg
+Generating -47.jpg
+Generating -46.jpg
+Generating -45.jpg
+Generating -44.jpg
+Generating -43.jpg
+Generating -42.jpg
+Generating -41.jpg
+Generating -40.jpg
+Generating -39.jpg
+Generating -38.jpg
+Generating -37.jpg
+Generating -36.jpg
+Generating -35.jpg
+Generating -34.jpg
+Generating -33.jpg
+Generating -32.jpg
+Generating -31.jpg
+Generating -30.jpg
+Generating -29.jpg
+Generating -28.jpg
+Generating -27.jpg
+Generating -26.jpg
+Generating -25.jpg
+Generating -24.jpg
+Generating -23.jpg
+Generating -22.jpg
+Generating -21.jpg
+Generating -20.jpg
+Generating -19.jpg
+Generating -18.jpg
+Generating -17.jpg
+Generating -16.jpg
+Generating -15.jpg
+Generating -14.jpg
+Generating -13.jpg
+Generating -12.jpg
+Generating -11.jpg
+Generating -10.jpg
+Generating -9.jpg
+Generating -8.jpg
+Generating -7.jpg
+Generating -6.jpg
+Generating -5.jpg
+Generating -4.jpg
+Generating -3.jpg
+Generating -2.jpg
+Generating -1.jpg
+Generating 0.jpg
+Generating 1.jpg
+Generating 2.jpg
+Generating 3.jpg
+Generating 4.jpg
+Generating 5.jpg
+Generating 6.jpg
+Generating 7.jpg
+Generating 8.jpg
+Generating 9.jpg
+Generating 10.jpg
+Generating 11.jpg
+Generating 12.jpg
+Generating 13.jpg
+Generating 14.jpg
+Generating 15.jpg
+Generating 16.jpg
+Generating 17.jpg
+Generating 18.jpg
+Generating 19.jpg
+Generating 20.jpg
+Generating 21.jpg
+Generating 22.jpg
+Generating 23.jpg
+Generating 24.jpg
+Generating 25.jpg
+Generating 26.jpg
+Generating 27.jpg
+Generating 28.jpg
+Generating 29.jpg
+Generating 30.jpg
+Generating 31.jpg
+Generating 32.jpg
+Generating 33.jpg
+Generating 34.jpg
+Generating 35.jpg
+Generating 36.jpg
+Generating 37.jpg
+Generating 38.jpg
+Generating 39.jpg
+Generating 40.jpg
+Generating 41.jpg
+Generating 42.jpg
+Generating 43.jpg
+Generating 44.jpg
+Generating 45.jpg
+Generating 46.jpg
+Generating 47.jpg
+Generating 48.jpg
+Generating 49.jpg
+Generating 50.jpg
+Generating 51.jpg
+Generating 52.jpg
+Generating 53.jpg
+Generating 54.jpg
+Generating 55.jpg
+Generating 56.jpg
+Generating 57.jpg
+Generating 58.jpg
+Generating 59.jpg
+Generating 60.jpg
+Generating 61.jpg
+Generating 62.jpg
+Generating 63.jpg
+Generating 64.jpg
+Generating 65.jpg
+Generating 66.jpg
+Generating 67.jpg
+Generating 68.jpg
+Generating 69.jpg
+Generating 70.jpg
+Generating 71.jpg
+Generating 72.jpg
+Generating 73.jpg
+Generating 74.jpg
+Generating 75.jpg
+Generating 76.jpg
+Generating 77.jpg
+Generating 78.jpg
+Generating 79.jpg
+Generating 80.jpg
+Generating 81.jpg
+Generating 82.jpg
+Generating 83.jpg
+Generating 84.jpg
+Generating 85.jpg
+Generating 86.jpg
+Generating 87.jpg
+Generating 88.jpg
+Generating 89.jpg
+179 images Generated are save to autogen/cmt9_front
+
+4 argument(s) passed
+model     = models\yolov5s-seg-idcard-2.ncnn.bin
+param     = models\yolov5s-seg-idcard-2.ncnn.param
+input     = autogen\cmt9_front
+data      = data\idcard.txt
+size      = 640
+conf      = 0.25
+nms       = 0.45
+maxObj    = 1
+dynamic   = 0
+contour   = 0
+agnostic  = 0
+crop      = 0
+save      = 1
+saveTxt   = 0
+saveMask  = 0
+rotate    = 1
+------------------------------------------------
+Auto running on all images in the input folder
+------------------------------------------------
+autogen\cmt9_front\-1.jpg
+Inference time = 0.195 (seconds)
+Objects count = 1
+5 0.952909 227 179 707 502
+Output saved at output-autogen\cmt9_front\-1.jpg
+------------------------------------------------
+autogen\cmt9_front\-10.jpg
+Inference time = 0.206 (seconds)
+Objects count = 1
+5 0.952573 207 146 726 533
+Output saved at output-autogen\cmt9_front\-10.jpg
+------------------------------------------------
+autogen\cmt9_front\-11.jpg
+Inference time = 0.203 (seconds)
+Objects count = 1
+5 0.951892 206 142 728 536
+Output saved at output-autogen\cmt9_front\-11.jpg
+------------------------------------------------
+autogen\cmt9_front\-12.jpg
+Inference time = 0.226 (seconds)
+Objects count = 1
+5 0.952801 205 139 730 538
+Output saved at output-autogen\cmt9_front\-12.jpg
+------------------------------------------------
+autogen\cmt9_front\-13.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+5 0.951776 202 135 731 540
+Output saved at output-autogen\cmt9_front\-13.jpg
+------------------------------------------------
+autogen\cmt9_front\-14.jpg
+Inference time = 0.187 (seconds)
+Objects count = 1
+5 0.950254 198 129 736 541
+Output saved at output-autogen\cmt9_front\-14.jpg
+------------------------------------------------
+autogen\cmt9_front\-15.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+5 0.955673 198 128 739 544
+Output saved at output-autogen\cmt9_front\-15.jpg
+------------------------------------------------
+autogen\cmt9_front\-16.jpg
+Inference time = 0.172 (seconds)
+Objects count = 1
+5 0.961137 194 124 741 547
+Output saved at output-autogen\cmt9_front\-16.jpg
+------------------------------------------------
+autogen\cmt9_front\-17.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+5 0.961517 194 122 742 549
+Output saved at output-autogen\cmt9_front\-17.jpg
+------------------------------------------------
+autogen\cmt9_front\-18.jpg
+Inference time = 0.184 (seconds)
+Objects count = 1
+5 0.960478 193 119 744 553
+Output saved at output-autogen\cmt9_front\-18.jpg
+------------------------------------------------
+autogen\cmt9_front\-19.jpg
+Inference time = 0.213 (seconds)
+Objects count = 1
+5 0.960486 191 116 745 557
+Output saved at output-autogen\cmt9_front\-19.jpg
+------------------------------------------------
+autogen\cmt9_front\-2.jpg
+Inference time = 0.169 (seconds)
+Objects count = 1
+5 0.954778 225 175 710 508
+Output saved at output-autogen\cmt9_front\-2.jpg
+------------------------------------------------
+autogen\cmt9_front\-20.jpg
+Inference time = 0.187 (seconds)
+Objects count = 1
+5 0.961077 185 111 747 556
+Output saved at output-autogen\cmt9_front\-20.jpg
+------------------------------------------------
+autogen\cmt9_front\-21.jpg
+Inference time = 0.18 (seconds)
+Objects count = 1
+5 0.962428 184 108 747 559
+Output saved at output-autogen\cmt9_front\-21.jpg
+------------------------------------------------
+autogen\cmt9_front\-22.jpg
+Inference time = 0.196 (seconds)
+Objects count = 1
+5 0.967205 186 106 745 566
+Output saved at output-autogen\cmt9_front\-22.jpg
+------------------------------------------------
+autogen\cmt9_front\-23.jpg
+Inference time = 0.199 (seconds)
+Objects count = 1
+5 0.965142 186 103 746 569
+Output saved at output-autogen\cmt9_front\-23.jpg
+------------------------------------------------
+autogen\cmt9_front\-24.jpg
+Inference time = 0.165 (seconds)
+Objects count = 1
+5 0.966146 186 101 747 571
+Output saved at output-autogen\cmt9_front\-24.jpg
+------------------------------------------------
+autogen\cmt9_front\-25.jpg
+Inference time = 0.18 (seconds)
+Objects count = 1
+5 0.965869 184 98 747 574
+Output saved at output-autogen\cmt9_front\-25.jpg
+------------------------------------------------
+autogen\cmt9_front\-26.jpg
+Inference time = 0.169 (seconds)
+Objects count = 1
+5 0.964372 179 95 752 572
+Output saved at output-autogen\cmt9_front\-26.jpg
+------------------------------------------------
+autogen\cmt9_front\-27.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+5 0.965134 182 94 749 577
+Output saved at output-autogen\cmt9_front\-27.jpg
+------------------------------------------------
+autogen\cmt9_front\-28.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+5 0.964024 177 89 752 579
+Output saved at output-autogen\cmt9_front\-28.jpg
+------------------------------------------------
+autogen\cmt9_front\-29.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+5 0.959781 177 85 752 584
+Output saved at output-autogen\cmt9_front\-29.jpg
+------------------------------------------------
+autogen\cmt9_front\-3.jpg
+Inference time = 0.189 (seconds)
+Objects count = 1
+5 0.955343 223 170 715 511
+Output saved at output-autogen\cmt9_front\-3.jpg
+------------------------------------------------
+autogen\cmt9_front\-30.jpg
+Inference time = 0.168 (seconds)
+Objects count = 1
+5 0.955664 177 84 753 587
+Output saved at output-autogen\cmt9_front\-30.jpg
+------------------------------------------------
+autogen\cmt9_front\-31.jpg
+Inference time = 0.19 (seconds)
+Objects count = 1
+5 0.956342 177 80 753 591
+Output saved at output-autogen\cmt9_front\-31.jpg
+------------------------------------------------
+autogen\cmt9_front\-32.jpg
+Inference time = 0.184 (seconds)
+Objects count = 1
+5 0.957600 178 78 753 592
+Output saved at output-autogen\cmt9_front\-32.jpg
+------------------------------------------------
+autogen\cmt9_front\-33.jpg
+Inference time = 0.176 (seconds)
+Objects count = 1
+5 0.956804 179 76 752 592
+Output saved at output-autogen\cmt9_front\-33.jpg
+------------------------------------------------
+autogen\cmt9_front\-34.jpg
+Inference time = 0.171 (seconds)
+Objects count = 1
+5 0.959378 179 73 752 594
+Output saved at output-autogen\cmt9_front\-34.jpg
+------------------------------------------------
+autogen\cmt9_front\-35.jpg
+Inference time = 0.178 (seconds)
+Objects count = 1
+5 0.959911 178 72 751 596
+Output saved at output-autogen\cmt9_front\-35.jpg
+------------------------------------------------
+autogen\cmt9_front\-36.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+5 0.960702 179 71 750 597
+Output saved at output-autogen\cmt9_front\-36.jpg
+------------------------------------------------
+autogen\cmt9_front\-37.jpg
+Inference time = 0.182 (seconds)
+Objects count = 1
+5 0.962390 177 69 750 598
+Output saved at output-autogen\cmt9_front\-37.jpg
+------------------------------------------------
+autogen\cmt9_front\-38.jpg
+Inference time = 0.175 (seconds)
+Objects count = 1
+5 0.963428 179 69 749 599
+Output saved at output-autogen\cmt9_front\-38.jpg
+------------------------------------------------
+autogen\cmt9_front\-39.jpg
+Inference time = 0.173 (seconds)
+Objects count = 1
+5 0.965401 179 68 748 601
+Output saved at output-autogen\cmt9_front\-39.jpg
+------------------------------------------------
+autogen\cmt9_front\-4.jpg
+Inference time = 0.185 (seconds)
+Objects count = 1
+5 0.953817 221 166 719 515
+Output saved at output-autogen\cmt9_front\-4.jpg
+------------------------------------------------
+autogen\cmt9_front\-40.jpg
+Inference time = 0.17 (seconds)
+Objects count = 1
+5 0.966578 180 67 748 601
+Output saved at output-autogen\cmt9_front\-40.jpg
+------------------------------------------------
+autogen\cmt9_front\-41.jpg
+Inference time = 0.198 (seconds)
+Objects count = 1
+5 0.968513 181 65 748 603
+Output saved at output-autogen\cmt9_front\-41.jpg
+------------------------------------------------
+autogen\cmt9_front\-42.jpg
+Inference time = 0.167 (seconds)
+Objects count = 1
+5 0.970199 182 64 747 604
+Output saved at output-autogen\cmt9_front\-42.jpg
+------------------------------------------------
+autogen\cmt9_front\-43.jpg
+Inference time = 0.167 (seconds)
+Objects count = 1
+5 0.970862 183 64 745 605
+Output saved at output-autogen\cmt9_front\-43.jpg
+------------------------------------------------
+autogen\cmt9_front\-44.jpg
+Inference time = 0.17 (seconds)
+Objects count = 1
+5 0.972020 184 63 744 606
+Output saved at output-autogen\cmt9_front\-44.jpg
+------------------------------------------------
+autogen\cmt9_front\-45.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+5 0.972881 186 59 743 608
+Output saved at output-autogen\cmt9_front\-45.jpg
+------------------------------------------------
+autogen\cmt9_front\-46.jpg
+Inference time = 0.206 (seconds)
+Objects count = 1
+5 0.973683 184 57 743 611
+Output saved at output-autogen\cmt9_front\-46.jpg
+------------------------------------------------
+autogen\cmt9_front\-47.jpg
+Inference time = 0.195 (seconds)
+Objects count = 1
+5 0.973617 186 54 742 612
+Output saved at output-autogen\cmt9_front\-47.jpg
+------------------------------------------------
+autogen\cmt9_front\-48.jpg
+Inference time = 0.177 (seconds)
+Objects count = 1
+5 0.973274 189 53 742 611
+Output saved at output-autogen\cmt9_front\-48.jpg
+------------------------------------------------
+autogen\cmt9_front\-49.jpg
+Inference time = 0.193 (seconds)
+Objects count = 1
+5 0.973773 193 52 739 613
+Output saved at output-autogen\cmt9_front\-49.jpg
+------------------------------------------------
+autogen\cmt9_front\-5.jpg
+Inference time = 0.187 (seconds)
+Objects count = 1
+5 0.953228 218 163 720 519
+Output saved at output-autogen\cmt9_front\-5.jpg
+------------------------------------------------
+autogen\cmt9_front\-50.jpg
+Inference time = 0.169 (seconds)
+Objects count = 1
+5 0.973441 194 51 739 613
+Output saved at output-autogen\cmt9_front\-50.jpg
+------------------------------------------------
+autogen\cmt9_front\-51.jpg
+Inference time = 0.161 (seconds)
+Objects count = 1
+5 0.973136 196 50 738 614
+Output saved at output-autogen\cmt9_front\-51.jpg
+------------------------------------------------
+autogen\cmt9_front\-52.jpg
+Inference time = 0.173 (seconds)
+Objects count = 1
+5 0.973895 198 49 737 614
+Output saved at output-autogen\cmt9_front\-52.jpg
+------------------------------------------------
+autogen\cmt9_front\-53.jpg
+Inference time = 0.168 (seconds)
+Objects count = 1
+5 0.974354 200 49 734 613
+Output saved at output-autogen\cmt9_front\-53.jpg
+------------------------------------------------
+autogen\cmt9_front\-54.jpg
+Inference time = 0.195 (seconds)
+Objects count = 1
+5 0.974526 202 49 733 615
+Output saved at output-autogen\cmt9_front\-54.jpg
+------------------------------------------------
+autogen\cmt9_front\-55.jpg
+Inference time = 0.187 (seconds)
+Objects count = 1
+5 0.974387 205 48 730 614
+Output saved at output-autogen\cmt9_front\-55.jpg
+------------------------------------------------
+autogen\cmt9_front\-56.jpg
+Inference time = 0.163 (seconds)
+Objects count = 1
+5 0.974447 207 47 727 614
+Output saved at output-autogen\cmt9_front\-56.jpg
+------------------------------------------------
+autogen\cmt9_front\-57.jpg
+Inference time = 0.17 (seconds)
+Objects count = 1
+5 0.974410 209 46 723 614
+Output saved at output-autogen\cmt9_front\-57.jpg
+------------------------------------------------
+autogen\cmt9_front\-58.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+5 0.974911 213 44 713 616
+Output saved at output-autogen\cmt9_front\-58.jpg
+------------------------------------------------
+autogen\cmt9_front\-59.jpg
+Inference time = 0.182 (seconds)
+Objects count = 1
+5 0.975859 215 43 710 616
+Output saved at output-autogen\cmt9_front\-59.jpg
+------------------------------------------------
+autogen\cmt9_front\-6.jpg
+Inference time = 0.171 (seconds)
+Objects count = 1
+5 0.952819 215 160 723 522
+Output saved at output-autogen\cmt9_front\-6.jpg
+------------------------------------------------
+autogen\cmt9_front\-60.jpg
+Inference time = 0.207 (seconds)
+Objects count = 1
+5 0.976340 216 43 708 612
+Output saved at output-autogen\cmt9_front\-60.jpg
+------------------------------------------------
+autogen\cmt9_front\-61.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+5 0.977158 217 44 707 610
+Output saved at output-autogen\cmt9_front\-61.jpg
+------------------------------------------------
+autogen\cmt9_front\-62.jpg
+Inference time = 0.19 (seconds)
+Objects count = 1
+5 0.977107 220 43 704 608
+Output saved at output-autogen\cmt9_front\-62.jpg
+------------------------------------------------
+autogen\cmt9_front\-63.jpg
+Inference time = 0.228 (seconds)
+Objects count = 1
+5 0.977135 223 43 702 606
+Output saved at output-autogen\cmt9_front\-63.jpg
+------------------------------------------------
+autogen\cmt9_front\-64.jpg
+Inference time = 0.174 (seconds)
+Objects count = 1
+5 0.977035 225 44 700 606
+Output saved at output-autogen\cmt9_front\-64.jpg
+------------------------------------------------
+autogen\cmt9_front\-65.jpg
+Inference time = 0.153 (seconds)
+Objects count = 1
+5 0.977376 227 43 697 604
+Output saved at output-autogen\cmt9_front\-65.jpg
+------------------------------------------------
+autogen\cmt9_front\-66.jpg
+Inference time = 0.204 (seconds)
+Objects count = 1
+5 0.977610 229 44 697 602
+Output saved at output-autogen\cmt9_front\-66.jpg
+------------------------------------------------
+autogen\cmt9_front\-67.jpg
+Inference time = 0.186 (seconds)
+Objects count = 1
+5 0.977735 230 44 694 600
+Output saved at output-autogen\cmt9_front\-67.jpg
+------------------------------------------------
+autogen\cmt9_front\-68.jpg
+Inference time = 0.198 (seconds)
+Objects count = 1
+5 0.977710 233 43 691 599
+Output saved at output-autogen\cmt9_front\-68.jpg
+------------------------------------------------
+autogen\cmt9_front\-69.jpg
+Inference time = 0.214 (seconds)
+Objects count = 1
+5 0.977033 236 44 687 597
+Output saved at output-autogen\cmt9_front\-69.jpg
+------------------------------------------------
+autogen\cmt9_front\-7.jpg
+Inference time = 0.169 (seconds)
+Objects count = 1
+5 0.953280 212 156 724 525
+Output saved at output-autogen\cmt9_front\-7.jpg
+------------------------------------------------
+autogen\cmt9_front\-70.jpg
+Inference time = 0.178 (seconds)
+Objects count = 1
+5 0.976288 238 45 686 595
+Output saved at output-autogen\cmt9_front\-70.jpg
+------------------------------------------------
+autogen\cmt9_front\-71.jpg
+Inference time = 0.198 (seconds)
+Objects count = 1
+5 0.974646 242 44 687 598
+Output saved at output-autogen\cmt9_front\-71.jpg
+------------------------------------------------
+autogen\cmt9_front\-72.jpg
+Inference time = 0.182 (seconds)
+Objects count = 1
+5 0.972807 248 45 684 595
+Output saved at output-autogen\cmt9_front\-72.jpg
+------------------------------------------------
+autogen\cmt9_front\-73.jpg
+Inference time = 0.175 (seconds)
+Objects count = 1
+5 0.972301 252 46 679 594
+Output saved at output-autogen\cmt9_front\-73.jpg
+------------------------------------------------
+autogen\cmt9_front\-74.jpg
+Inference time = 0.158 (seconds)
+Objects count = 1
+5 0.969873 254 49 675 591
+Output saved at output-autogen\cmt9_front\-74.jpg
+------------------------------------------------
+autogen\cmt9_front\-75.jpg
+Inference time = 0.168 (seconds)
+Objects count = 1
+5 0.968122 256 51 670 589
+Output saved at output-autogen\cmt9_front\-75.jpg
+------------------------------------------------
+autogen\cmt9_front\-76.jpg
+Inference time = 0.179 (seconds)
+Objects count = 1
+5 0.966363 258 53 664 586
+Output saved at output-autogen\cmt9_front\-76.jpg
+------------------------------------------------
+autogen\cmt9_front\-77.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+5 0.965229 261 57 661 581
+Output saved at output-autogen\cmt9_front\-77.jpg
+------------------------------------------------
+autogen\cmt9_front\-78.jpg
+Inference time = 0.188 (seconds)
+Objects count = 1
+5 0.965068 267 59 660 580
+Output saved at output-autogen\cmt9_front\-78.jpg
+------------------------------------------------
+autogen\cmt9_front\-79.jpg
+Inference time = 0.167 (seconds)
+Objects count = 1
+5 0.964864 270 59 657 577
+Output saved at output-autogen\cmt9_front\-79.jpg
+------------------------------------------------
+autogen\cmt9_front\-8.jpg
+Inference time = 0.178 (seconds)
+Objects count = 1
+5 0.952818 209 152 726 528
+Output saved at output-autogen\cmt9_front\-8.jpg
+------------------------------------------------
+autogen\cmt9_front\-80.jpg
+Inference time = 0.186 (seconds)
+Objects count = 1
+5 0.964436 274 62 655 573
+Output saved at output-autogen\cmt9_front\-80.jpg
+------------------------------------------------
+autogen\cmt9_front\-81.jpg
+Inference time = 0.176 (seconds)
+Objects count = 1
+5 0.963608 276 63 652 572
+Output saved at output-autogen\cmt9_front\-81.jpg
+------------------------------------------------
+autogen\cmt9_front\-82.jpg
+Inference time = 0.18 (seconds)
+Objects count = 1
+5 0.961589 280 64 646 570
+Output saved at output-autogen\cmt9_front\-82.jpg
+------------------------------------------------
+autogen\cmt9_front\-83.jpg
+Inference time = 0.208 (seconds)
+Objects count = 1
+5 0.960274 285 66 642 566
+Output saved at output-autogen\cmt9_front\-83.jpg
+------------------------------------------------
+autogen\cmt9_front\-84.jpg
+Inference time = 0.205 (seconds)
+Objects count = 1
+5 0.959675 289 63 633 569
+Output saved at output-autogen\cmt9_front\-84.jpg
+------------------------------------------------
+autogen\cmt9_front\-85.jpg
+Inference time = 0.184 (seconds)
+Objects count = 1
+5 0.961950 297 65 629 566
+Output saved at output-autogen\cmt9_front\-85.jpg
+------------------------------------------------
+autogen\cmt9_front\-86.jpg
+Inference time = 0.192 (seconds)
+Objects count = 1
+5 0.965769 304 65 623 562
+Output saved at output-autogen\cmt9_front\-86.jpg
+------------------------------------------------
+autogen\cmt9_front\-87.jpg
+Inference time = 0.185 (seconds)
+Objects count = 1
+5 0.968167 308 65 619 559
+Output saved at output-autogen\cmt9_front\-87.jpg
+------------------------------------------------
+autogen\cmt9_front\-88.jpg
+Inference time = 0.196 (seconds)
+Objects count = 1
+5 0.969496 310 65 616 557
+Output saved at output-autogen\cmt9_front\-88.jpg
+------------------------------------------------
+autogen\cmt9_front\-89.jpg
+Inference time = 0.198 (seconds)
+Objects count = 1
+5 0.968610 313 65 614 557
+Output saved at output-autogen\cmt9_front\-89.jpg
+------------------------------------------------
+autogen\cmt9_front\-9.jpg
+Inference time = 0.189 (seconds)
+Objects count = 1
+5 0.953082 208 149 726 530
+Output saved at output-autogen\cmt9_front\-9.jpg
+------------------------------------------------
+autogen\cmt9_front\0.jpg
+Inference time = 0.174 (seconds)
+Objects count = 1
+5 0.953386 229 181 705 499
+Output saved at output-autogen\cmt9_front\0.jpg
+------------------------------------------------
+autogen\cmt9_front\1.jpg
+Inference time = 0.194 (seconds)
+Objects count = 1
+5 0.960833 232 183 705 490
+Output saved at output-autogen\cmt9_front\1.jpg
+------------------------------------------------
+autogen\cmt9_front\10.jpg
+Inference time = 0.193 (seconds)
+Objects count = 1
+5 0.944059 216 154 738 519
+Output saved at output-autogen\cmt9_front\10.jpg
+------------------------------------------------
+autogen\cmt9_front\11.jpg
+Inference time = 0.175 (seconds)
+Objects count = 1
+5 0.946506 214 152 741 521
+Output saved at output-autogen\cmt9_front\11.jpg
+------------------------------------------------
+autogen\cmt9_front\12.jpg
+Inference time = 0.183 (seconds)
+Objects count = 1
+5 0.947998 211 150 743 524
+Output saved at output-autogen\cmt9_front\12.jpg
+------------------------------------------------
+autogen\cmt9_front\13.jpg
+Inference time = 0.194 (seconds)
+Objects count = 1
+5 0.947615 208 147 745 528
+Output saved at output-autogen\cmt9_front\13.jpg
+------------------------------------------------
+autogen\cmt9_front\14.jpg
+Inference time = 0.195 (seconds)
+Objects count = 1
+5 0.948598 207 144 747 531
+Output saved at output-autogen\cmt9_front\14.jpg
+------------------------------------------------
+autogen\cmt9_front\15.jpg
+Inference time = 0.21 (seconds)
+Objects count = 1
+5 0.949209 206 138 749 536
+Output saved at output-autogen\cmt9_front\15.jpg
+------------------------------------------------
+autogen\cmt9_front\16.jpg
+Inference time = 0.216 (seconds)
+Objects count = 1
+5 0.951729 205 131 750 540
+Output saved at output-autogen\cmt9_front\16.jpg
+------------------------------------------------
+autogen\cmt9_front\17.jpg
+Inference time = 0.218 (seconds)
+Objects count = 1
+5 0.956368 205 125 752 545
+Output saved at output-autogen\cmt9_front\17.jpg
+------------------------------------------------
+autogen\cmt9_front\18.jpg
+Inference time = 0.181 (seconds)
+Objects count = 1
+5 0.960529 204 119 754 551
+Output saved at output-autogen\cmt9_front\18.jpg
+------------------------------------------------
+autogen\cmt9_front\19.jpg
+Inference time = 0.189 (seconds)
+Objects count = 1
+5 0.961731 203 115 755 555
+Output saved at output-autogen\cmt9_front\19.jpg
+------------------------------------------------
+autogen\cmt9_front\2.jpg
+Inference time = 0.189 (seconds)
+Objects count = 1
+5 0.962797 232 180 706 492
+Output saved at output-autogen\cmt9_front\2.jpg
+------------------------------------------------
+autogen\cmt9_front\20.jpg
+Inference time = 0.214 (seconds)
+Objects count = 1
+5 0.964275 202 112 756 560
+Output saved at output-autogen\cmt9_front\20.jpg
+------------------------------------------------
+autogen\cmt9_front\21.jpg
+Inference time = 0.187 (seconds)
+Objects count = 1
+5 0.966285 201 111 757 563
+Output saved at output-autogen\cmt9_front\21.jpg
+------------------------------------------------
+autogen\cmt9_front\22.jpg
+Inference time = 0.235 (seconds)
+Objects count = 1
+5 0.969264 202 109 759 565
+Output saved at output-autogen\cmt9_front\22.jpg
+------------------------------------------------
+autogen\cmt9_front\23.jpg
+Inference time = 0.31 (seconds)
+Objects count = 1
+5 0.969537 201 106 760 567
+Output saved at output-autogen\cmt9_front\23.jpg
+------------------------------------------------
+autogen\cmt9_front\24.jpg
+Inference time = 0.279 (seconds)
+Objects count = 1
+5 0.970466 200 102 762 570
+Output saved at output-autogen\cmt9_front\24.jpg
+------------------------------------------------
+autogen\cmt9_front\25.jpg
+Inference time = 0.299 (seconds)
+Objects count = 1
+5 0.970114 200 97 763 573
+Output saved at output-autogen\cmt9_front\25.jpg
+------------------------------------------------
+autogen\cmt9_front\26.jpg
+Inference time = 0.287 (seconds)
+Objects count = 1
+5 0.969591 199 94 763 577
+Output saved at output-autogen\cmt9_front\26.jpg
+------------------------------------------------
+autogen\cmt9_front\27.jpg
+Inference time = 0.313 (seconds)
+Objects count = 1
+5 0.968610 199 91 765 582
+Output saved at output-autogen\cmt9_front\27.jpg
+------------------------------------------------
+autogen\cmt9_front\28.jpg
+Inference time = 0.279 (seconds)
+Objects count = 1
+5 0.967010 198 89 767 586
+Output saved at output-autogen\cmt9_front\28.jpg
+------------------------------------------------
+autogen\cmt9_front\29.jpg
+Inference time = 0.318 (seconds)
+Objects count = 1
+5 0.966629 198 89 768 588
+Output saved at output-autogen\cmt9_front\29.jpg
+------------------------------------------------
+autogen\cmt9_front\3.jpg
+Inference time = 0.317 (seconds)
+Objects count = 1
+5 0.953259 230 176 715 494
+Output saved at output-autogen\cmt9_front\3.jpg
+------------------------------------------------
+autogen\cmt9_front\30.jpg
+Inference time = 0.302 (seconds)
+Objects count = 1
+5 0.965057 198 87 771 590
+Output saved at output-autogen\cmt9_front\30.jpg
+------------------------------------------------
+autogen\cmt9_front\31.jpg
+Inference time = 0.306 (seconds)
+Objects count = 1
+5 0.965749 197 83 770 593
+Output saved at output-autogen\cmt9_front\31.jpg
+------------------------------------------------
+autogen\cmt9_front\32.jpg
+Inference time = 0.304 (seconds)
+Objects count = 1
+5 0.966114 198 80 770 594
+Output saved at output-autogen\cmt9_front\32.jpg
+------------------------------------------------
+autogen\cmt9_front\33.jpg
+Inference time = 0.315 (seconds)
+Objects count = 1
+5 0.966365 199 77 771 595
+Output saved at output-autogen\cmt9_front\33.jpg
+------------------------------------------------
+autogen\cmt9_front\34.jpg
+Inference time = 0.316 (seconds)
+Objects count = 1
+5 0.967204 199 76 771 597
+Output saved at output-autogen\cmt9_front\34.jpg
+------------------------------------------------
+autogen\cmt9_front\35.jpg
+Inference time = 0.325 (seconds)
+Objects count = 1
+5 0.967588 201 73 772 598
+Output saved at output-autogen\cmt9_front\35.jpg
+------------------------------------------------
+autogen\cmt9_front\36.jpg
+Inference time = 0.284 (seconds)
+Objects count = 1
+5 0.968238 202 70 770 600
+Output saved at output-autogen\cmt9_front\36.jpg
+------------------------------------------------
+autogen\cmt9_front\37.jpg
+Inference time = 0.315 (seconds)
+Objects count = 1
+5 0.969461 203 69 767 602
+Output saved at output-autogen\cmt9_front\37.jpg
+------------------------------------------------
+autogen\cmt9_front\38.jpg
+Inference time = 0.306 (seconds)
+Objects count = 1
+5 0.970977 203 68 768 604
+Output saved at output-autogen\cmt9_front\38.jpg
+------------------------------------------------
+autogen\cmt9_front\39.jpg
+Inference time = 0.305 (seconds)
+Objects count = 1
+5 0.972190 204 66 769 606
+Output saved at output-autogen\cmt9_front\39.jpg
+------------------------------------------------
+autogen\cmt9_front\4.jpg
+Inference time = 0.277 (seconds)
+Objects count = 1
+5 0.949976 228 170 719 503
+Output saved at output-autogen\cmt9_front\4.jpg
+------------------------------------------------
+autogen\cmt9_front\40.jpg
+Inference time = 0.362 (seconds)
+Objects count = 1
+5 0.973550 204 65 769 607
+Output saved at output-autogen\cmt9_front\40.jpg
+------------------------------------------------
+autogen\cmt9_front\41.jpg
+Inference time = 0.276 (seconds)
+Objects count = 1
+5 0.973432 205 64 767 610
+Output saved at output-autogen\cmt9_front\41.jpg
+------------------------------------------------
+autogen\cmt9_front\42.jpg
+Inference time = 0.335 (seconds)
+Objects count = 1
+5 0.974505 206 61 764 612
+Output saved at output-autogen\cmt9_front\42.jpg
+------------------------------------------------
+autogen\cmt9_front\43.jpg
+Inference time = 0.407 (seconds)
+Objects count = 1
+5 0.975218 207 60 766 613
+Output saved at output-autogen\cmt9_front\43.jpg
+------------------------------------------------
+autogen\cmt9_front\44.jpg
+Inference time = 0.428 (seconds)
+Objects count = 1
+5 0.973889 208 59 767 614
+Output saved at output-autogen\cmt9_front\44.jpg
+------------------------------------------------
+autogen\cmt9_front\45.jpg
+Inference time = 0.421 (seconds)
+Objects count = 1
+5 0.973364 209 57 766 615
+Output saved at output-autogen\cmt9_front\45.jpg
+------------------------------------------------
+autogen\cmt9_front\46.jpg
+Inference time = 0.4 (seconds)
+Objects count = 1
+5 0.973156 210 57 766 615
+Output saved at output-autogen\cmt9_front\46.jpg
+------------------------------------------------
+autogen\cmt9_front\47.jpg
+Inference time = 0.417 (seconds)
+Objects count = 1
+5 0.973604 210 56 763 616
+Output saved at output-autogen\cmt9_front\47.jpg
+------------------------------------------------
+autogen\cmt9_front\48.jpg
+Inference time = 0.408 (seconds)
+Objects count = 1
+5 0.974705 214 55 766 617
+Output saved at output-autogen\cmt9_front\48.jpg
+------------------------------------------------
+autogen\cmt9_front\49.jpg
+Inference time = 0.416 (seconds)
+Objects count = 1
+5 0.976240 216 56 765 617
+Output saved at output-autogen\cmt9_front\49.jpg
+------------------------------------------------
+autogen\cmt9_front\5.jpg
+Inference time = 0.418 (seconds)
+Objects count = 1
+5 0.948489 227 166 722 507
+Output saved at output-autogen\cmt9_front\5.jpg
+------------------------------------------------
+autogen\cmt9_front\50.jpg
+Inference time = 0.539 (seconds)
+Objects count = 1
+5 0.976430 217 54 763 617
+Output saved at output-autogen\cmt9_front\50.jpg
+------------------------------------------------
+autogen\cmt9_front\51.jpg
+Inference time = 0.409 (seconds)
+Objects count = 1
+5 0.977562 219 54 764 617
+Output saved at output-autogen\cmt9_front\51.jpg
+------------------------------------------------
+autogen\cmt9_front\52.jpg
+Inference time = 0.399 (seconds)
+Objects count = 1
+5 0.977238 220 53 763 618
+Output saved at output-autogen\cmt9_front\52.jpg
+------------------------------------------------
+autogen\cmt9_front\53.jpg
+Inference time = 0.463 (seconds)
+Objects count = 1
+5 0.976800 221 53 762 618
+Output saved at output-autogen\cmt9_front\53.jpg
+------------------------------------------------
+autogen\cmt9_front\54.jpg
+Inference time = 1.283 (seconds)
+Objects count = 1
+5 0.976552 221 52 759 618
+Output saved at output-autogen\cmt9_front\54.jpg
+------------------------------------------------
+autogen\cmt9_front\55.jpg
+Inference time = 0.82 (seconds)
+Objects count = 1
+5 0.975949 222 50 758 618
+Output saved at output-autogen\cmt9_front\55.jpg
+------------------------------------------------
+autogen\cmt9_front\56.jpg
+Inference time = 0.638 (seconds)
+Objects count = 1
+5 0.976396 224 51 758 618
+Output saved at output-autogen\cmt9_front\56.jpg
+------------------------------------------------
+autogen\cmt9_front\57.jpg
+Inference time = 0.691 (seconds)
+Objects count = 1
+5 0.975387 226 51 758 618
+Output saved at output-autogen\cmt9_front\57.jpg
+------------------------------------------------
+autogen\cmt9_front\58.jpg
+Inference time = 0.741 (seconds)
+Objects count = 1
+5 0.974292 229 51 757 618
+Output saved at output-autogen\cmt9_front\58.jpg
+------------------------------------------------
+autogen\cmt9_front\59.jpg
+Inference time = 0.501 (seconds)
+Objects count = 1
+5 0.971533 235 51 754 619
+Output saved at output-autogen\cmt9_front\59.jpg
+------------------------------------------------
+autogen\cmt9_front\6.jpg
+Inference time = 0.474 (seconds)
+Objects count = 1
+5 0.946842 225 163 725 512
+Output saved at output-autogen\cmt9_front\6.jpg
+------------------------------------------------
+autogen\cmt9_front\60.jpg
+Inference time = 1.001 (seconds)
+Objects count = 1
+5 0.971755 239 49 752 620
+Output saved at output-autogen\cmt9_front\60.jpg
+------------------------------------------------
+autogen\cmt9_front\61.jpg
+Inference time = 0.701 (seconds)
+Objects count = 1
+5 0.972148 244 49 750 620
+Output saved at output-autogen\cmt9_front\61.jpg
+------------------------------------------------
+autogen\cmt9_front\62.jpg
+Inference time = 0.557 (seconds)
+Objects count = 1
+5 0.972171 248 50 749 620
+Output saved at output-autogen\cmt9_front\62.jpg
+------------------------------------------------
+autogen\cmt9_front\63.jpg
+Inference time = 0.32 (seconds)
+Objects count = 1
+5 0.972062 252 49 746 619
+Output saved at output-autogen\cmt9_front\63.jpg
+------------------------------------------------
+autogen\cmt9_front\64.jpg
+Inference time = 0.305 (seconds)
+Objects count = 1
+5 0.972867 254 49 744 619
+Output saved at output-autogen\cmt9_front\64.jpg
+------------------------------------------------
+autogen\cmt9_front\65.jpg
+Inference time = 0.294 (seconds)
+Objects count = 1
+5 0.972643 256 49 743 619
+Output saved at output-autogen\cmt9_front\65.jpg
+------------------------------------------------
+autogen\cmt9_front\66.jpg
+Inference time = 0.295 (seconds)
+Objects count = 1
+5 0.973543 259 49 740 619
+Output saved at output-autogen\cmt9_front\66.jpg
+------------------------------------------------
+autogen\cmt9_front\67.jpg
+Inference time = 0.271 (seconds)
+Objects count = 1
+5 0.974349 263 50 739 618
+Output saved at output-autogen\cmt9_front\67.jpg
+------------------------------------------------
+autogen\cmt9_front\68.jpg
+Inference time = 0.314 (seconds)
+Objects count = 1
+5 0.974877 266 51 737 617
+Output saved at output-autogen\cmt9_front\68.jpg
+------------------------------------------------
+autogen\cmt9_front\69.jpg
+Inference time = 0.307 (seconds)
+Objects count = 1
+5 0.974359 271 51 734 615
+Output saved at output-autogen\cmt9_front\69.jpg
+------------------------------------------------
+autogen\cmt9_front\7.jpg
+Inference time = 0.325 (seconds)
+Objects count = 1
+5 0.946947 222 160 728 515
+Output saved at output-autogen\cmt9_front\7.jpg
+------------------------------------------------
+autogen\cmt9_front\70.jpg
+Inference time = 0.316 (seconds)
+Objects count = 1
+5 0.972756 273 52 729 612
+Output saved at output-autogen\cmt9_front\70.jpg
+------------------------------------------------
+autogen\cmt9_front\71.jpg
+Inference time = 0.292 (seconds)
+Objects count = 1
+5 0.972011 279 49 722 614
+Output saved at output-autogen\cmt9_front\71.jpg
+------------------------------------------------
+autogen\cmt9_front\72.jpg
+Inference time = 0.297 (seconds)
+Objects count = 1
+5 0.971237 283 51 717 611
+Output saved at output-autogen\cmt9_front\72.jpg
+------------------------------------------------
+autogen\cmt9_front\73.jpg
+Inference time = 0.296 (seconds)
+Objects count = 1
+5 0.970175 286 53 712 606
+Output saved at output-autogen\cmt9_front\73.jpg
+------------------------------------------------
+autogen\cmt9_front\74.jpg
+Inference time = 0.302 (seconds)
+Objects count = 1
+5 0.970677 289 54 709 603
+Output saved at output-autogen\cmt9_front\74.jpg
+------------------------------------------------
+autogen\cmt9_front\75.jpg
+Inference time = 0.306 (seconds)
+Objects count = 1
+5 0.971675 294 56 706 602
+Output saved at output-autogen\cmt9_front\75.jpg
+------------------------------------------------
+autogen\cmt9_front\76.jpg
+Inference time = 0.354 (seconds)
+Objects count = 1
+5 0.971668 298 57 704 600
+Output saved at output-autogen\cmt9_front\76.jpg
+------------------------------------------------
+autogen\cmt9_front\77.jpg
+Inference time = 0.37 (seconds)
+Objects count = 1
+5 0.970586 302 59 701 598
+Output saved at output-autogen\cmt9_front\77.jpg
+------------------------------------------------
+autogen\cmt9_front\78.jpg
+Inference time = 0.277 (seconds)
+Objects count = 1
+5 0.969758 307 61 698 595
+Output saved at output-autogen\cmt9_front\78.jpg
+------------------------------------------------
+autogen\cmt9_front\79.jpg
+Inference time = 0.298 (seconds)
+Objects count = 1
+5 0.968394 312 63 694 593
+Output saved at output-autogen\cmt9_front\79.jpg
+------------------------------------------------
+autogen\cmt9_front\8.jpg
+Inference time = 0.289 (seconds)
+Objects count = 1
+5 0.945712 221 156 731 517
+Output saved at output-autogen\cmt9_front\8.jpg
+------------------------------------------------
+autogen\cmt9_front\80.jpg
+Inference time = 0.303 (seconds)
+Objects count = 1
+5 0.966655 316 65 691 591
+Output saved at output-autogen\cmt9_front\80.jpg
+------------------------------------------------
+autogen\cmt9_front\81.jpg
+Inference time = 0.291 (seconds)
+Objects count = 1
+5 0.966295 321 66 688 588
+Output saved at output-autogen\cmt9_front\81.jpg
+------------------------------------------------
+autogen\cmt9_front\82.jpg
+Inference time = 0.303 (seconds)
+Objects count = 1
+5 0.967211 324 67 685 586
+Output saved at output-autogen\cmt9_front\82.jpg
+------------------------------------------------
+autogen\cmt9_front\83.jpg
+Inference time = 0.301 (seconds)
+Objects count = 1
+5 0.967613 327 67 683 586
+Output saved at output-autogen\cmt9_front\83.jpg
+------------------------------------------------
+autogen\cmt9_front\84.jpg
+Inference time = 0.334 (seconds)
+Objects count = 1
+5 0.968114 332 69 680 584
+Output saved at output-autogen\cmt9_front\84.jpg
+------------------------------------------------
+autogen\cmt9_front\85.jpg
+Inference time = 0.329 (seconds)
+Objects count = 1
+5 0.968525 337 70 676 584
+Output saved at output-autogen\cmt9_front\85.jpg
+------------------------------------------------
+autogen\cmt9_front\86.jpg
+Inference time = 0.301 (seconds)
+Objects count = 1
+5 0.969168 340 74 671 583
+Output saved at output-autogen\cmt9_front\86.jpg
+------------------------------------------------
+autogen\cmt9_front\87.jpg
+Inference time = 0.308 (seconds)
+Objects count = 1
+5 0.968791 344 80 665 581
+Output saved at output-autogen\cmt9_front\87.jpg
+------------------------------------------------
+autogen\cmt9_front\88.jpg
+Inference time = 0.316 (seconds)
+Objects count = 1
+5 0.969353 345 84 661 576
+Output saved at output-autogen\cmt9_front\88.jpg
+------------------------------------------------
+autogen\cmt9_front\89.jpg
+Inference time = 0.259 (seconds)
+Objects count = 1
+5 0.970123 346 87 659 572
+Output saved at output-autogen\cmt9_front\89.jpg
+------------------------------------------------
+autogen\cmt9_front\9.jpg
+Inference time = 0.175 (seconds)
+Objects count = 1
+5 0.944646 218 154 734 520
+Output saved at output-autogen\cmt9_front\9.jpg
+------------------------------------------------
+179 images processed
+Total time taken: 56.047 seconds
+Average time taken: 0.313112 seconds
+
+-10 -10.3818 0.3818
+-11 -11.2537 0.2537
+-12 -12.2936 0.2936
+-13 -13.3078 0.3078
+-14 -14.4578 0.4578
+-15 -15.325 0.325
+-16 -16.2388 0.2388
+-17 -17.3621 0.362101
+-18 -18.2589 0.2589
+-19 -19.2993 0.299299
+-2 -2.13936 0.13936
+-20 -20.2565 0.2565
+-21 -21.2374 0.2374
+-22 -22.2876 0.2876
+-23 -23.2498 0.2498
+-24 -24.2173 0.2173
+-25 -25.2711 0.271099
+-26 -26.2757 0.2757
+-27 -27.1907 0.190701
+-28 -28.1867 0.186701
+-29 -29.2804 0.280399
+-3 -3.34194 0.34194
+-30 -30.2939 0.2939
+-31 -31.2909 0.290899
+-32 -32.7352 0.735199
+-33 -33.4363 0.436298
+-34 -34.3151 0.315102
+-35 -35.3591 0.3591
+-36 -36.5469 0.546902
+-37 -37.3493 0.3493
+-38 -38.2583 0.258301
+-39 -39.1793 0.179298
+-4 -4.39871 0.39871
+-40 -40.4914 0.491402
+-41 -41.2078 0.207802
+-42 -42.6538 0.653801
+-43 -43.5881 0.5881
+-44 -44.4464 0.4464
+-45 -45.3592 0.3592
+-46 -46.3119 0.311901
+-47 -47.3336 0.333599
+-48 -48.3501 0.350101
+-49 -49.2635 0.2635
+-5 -6.08032 1.08032
+-50 -50.2952 0.2952
+-51 -51.3701 0.370098
+-52 -52.2243 0.2243
+-53 -53.4531 0.453098
+-54 -54.2016 0.201599
+-55 -55.6112 0.611198
+-56 -56.2404 0.240398
+-57 -57.1443 0.144299
+-58 -58.409 0.409
+-59 -59.4257 0.425701
+-6 -6.19391 0.19391
+-60 -60.5385 0.538502
+-61 -61.6992 0.6992
+-62 -62.5398 0.539799
+-63 -63.9046 0.904598
+-64 -64.4703 0.470299
+-65 -65.3573 0.3573
+-66 -66.5244 0.524399
+-67 -67.5573 0.557297
+-68 -68.3131 0.313103
+-69 -69.535 0.535004
+-7 -7.95752 0.95752
+-70 -70.8738 0.873802
+-71 -71.3824 0.382401
+-72 -72.2303 0.230301
+-73 -74.0546 1.0546
+-74 -74.4551 0.455101
+-75 -75.406 0.405998
+-76 -76.911 0.911003
+-77 -77.4245 0.4245
+-78 -78.8049 0.804901
+-79 -80.007 1.007
+-8 -8.32565 0.32565
+-80 -80.7185 0.718498
+-81 -81.9067 0.9067
+-82 -82.8416 0.841599
+-83 -84.1331 1.1331
+-84 -85.3484 1.3484
+-85 -86.5492 1.5492
+-86 -87.4362 1.4362
+-87 -90 3
+-88 -90 2
+-89 -90 1
+-9 -9.16675 0.16675
+0 -0.131111 0.131111
+1 -0 1
+10 9.53013 0.46987
+11 9.97206 1.02794
+12 11.0463 0.9537
+13 12.4332 0.5668
+14 13.2405 0.7595
+15 13.9078 1.0922
+16 15.5241 0.4759
+17 16.7369 0.2631
+18 17.8122 0.187799
+19 18.6001 0.3999
+2 -0 2
+20 19.6142 0.385799
+21 20.5095 0.490499
+22 21.7271 0.2729
+23 22.5294 0.4706
+24 23.6294 0.3706
+25 24.7383 0.2617
+26 25.8356 0.1644
+27 26.565 0.434999
+28 27.4908 0.509199
+29 28.702 0.298
+3 1.58236 1.41764
+30 29.5719 0.428101
+31 30.6631 0.336901
+32 31.6075 0.3925
+33 32.5741 0.4259
+34 33.7429 0.257099
+35 34.5534 0.446602
+36 35.5377 0.462299
+37 36.1932 0.806801
+38 37.5384 0.461601
+39 38.4802 0.519798
+4 2.80408 1.19592
+40 39.2577 0.742298
+41 40.7074 0.292599
+42 41.1549 0.8451
+43 42.7525 0.247501
+44 43.7456 0.254398
+45 44.4679 0.532101
+46 45.5338 0.466202
+47 46.4995 0.5005
+48 47.3336 0.666401
+49 48.2629 0.737099
+5 4.15964 0.84036
+50 49.0361 0.963902
+51 50.3991 0.600899
+52 51.28 0.720001
+53 52.4314 0.5686
+54 53.3814 0.618599
+55 54.1179 0.882099
+56 55.1492 0.8508
+57 56.4171 0.582901
+58 57.0948 0.905201
+59 58.5824 0.417599
+6 4.77496 1.22504
+60 59.3335 0.6665
+61 60.69 0.310001
+62 61.4208 0.579201
+63 62.2785 0.7215
+64 63.5242 0.4758
+65 64.4942 0.505798
+66 65.4584 0.541603
+67 66.4618 0.5382
+68 67.225 0.775002
+69 68.1386 0.861397
+7 5.73434 1.26566
+70 69.118 0.882004
+71 70.0963 0.903702
+72 70.962 1.038
+73 71.984 1.016
+74 73.1749 0.825104
+75 74.3502 0.649803
+76 75.4034 0.596603
+77 76.2637 0.736298
+78 77.2818 0.718201
+79 78.2713 0.728699
+8 6.81522 1.18478
+80 79.3271 0.672897
+81 80.0494 0.9506
+82 81.1294 0.870598
+83 82.0371 0.962898
+84 83.0825 0.917503
+85 84.0326 0.9674
+86 85.2183 0.7817
+87 86.9993 0.000701904
+88 88.6678 0.667801
+89 -90 179
+9 8.05684 0.94316
+
+------------------------------------------------
+Average = 0.594107
+False angle = 1
+Max = 3
+Min = 0.000701904
