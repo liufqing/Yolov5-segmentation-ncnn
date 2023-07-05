@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{e4724046-a898-4a44-8f20-94a0c356e4ae}</ProjectGuid>
-    <RootNamespace>compareAngles</RootNamespace>
+    <ProjectGuid>{879c0712-f36c-4074-aff6-b36ad9ef873f}</ProjectGuid>
+    <RootNamespace>affineTransform</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -129,7 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Tools\compareAngles.cpp" />
+    <ClCompile Include="affineTransform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

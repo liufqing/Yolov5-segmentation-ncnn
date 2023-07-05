@@ -5,9 +5,11 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Yolov5-seg", "Yolov5-seg\Yolov5-seg.vcxproj", "{C441E239-2626-480F-BF7B-B0D02FA0C42D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "autoGenRotate", "autoGenRotate\autoGenRotate.vcxproj", "{82DF53A3-33FB-467B-A5DE-98FA746DDED1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "autoGenRotate", "Tools\autoGenRotate\autoGenRotate.vcxproj", "{82DF53A3-33FB-467B-A5DE-98FA746DDED1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compareAngles", "compareAngles\compareAngles.vcxproj", "{E4724046-A898-4A44-8F20-94A0C356E4AE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "affineTransform", "Tools\affineTransform\affineTransform.vcxproj", "{879C0712-F36C-4074-AFF6-B36AD9EF873F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compareAngles", "Tools\compareAngles\compareAngles.vcxproj", "{E4724046-A898-4A44-8F20-94A0C356E4AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,8 +29,8 @@ Global
 		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Release|x64.Build.0 = Release|x64
 		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Release|x86.ActiveCfg = Release|Win32
 		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Release|x86.Build.0 = Release|Win32
-		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Test|x64.ActiveCfg = test|x64
-		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Test|x64.Build.0 = test|x64
+		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Test|x64.ActiveCfg = Debug|x64
+		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Test|x64.Build.0 = Debug|x64
 		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Test|x86.ActiveCfg = test|Win32
 		{C441E239-2626-480F-BF7B-B0D02FA0C42D}.Test|x86.Build.0 = test|Win32
 		{82DF53A3-33FB-467B-A5DE-98FA746DDED1}.Debug|x64.ActiveCfg = Debug|x64
@@ -43,6 +45,18 @@ Global
 		{82DF53A3-33FB-467B-A5DE-98FA746DDED1}.Test|x64.Build.0 = Debug|x64
 		{82DF53A3-33FB-467B-A5DE-98FA746DDED1}.Test|x86.ActiveCfg = Debug|Win32
 		{82DF53A3-33FB-467B-A5DE-98FA746DDED1}.Test|x86.Build.0 = Debug|Win32
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Debug|x64.ActiveCfg = Debug|x64
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Debug|x64.Build.0 = Debug|x64
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Debug|x86.ActiveCfg = Debug|Win32
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Debug|x86.Build.0 = Debug|Win32
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Release|x64.ActiveCfg = Release|x64
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Release|x64.Build.0 = Release|x64
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Release|x86.ActiveCfg = Release|Win32
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Release|x86.Build.0 = Release|Win32
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Test|x64.ActiveCfg = Debug|x64
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Test|x64.Build.0 = Debug|x64
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Test|x86.ActiveCfg = Debug|Win32
+		{879C0712-F36C-4074-AFF6-B36AD9EF873F}.Test|x86.Build.0 = Debug|Win32
 		{E4724046-A898-4A44-8F20-94A0C356E4AE}.Debug|x64.ActiveCfg = Debug|x64
 		{E4724046-A898-4A44-8F20-94A0C356E4AE}.Debug|x64.Build.0 = Debug|x64
 		{E4724046-A898-4A44-8F20-94A0C356E4AE}.Debug|x86.ActiveCfg = Debug|Win32

@@ -677,7 +677,7 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
                 rotated = in(obj.rect);
             else {
                 cv::RotatedRect rr = cv::minAreaRect(contour);
-                //draw_RotatedRect(out, rr, cc);
+                //draw_RotatedRect(out, rr, cv::Scalar(0,0,255));
                 rotAngle = - getRotatedRectImg(in, rotated, rr);
             }
 			cv::utils::fs::createDirectory(rotateFolder);
@@ -781,12 +781,14 @@ float Yolo::getRotatedRectImg(const cv::Mat& src, cv::Mat& dst, const cv::Rotate
         angle = angle - 90;
     }
 
-    float radianAngle = angle * CV_PI / 180;
+    float radianAngle = - angle * CV_PI / 180;
     // angle += M_PI; // you may want rotate it upsidedown
     float sinA = sin(radianAngle), cosA = cos(radianAngle);
-    float data[6] = {
-         cosA, sinA, width / 2.0f - cosA * rr.center.x - sinA * rr.center.y,
-        -sinA, cosA, height / 2.0f - cosA * rr.center.y + sinA * rr.center.x };
+    float data[6] = 
+    {
+        cosA, -sinA, width / 2.0f - cosA * rr.center.x + sinA * rr.center.y,
+        sinA, cosA, height / 2.0f - cosA * rr.center.y - sinA * rr.center.x
+    };
     cv::Mat affineMatrix(2, 3, CV_32FC1, data);
 
     /*

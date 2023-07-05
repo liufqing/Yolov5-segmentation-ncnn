@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 		if (diff > max) max = diff;
 		if (diff < min) min = diff;
 	}
-	cout << "\n------------------------------------------------" << std::endl;
+	cout << "------------------------------------------------" << std::endl;
 	cout << "Average = " << total / count << endl;
 	cout << "False angle = " << skip << endl;
 	cout << "Max = " << max << endl;

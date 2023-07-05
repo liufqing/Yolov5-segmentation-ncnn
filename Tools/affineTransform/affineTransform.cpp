@@ -20,39 +20,43 @@ int angle;
 Mat src;
 Mat dst;
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]){
 	const char* inputPath = argv[1];
 	src = imread(inputPath);
-	//src.convertTo(src, CV_32FC3, 1.0 / 255.0);
-	//cv::Mat dst;
-	//cv::Mat affineMatrix = cv::getRotationMatrix2D(cv::Point(src.cols/2, src.rows/2), 30, 0.8);
-	//cv::warpAffine(src, dst, affineMatrix, src.size(),0, BORDER_REPLICATE);
-	//cv::imwrite("dst.jpg", dst);
-	//
-	//cv::imshow("dst", dst);
-	//cv::waitKey();
-	angle = 0;
-	x = 0;
-	y = 0;
+
+	cv::Mat dst;
+	//affineMatrix = cv::getRotationMatrix2D(cv::Point(src.cols/2, src.rows/2), 30, 0.8);
+	float data[6] = {
+		-1	,	0	,	src.rows,
+		0	,	1	,	0 };
+	cv::Mat affineMatrix(2, 3, CV_32FC1, data);
+	cv::warpAffine(src, dst, affineMatrix, src.size());
+	cv::imwrite("dst.jpg", dst);
 	
-	const char* windowname = "src";
+	cv::imshow("dst", dst);
+	cv::waitKey();
 
-	namedWindow(windowname, WINDOW_AUTOSIZE);
-	cv::createTrackbar("angle", windowname, &angle, 12, onTrackbar);
-	cv::createTrackbar("x", windowname, &x, 10, onTrackbar);
-	cv::createTrackbar("y", windowname, &y, 10, onTrackbar);
+	//angle = 0;
+	//x = 0;
+	//y = 0;
+	//
+	//const char* windowname = "src";
 
-	onTrackbar(0, 0);
-	cv::waitKey(0);
-	cv::destroyAllWindows();
+	//namedWindow(windowname, WINDOW_AUTOSIZE);
+	//cv::createTrackbar("angle", windowname, &angle, 12, onTrackbar);
+	//cv::createTrackbar("x", windowname, &x, 10, onTrackbar);
+	//cv::createTrackbar("y", windowname, &y, 10, onTrackbar);
+
+	//onTrackbar(0, 0);
+	//cv::waitKey(0);
+	//cv::destroyAllWindows();
 
 	return 0;
 }
 
 void onTrackbar(int, void*) {
 	Mat dst, srcCopy = src.clone();
-	int newangle = angle * 30;
+	int newangle =-90 + angle * 30;
 	cv::RotatedRect rr(cv::Point2f(300, 400), Size(300, 300), newangle);
 
 	//Draw rotated rectangle
@@ -67,8 +71,8 @@ void onTrackbar(int, void*) {
 	float cosA = cos(newangle * CV_PI / 180.0);
 	float width = rr.size.width;
 	float height = rr.size.height;
-	float xShift = width / 2.0f - cosA * rr.center.x - sinA * rr.center.y;
-	float yShift = height / 2.0f - cosA * rr.center.y + sinA * rr.center.x;
+	float xShift = -100 + x*10;
+	float yShift = -100 + y*10;
 	float data[6] = {
 		 cosA, sinA, xShift,
 		-sinA, cosA, yShift };
