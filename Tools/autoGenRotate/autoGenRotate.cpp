@@ -14,12 +14,15 @@ int main(int argc, char* argv[]){
 
 	int min = std::stoi(minAngle);
 	int max = std::stoi(maxAngle);
+
 	cv::Mat src = cv::imread(input);
+
 	std::filesystem::path inputPath = input;
+
 	cv::Mat dst;
 	cv::Size size(src.cols,src.cols);
 	cv::Point2f center(src.cols / 2, src.rows / 2);
-	std::string outputFolder = "autogen/" + inputPath.stem().string();
+	std::string outputFolder = inputPath.parent_path().string() + "\\" + inputPath.stem().string();
 	cv::utils::fs::createDirectory(outputFolder);
 	for (int i = min; i < max; i++) {
 		cv::Mat affineMatrix = cv::getRotationMatrix2D(center, i, std::stof(scale));
