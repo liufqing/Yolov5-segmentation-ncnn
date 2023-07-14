@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <vector>
 #include <cctype>
+#include <chrono>
+#include <iostream>
 
 #define MAX_STRIDE 64
 #define PERMUTE 0 // Using the permute layer output
@@ -22,6 +24,14 @@ struct Object {
     float prob{};
     std::vector<float> mask_feat;
     cv::Mat cv_mask;
+};
+
+struct Timer {
+    std::chrono::time_point<std::chrono::steady_clock> start{}, finish{};
+    std::chrono::duration<float> duration{}; //duration in seconds
+    std::string task;
+    Timer(const char* _task);
+    ~Timer();
 };
 
 extern const unsigned char colors[81][3];

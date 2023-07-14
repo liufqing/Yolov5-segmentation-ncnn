@@ -69,7 +69,7 @@ void Yolo::get_blob_name(std::string in, std::string out, std::string out1, std:
 }
 
 int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
-    clock_t tStart = clock();
+    Timer timer("Inference");
     // load image, resize and pad to 640x640
     const int img_w = bgr.cols;
     const int img_h = bgr.rows;
@@ -182,8 +182,6 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
             proposals.push_back(obj);
         }
     }
-    
-    inference_time = (double)(clock() - tStart) / CLOCKS_PER_SEC ;
 
     // sort all candidates by score from highest to lowest
     qsort_descent_inplace(proposals);
@@ -234,8 +232,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
 }
 
 int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
-    clock_t tStart = clock();
-
+    Timer timer("Inference");
     // load image, resize and letterbox pad to multiple of MAX_STRIDE
     int img_w = bgr.cols;
     int img_h = bgr.rows;
@@ -440,8 +437,6 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
         proposals.insert(proposals.end(), objects.begin(), objects.end());
     }
 
-    inference_time = (double)(clock() - tStart) / CLOCKS_PER_SEC;
-
     // sort all proposals by score from highest to lowest
     qsort_descent_inplace(proposals);
 
@@ -620,8 +615,6 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 	else
 		detect(in, objects);
 
-	std::cout << "Inference time = " << inference_time << " (seconds)\n";
-
 	std::string fileName     = inputPath.filename().string();
     std::string stem         = inputPath.stem().string();
 	std::string outputPath   = outputFolder.string() + "\\" + fileName;
@@ -683,7 +676,7 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 			cv::utils::fs::createDirectory(rotateFolder);
             std::string rotatePath = rotateFolder + "\\" + saveFileName;
             if(!continuous)
-                cv::imshow("rotated", rotated);
+                cv::imshow("Rotated", rotated);
             if(save)
                 cv::imwrite(rotatePath, rotated);
 

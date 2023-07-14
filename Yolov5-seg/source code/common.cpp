@@ -87,6 +87,18 @@ const unsigned char colors[81][3] = {
 std::vector<std::string> IMG_FORMATS{ "bmp", "dng", "jpg", "jpeg", "mpo", "png", "tif", "tiff", "webp", "pfm" };
 std::vector<std::string> VID_FORMATS{ "asf", "avi", "gif", "m4v", "mkv", "mov", "mp4", "mpeg", "mpg", "ts", "wmv" };
 
+Timer::Timer(const char* _task){
+    task = _task;
+    start = std::chrono::high_resolution_clock::now();
+}
+
+Timer::~Timer() {
+    finish = std::chrono::high_resolution_clock::now();
+    duration = finish - start;
+
+    std::cout << task << " took " << duration << std::endl;
+}
+
 bool isImage(const std::string& path) {
 	std::string ext = path.substr(path.find_last_of(".") + 1);
 	std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });

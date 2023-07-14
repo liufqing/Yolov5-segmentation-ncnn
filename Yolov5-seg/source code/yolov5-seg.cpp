@@ -1,5 +1,6 @@
 #include "yolo.hpp"
 #include "parser.hpp"
+#include <time.h>
 
 int main(int argc, char* argv[]) {
     InputParser argument(argc, argv);

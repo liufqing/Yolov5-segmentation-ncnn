@@ -12,7 +12,6 @@
 #include <float.h>
 #include <vector>
 #include <fstream>
-#include <time.h>
 #include <filesystem>
 #include <windows.h>
 
@@ -69,7 +68,6 @@ private:
     ncnn::Net net;
     std::vector<std::string> class_names;
     int class_count=0;
-    double inference_time;
     std::string in_blob;
     std::string out_blob;
     std::string out1_blob;
