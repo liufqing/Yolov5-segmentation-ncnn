@@ -375,3 +375,5 @@ FodyWeavers.xsd
 /output-autogen
 /results
 /dataset
+/autogen-log
+/autogen-output
