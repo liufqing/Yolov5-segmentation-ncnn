@@ -10,12 +10,8 @@ set LOG=D:\Projects\Random_Project\Yolo\autogen-log
 
 cd %CWD%
 
-for %%i in (%INPUT%\*.jpg) do (
-    echo Generating image from %%i
-    %RELEASE%\autoGenRotate.exe %%i -150 180 30 0.5 >> %LOG%\%%~ni_gen.txt
-    
-    echo ------------------------------------------------
-)
+call script\gen.bat
 
-echo Finish !
-pause
+call script\rotate.bat
+
+call script\compareAngles.bat

@@ -20,6 +20,7 @@ int main(int argc, char* argv[]) {
     float conf            = argument.setDefaultArgument("--conf", 0.25f);
     float nms             = argument.setDefaultArgument("--nms", 0.45f);
     int maxObj            = argument.setDefaultArgument("--max-obj", 1);
+    int offset            = argument.setDefaultArgument("--offset", 0);
     bool dynamic          = argument.cmdOptionExists("--dynamic");
     bool contour          = argument.cmdOptionExists("--contour");
     bool agnostic         = argument.cmdOptionExists("--agnostic");
@@ -49,6 +50,7 @@ int main(int argc, char* argv[]) {
                 << "\ncontour   = " << contour
                 << "\nagnostic  = " << agnostic
                 << "\ncrop      = " << crop
+                << "\noffset    = " << offset
                 << "\nsave      = " << save
                 << "\nsaveTxt   = " << saveTxt
                 << "\nsaveMask  = " << saveMask
@@ -73,6 +75,7 @@ int main(int argc, char* argv[]) {
     Yolov5.max_object     = maxObj;
     Yolov5.saveTxt		  = saveTxt;
     Yolov5.crop			  = crop;
+    Yolov5.offset         = offset;
     Yolov5.saveMask		  = saveMask;
     Yolov5.rotate		  = rotate;
 

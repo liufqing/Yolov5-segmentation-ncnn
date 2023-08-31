@@ -688,7 +688,8 @@ void Yolo::image(const std::filesystem::path& inputPath, const std::filesystem::
 
         if (crop) {
             cv::utils::fs::createDirectory(cropFolder);
-            cv::Mat RoI(in, obj.rect); //Region Of Interest
+            cv::Rect2f roi(obj.rect.x - offset, obj.rect.y - offset, obj.rect.width + offset*2, obj.rect.height + offset*2);
+            cv::Mat RoI(in, roi); //Region Of Interest
             std::string cropPath = cropFolder + "\\" + saveFileName;
             cv::imwrite(cropPath, RoI);
         }

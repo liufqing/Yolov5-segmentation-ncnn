@@ -54,12 +54,13 @@ public:
 
     bool dynamic         = false;
     bool save            = false;
-    bool drawContour         = false;
+    bool drawContour     = false;
     bool agnostic        = false;
     bool crop            = false;
     bool saveTxt         = false;
     bool saveMask        = false;
     bool rotate          = false;
+    int offset           = 0;
     int target_size      = 640;
     float prob_threshold = 0.25f;
     float nms_threshold  = 0.45f;
