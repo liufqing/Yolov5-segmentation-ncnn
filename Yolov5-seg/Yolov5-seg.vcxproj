@@ -74,13 +74,13 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include</IncludePath>
     <LibraryPath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
-    <TargetName>yoloncnn</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include</IncludePath>
     <LibraryPath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <TargetName>yoloncnn</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <VcpkgUseStatic>false</VcpkgUseStatic>

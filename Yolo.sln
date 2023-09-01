@@ -11,11 +11,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "affineTransform", "Tools\af
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compareAngles", "Tools\compareAngles\compareAngles.vcxproj", "{E4724046-A898-4A44-8F20-94A0C356E4AE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{8B4D79DA-4B3D-44D2-ADEC-A58BF3B7710C}"
-	ProjectSection(SolutionItems) = preProject
-		script\autoGen.bat = script\autoGen.bat
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

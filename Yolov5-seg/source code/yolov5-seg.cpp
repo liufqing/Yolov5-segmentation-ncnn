@@ -2,7 +2,7 @@
 #include "parser.hpp"
 #include <time.h>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char** argv) {
     InputParser argument(argc, argv);
 
     //set folder path
