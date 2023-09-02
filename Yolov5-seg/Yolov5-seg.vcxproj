@@ -73,13 +73,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include;$(SolutionDir)yolo</IncludePath>
-    <LibraryPath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)yolo;$(VULKAN_SDK)\Include;$(NCNN)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(NCNN)\lib;$(VULKAN_SDK)\lib;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include;$(SolutionDir)yolo</IncludePath>
-    <LibraryPath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)yolo;$(VULKAN_SDK)\Include;$(NCNN)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(NCNN)\lib;$(VULKAN_SDK)\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>

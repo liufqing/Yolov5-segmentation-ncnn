@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VULKAN_SDK)\Include;$(NCNN)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(NCNN)\lib;$(VULKAN_SDK)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Admin\Libraries\ncnn\build-vs2022\install\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VULKAN_SDK)\Include;$(NCNN)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(NCNN)\lib;$(VULKAN_SDK)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -129,6 +129,8 @@
     </Link>
     <Lib>
       <AdditionalDependencies>ncnnd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -152,6 +154,8 @@
     </Link>
     <Lib>
       <AdditionalDependencies>ncnn.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

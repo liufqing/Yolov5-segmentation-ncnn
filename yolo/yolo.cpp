@@ -9,6 +9,7 @@ using namespace ncnn;
 
 Yolo::Yolo() {
     net = new Net();
+    //net->opt.use_vulkan_compute = true;
 }
 
 Yolo::~Yolo() {
