@@ -42,7 +42,7 @@
 ```
 Usage
 
-yoloncnn [option] <value>
+yolov5-seg [option] <value>
 
 Options
     --model <ncnn model name>           = Explicitly specify the ncnn model name. Default yolov5s-seg-idcard-2.ncnn
@@ -74,7 +74,7 @@ source can be :
 For example :
 
 ```
-yoloncnn --source input/test.jpg --model yolov5s-seg-idcard-2.ncnn --save --rotate
+yolov5-seg --source input/test.jpg --model yolov5s-seg-idcard-2.ncnn --save --rotate
 ```
 
 ```
