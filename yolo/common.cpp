@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "common.hpp"
 
 const unsigned char colors[81][3] = {

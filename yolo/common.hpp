@@ -1,17 +1,4 @@
 #pragma once
-#include <ncnn/net.h>
-
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-
-#include <string>
-#include <filesystem>
-#include <algorithm>
-#include <vector>
-#include <cctype>
-#include <chrono>
-#include <iostream>
 
 #define MAX_STRIDE 64
 #define PERMUTE 0 // Using the permute layer output

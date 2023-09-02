@@ -1,28 +1,14 @@
 #pragma once
+
 #include <ncnn/net.h>
-
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/core/utils/filesystem.hpp>
-
-#include <iostream>
-#include <stdio.h>
 #include <string>
-#include <float.h>
-#include <vector>
-#include <fstream>
-#include <filesystem>
-#include <windows.h>
+#include <opencv2/core/core.hpp>
 
 #include "common.hpp"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-
 enum strategy {
     concatenatedContour = 0,    //concatenate all segments
-    largestContour      = 1     //select largest segment
+    largestContour = 1     //select largest segment
 };
 
 enum colorMode {
@@ -34,6 +20,8 @@ class Yolo {
 public:
     Yolo();
     ~Yolo();
+
+public:
     int load(const std::string& bin, const std::string& param);
 
     int load(const std::filesystem::path& bin, const std::filesystem::path& param);
@@ -50,25 +38,26 @@ public:
 
     void get_class_names(const std::filesystem::path& data);
 
-    void get_blob_name(std::string in, std::string out, std::string out0, std::string out1, std::string out2,std::string seg);
+    void get_blob_name(std::string in, std::string out, std::string out0, std::string out1, std::string out2, std::string seg);
 
-    bool dynamic         = false;
-    bool save            = false;
-    bool drawContour     = false;
-    bool agnostic        = false;
-    bool crop            = false;
-    bool saveTxt         = false;
-    bool saveMask        = false;
-    bool rotate          = false;
-    int offset           = 0;
-    int target_size      = 640;
+    bool dynamic = false;
+    bool save = false;
+    bool drawContour = false;
+    bool agnostic = false;
+    bool crop = false;
+    bool saveTxt = false;
+    bool saveMask = false;
+    bool rotate = false;
+    int offset = 0;
+    int target_size = 640;
     float prob_threshold = 0.25f;
-    float nms_threshold  = 0.45f;
-    int max_object       = 100;
+    float nms_threshold = 0.45f;
+    int max_object = 100;
+
 private:
     ncnn::Net net;
     std::vector<std::string> class_names;
-    int class_count=0;
+    int class_count = 0;
     std::string in_blob;
     std::string out_blob;
     std::string out1_blob;
@@ -82,7 +71,7 @@ private:
     /// @param objects object vector contain all the detected object in the image
     /// @param colorMode determine the color for each object to be draw ( bounding box and feature mask )
     void draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int colorMode = byIndex);
-    
+
     /// @brief draw color mask on the background image.
     /// @param bgr background image to be draw on.
     /// @param mask gray scale mask
