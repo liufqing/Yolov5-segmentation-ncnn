@@ -1,43 +1,36 @@
 #include "pch.hpp"
 #include "yolo.hpp"
 
-#define MAX_STRIDE 64
+#define MAX_STRIDE  64
 #define PERMUTE     0 // Using the permute layer output
 #define FAST_EXP    1 // Using fast exponential function
-#define SEGMENT     1 // Using segmentation model
+
+using namespace ncnn;
 
 Yolo::Yolo() {
-    net.opt.use_vulkan_compute = false;
-    net.opt.num_threads = 4;
-    in_blob = "in0";
-    out_blob = "out0";
-    out1_blob = "out1";
-    out2_blob = "out2";
-    out3_blob = "out3";
-    seg_blob = "seg";
-    //std::cout << "net init" << std::endl;
+    net = new Net();
 }
 
 Yolo::~Yolo() {
-    net.clear();
-    //std::cout << "net clear" << std::endl;
+    net->clear();
+    delete net;
 }
 
 int Yolo::load(const std::string& bin, const std::string& param) {
-    if (net.load_param(param.c_str())) {
+    if (net->load_param(param.c_str())) {
         return -1;
     }
-    if (net.load_model(bin.c_str())) {
+    if (net->load_model(bin.c_str())) {
         return -1;
     }
     return 0;
 }
 
 int Yolo::load(const std::filesystem::path& bin, const std::filesystem::path& param) {
-    if (net.load_param(param.string().c_str())) {
+    if (net->load_param(param.string().c_str())) {
         return -1;
     }
-    if (net.load_model(bin.string().c_str())) {
+    if (net->load_model(bin.string().c_str())) {
         return -1;
     }
     return 0;
@@ -108,7 +101,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
     in_pad.substract_mean_normalize(0, norm_vals);
 
     //inference
-    ncnn::Extractor ex = net.create_extractor();
+    ncnn::Extractor ex = net->create_extractor();
     ex.input(in_blob.c_str(), in_pad);
     ncnn::Mat out;
     ex.extract(out_blob.c_str(), out);
@@ -271,7 +264,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     in_pad.substract_mean_normalize(0, norm_vals);
 
     // yolov5 model inference
-    ncnn::Extractor ex = net.create_extractor();
+    ncnn::Extractor ex = net->create_extractor();
     ex.input(in_blob.c_str(), in_pad);
 
     ncnn::Mat out1;
@@ -1000,8 +993,8 @@ void Yolo::matmul(const std::vector<ncnn::Mat>& bottom_blobs, ncnn::Mat& top_blo
 }
 
 void Yolo::decode_mask(const ncnn::Mat& mask_feat, const int& img_w, const int& img_h,
-                 const ncnn::Mat& mask_proto, const ncnn::Mat& in_pad, const int& wpad, const int& hpad,
-                 ncnn::Mat& mask_pred_result) {
+                       const ncnn::Mat& mask_proto, const ncnn::Mat& in_pad, const int& wpad, const int& hpad,
+                       ncnn::Mat& mask_pred_result) {
     ncnn::Mat masks;
     matmul(std::vector<ncnn::Mat>{mask_feat, mask_proto}, masks);
     sigmoid(masks);

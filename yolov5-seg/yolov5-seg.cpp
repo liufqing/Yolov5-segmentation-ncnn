@@ -7,7 +7,8 @@
 int main(int argc, char** argv) {
     InputParser argument(argc, argv);
 
-    //set folder path
+    //Set folder path
+    //Make sure that current working is in the solution dir
     std::string inputFolder     = "input";
     std::string outputFolder    = "output";
     std::string modelFolder     = "models";

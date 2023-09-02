@@ -8,7 +8,7 @@
 
 enum strategy {
     concatenatedContour = 0,    //concatenate all segments
-    largestContour = 1     //select largest segment
+    largestContour = 1          //select largest segment
 };
 
 enum colorMode {
@@ -49,30 +49,31 @@ public:
 
     void get_blob_name(std::string in, std::string out, std::string out0, std::string out1, std::string out2, std::string seg);
 
-    bool dynamic = false;
-    bool save = false;
-    bool drawContour = false;
-    bool agnostic = false;
-    bool crop = false;
-    bool saveTxt = false;
-    bool saveMask = false;
-    bool rotate = false;
-    int offset = 0;
-    int target_size = 640;
+    bool dynamic         = false;
+    bool save            = false;
+    bool drawContour     = false;
+    bool agnostic        = false;
+    bool crop            = false;
+    bool saveTxt         = false;
+    bool saveMask        = false;
+    bool rotate          = false;
+    int offset           = 0;
+    int target_size      = 640;
     float prob_threshold = 0.25f;
-    float nms_threshold = 0.45f;
-    int max_object = 100;
+    float nms_threshold  = 0.45f;
+    int max_object       = 100;
 
 private:
-    ncnn::Net net;
+    ncnn::Net *net;
     std::vector<std::string> class_names;
     int class_count = 0;
-    std::string in_blob;
-    std::string out_blob;
-    std::string out1_blob;
-    std::string out2_blob;
-    std::string out3_blob;
-    std::string seg_blob;
+    std::string in_blob   = "in0";
+    std::string out_blob  = "out0";
+    std::string out1_blob = "out1";
+    std::string out2_blob = "out2";
+    std::string out3_blob = "out3";
+    std::string seg_blob  = "seg";
+
 private:
     /// @brief Draw all the objects at once.
     /// This function is a combination of draw_mask, draw_label and cv::rectangle
@@ -112,8 +113,11 @@ private:
 
     void matmul(const std::vector<ncnn::Mat>& bottom_blobs, ncnn::Mat& top_blob);
 
-    void decode_mask(const ncnn::Mat& mask_feat, const int& img_w, const int& img_h,
-                     const ncnn::Mat& mask_proto, const ncnn::Mat& in_pad, const int& wpad, const int& hpad,
+    void decode_mask(const ncnn::Mat& mask_feat,
+                     const int& img_w, const int& img_h,
+                     const ncnn::Mat& mask_proto,
+                     const ncnn::Mat& in_pad,
+                     const int& wpad, const int& hpad,
                      ncnn::Mat& mask_pred_result);
 
     inline float intersection_area(const Object& a, const Object& b);
