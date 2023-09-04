@@ -20,8 +20,15 @@ public:
     float nms_threshold  = 0.45f;
     int max_object       = 100;
 
-protected:
+private:
     ncnn::Net net;
+
+    const char* in_blob   = "in0";
+    const char* out_blob  = "out0";
+    const char* out1_blob = "out1";
+    const char* out2_blob = "out2";
+    const char* out3_blob = "out3";
+    const char* seg_blob  = "seg";
 
 public:
     int load(const char* bin, const char* param);
@@ -33,14 +40,6 @@ public:
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
 
     void get_blob_name(const char* in, const char* out, const char* out1, const char* out2, const char* out3, const char* seg);
-
-protected:
-    const char* in_blob   = "in0";
-    const char* out_blob  = "out0";
-    const char* out1_blob = "out1";
-    const char* out2_blob = "out2";
-    const char* out3_blob = "out3";
-    const char* seg_blob  = "seg";
 
 private:
     void slice(const ncnn::Mat& in, ncnn::Mat& out, int start, int end, int axis);
