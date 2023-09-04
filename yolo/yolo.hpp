@@ -16,6 +16,14 @@ public:
 
     ~Yolo();
 
+    int load(const char* bin, const char* param);
+
+    int detect(const cv::Mat& bgr, std::vector<Object>& objects);
+
+    int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
+
+    void get_blob_name(const char* in, const char* out, const char* out1, const char* out2, const char* out3, const char* seg);
+
 public:
     bool dynamic         = false;
     bool agnostic        = false;
@@ -33,15 +41,6 @@ private:
     const char* out2_blob = "out2";
     const char* out3_blob = "out3";
     const char* seg_blob  = "seg";
-
-public:
-    int load(const char* bin, const char* param);
-
-    int detect(const cv::Mat& bgr, std::vector<Object>& objects);
-
-    int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
-
-    void get_blob_name(const char* in, const char* out, const char* out1, const char* out2, const char* out3, const char* seg);
 
 private:
     void slice(const ncnn::Mat& in, ncnn::Mat& out, int start, int end, int axis);

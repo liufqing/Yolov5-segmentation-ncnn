@@ -1,5 +1,6 @@
 #pragma once
 #include "yolo.hpp"
+#include "parser.hpp"
 
 enum strategy {
     concatenatedContour = 0,    //concatenate all segments
@@ -13,18 +14,30 @@ enum colorMode {
 
 class Utils {
 public:
-    bool save            = false;
-    bool drawContour     = false;
-    bool crop            = false;
-    bool saveTxt         = false;
-    bool saveMask        = false;
-    bool rotate          = false;
-    int offset           = 0;
+    Utils();
+    
+    Utils(int argc, char** argv);
+
+    ~Utils();
+
+public:
+    bool save                   = false;
+    bool drawContour            = false;
+    bool crop                   = false;
+    bool saveTxt                = false;
+    bool saveMask               = false;
+    bool rotate                 = false;
+    std::string inputFolder     = "input";
+    std::string outputFolder    = "output";
+    std::string modelFolder     = "models";
+    std::string dataFolder      = "data";
 
 public:
     int load(const std::filesystem::path& bin, const std::filesystem::path& param);
 
 	void video(std::string inputPath);
+
+    void image(const std::filesystem::path& inputPath);
 
 	void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous = false);
 
@@ -33,7 +46,8 @@ public:
     void get_class_names(const std::filesystem::path& data);
 
 private:
-    Yolo yolo;
+    Yolo* yolo = nullptr;
+    InputParser* parser = nullptr;
     std::vector<std::string> class_names;
 
 private:
@@ -64,4 +78,6 @@ private:
     void matPrint(const ncnn::Mat& m);
 
     void matVisualize(const char* title, const ncnn::Mat& m, bool save = 0);
+
+    void set_arguments(int argc, char** argv);
 };

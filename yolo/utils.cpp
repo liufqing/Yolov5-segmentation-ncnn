@@ -8,6 +8,40 @@
 
 #include "utils.hpp"
 
+Utils::Utils() {
+}
+
+Utils::Utils(int argc, char** argv) {
+    set_arguments(argc, argv);
+}
+
+Utils::~Utils() {
+    delete yolo;
+}
+
+void Utils::set_arguments(int argc, char** argv) {
+    parser = new InputParser(argc, argv);
+
+    this->modelFolder              = parser->setDefaultArgument("--model", "yolov5s-seg-idcard-2.ncnn");
+    this->dataFolder               = parser->setDefaultArgument("--data", "idcard.txt");
+    this->inputFolder              = parser->setDefaultArgument("--source", "inputFolder");
+    this->outputFolder             = parser->setDefaultArgument("--output", "outputFolder");
+    this->crop                     = parser->cmdOptionExists("--crop");
+    this->save                     = parser->cmdOptionExists("--save");
+    this->saveTxt                  = parser->cmdOptionExists("--save-txt");
+    this->saveMask		           = parser->cmdOptionExists("--save-mask");
+    this->rotate			       = parser->cmdOptionExists("--rotate");
+    //this->contour                  = parser->cmdOptionExists("--contour");
+    yolo->target_size              = parser->setDefaultArgument("--size", 640);
+    yolo->prob_threshold           = parser->setDefaultArgument("--conf", 0.25f);
+    yolo->nms_threshold            = parser->setDefaultArgument("--nms", 0.45f);
+    yolo->max_object               = parser->setDefaultArgument("--max-obj", 1);
+    yolo->dynamic                  = parser->cmdOptionExists("--dynamic");
+    yolo->agnostic                 = parser->cmdOptionExists("--agnostic");
+
+    delete parser;
+}
+
 void Utils::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int colorMode) {
     size_t objCount = objects.size();
     std::cout << "Objects count = " << objCount << std::endl;
@@ -132,10 +166,10 @@ void Utils::draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rr, const cv::
 void Utils::image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous) {
     cv::Mat in = cv::imread(inputPath.string());
     std::vector<Object> objects;
-    if (yolo.dynamic)
-        yolo.detect_dynamic(in, objects);
+    if (yolo->dynamic)
+        yolo->detect_dynamic(in, objects);
     else
-        yolo.detect(in, objects);
+        yolo->detect(in, objects);
 
     std::string fileName = inputPath.filename().string();
     std::string stem = inputPath.stem().string();
@@ -210,8 +244,7 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
 
         if (crop) {
             cv::utils::fs::createDirectory(cropFolder);
-            cv::Rect2f roi(obj.rect.x - offset, obj.rect.y - offset, obj.rect.width + offset * 2, obj.rect.height + offset * 2);
-            cv::Mat RoI(in, roi); //Region Of Interest
+            cv::Mat RoI(in, obj.rect); //Region Of Interest
             std::string cropPath = cropFolder + "\\" + saveFileName;
             cv::imwrite(cropPath, RoI);
         }
@@ -245,8 +278,18 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
     }
 }
 
+void Utils::image(const std::filesystem::path& inputPath) {
+    cv::Mat in = cv::imread(inputPath.string());
+    std::vector<Object> objects;
+    if (yolo->dynamic)
+        yolo->detect_dynamic(in, objects);
+    else
+        yolo->detect(in, objects);
+}
+
 int Utils::load(const std::filesystem::path& bin, const std::filesystem::path& param) {
-    return yolo.load(bin.string().c_str(), param.string().c_str());
+    yolo = new Yolo();
+    return yolo->load(bin.string().c_str(), param.string().c_str());
 }
 
 void Utils::video(std::string inputPath) {
@@ -266,10 +309,10 @@ void Utils::video(std::string inputPath) {
         size_t frameIndex = 0;
         do {
             capture >> frame; //extract frame by frame
-            if (yolo.dynamic)
-                yolo.detect_dynamic(frame, objects);
+            if (yolo->dynamic)
+                yolo->detect_dynamic(frame, objects);
             else
-                yolo.detect(frame, objects);
+                yolo->detect(frame, objects);
             draw_objects(frame, objects, 0);
             cv::imshow("Detect", frame);
             if (save) {
@@ -404,9 +447,5 @@ void Utils::get_class_names(const std::string& dataFile) {
 }
 
 void Utils::get_class_names(const std::filesystem::path& data) {
-    std::ifstream file(data);
-    std::string name = "";
-    while (std::getline(file, name)) {
-        class_names.push_back(name);
-    }
+    get_class_names(data.string());
 }
