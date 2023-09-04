@@ -32,7 +32,6 @@ public:
 
 private:
     std::vector<std::string> class_names;
-    int class_count = 0;
 
     /// @brief Draw all the objects at once.
     /// This function is a combination of draw_mask, draw_label and cv::rectangle

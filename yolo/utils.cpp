@@ -387,21 +387,15 @@ void Utils::matVisualize(const char* title, const ncnn::Mat& m, bool save) {
 void Utils::get_class_names(const std::string& dataFile) {
     std::ifstream file(dataFile);
     std::string name = "";
-    int count = 0;
     while (std::getline(file, name)) {
         class_names.push_back(name);
-        count++;
     }
-    class_count = count;
 }
 
 void Utils::get_class_names(const std::filesystem::path& data) {
     std::ifstream file(data);
     std::string name = "";
-    int count = 0;
     while (std::getline(file, name)) {
         class_names.push_back(name);
-        count++;
     }
-    class_count = count;
 }
