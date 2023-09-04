@@ -1,4 +1,3 @@
-#include "pch.hpp"
 #include "yolo.hpp"
 
 #define MAX_STRIDE  64
@@ -6,20 +5,18 @@
 #define FAST_EXP    1 // Using fast exponential function
 
 
-Yolo::Yolo() {
-    net = new ncnn::Net();
+Yolo::Yolo(){
 }
 
 Yolo::~Yolo() {
-    net->clear();
-    delete net;
+    net.clear();
 }
 
 int Yolo::load(const char* bin, const char* param) {
-    if (net->load_param(param)) {
+    if (net.load_param(param)) {
         return -1;
     }
-    if (net->load_model(bin)) {
+    if (net.load_model(bin)) {
         return -1;
     }
     return 0;
@@ -72,7 +69,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
     in_pad.substract_mean_normalize(0, norm_vals);
 
     //inference
-    ncnn::Extractor ex = net->create_extractor();
+    ncnn::Extractor ex = net.create_extractor();
     ex.input(in_blob, in_pad);
     ncnn::Mat out;
     ex.extract(out_blob, out);
@@ -235,7 +232,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     in_pad.substract_mean_normalize(0, norm_vals);
 
     // yolov5 model inference
-    ncnn::Extractor ex = net->create_extractor();
+    ncnn::Extractor ex = net.create_extractor();
     ex.input(in_blob, in_pad);
 
     ncnn::Mat out1;

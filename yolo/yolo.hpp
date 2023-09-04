@@ -1,4 +1,6 @@
 #pragma once
+#include <filesystem>
+
 #include <ncnn/net.h>
 #include <opencv2/core/mat.hpp>
 
@@ -19,7 +21,7 @@ public:
     int max_object       = 100;
 
 protected:
-    ncnn::Net* net;
+    ncnn::Net net;
 
 public:
     int load(const char* bin, const char* param);

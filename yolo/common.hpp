@@ -1,4 +1,10 @@
 #pragma once
+#include <string>
+#include <vector>
+#include <chrono>
+#include <filesystem>
+
+#include <opencv2/imgproc/imgproc.hpp>
 
 struct Timer {
     std::chrono::time_point<std::chrono::steady_clock> start{}, finish{};
@@ -6,6 +12,14 @@ struct Timer {
     std::string task;
     Timer(const char* _task);
     ~Timer();
+};
+
+struct Object {
+    cv::Rect_<float> rect;
+    int label {};
+    float prob {};
+    std::vector<float> mask_feat;
+    cv::Mat cv_mask;
 };
 
 extern const unsigned char colors[81][3];

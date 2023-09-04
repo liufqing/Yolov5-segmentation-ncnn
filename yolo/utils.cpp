@@ -1,4 +1,11 @@
-#include "pch.hpp"
+#include <iostream>
+#include <fstream>
+
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/utils/filesystem.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 #include "utils.hpp"
 
 void Utils::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int colorMode) {
