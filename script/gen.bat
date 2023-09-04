@@ -1,18 +1,18 @@
 @echo off
 
-set RELEASE=D:\Projects\Random_Project\Yolo\x64\Release
-set CWD=D:\Projects\Random_Project\Yolo
+set CWD=D:\Projects\C_Cpp\Yolo
+set RELEASE=%CWD%\x64\Release
 
-set INPUT=D:\Projects\Random_Project\Yolo\autogen
-set OUTPUT_FOLDER=D:\Projects\Random_Project\Yolo\autogen-output
+set INPUT=%CWD%\autogen
+set OUTPUT_FOLDER=%CWD%\autogen-output
 
-set LOG=D:\Projects\Random_Project\Yolo\autogen-log
+set LOG=%CWD%\autogen-log
 
 cd %CWD%
 
 for %%i in (%INPUT%\*.jpg) do (
     echo Generating image from %%i
-    %RELEASE%\autoGenRotate.exe %%i -150 180 30 0.5 >> %LOG%\%%~ni_gen.txt
+    %RELEASE%\autoGenRotate.exe %%i -175 180 5 0.55 >> %LOG%\%%~ni_gen.txt
     
     echo ------------------------------------------------
 )
