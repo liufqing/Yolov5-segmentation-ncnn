@@ -132,10 +132,10 @@ void Utils::draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rr, const cv::
 void Utils::image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous) {
     cv::Mat in = cv::imread(inputPath.string());
     std::vector<Object> objects;
-    if (dynamic)
-        detect_dynamic(in, objects);
+    if (yolo.dynamic)
+        yolo.detect_dynamic(in, objects);
     else
-        detect(in, objects);
+        yolo.detect(in, objects);
 
     std::string fileName = inputPath.filename().string();
     std::string stem = inputPath.stem().string();
@@ -245,6 +245,10 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
     }
 }
 
+int Utils::load(const std::filesystem::path& bin, const std::filesystem::path& param) {
+    return yolo.load(bin.string().c_str(), param.string().c_str());
+}
+
 void Utils::video(std::string inputPath) {
     cv::VideoCapture capture;
     if (inputPath == "0") {
@@ -262,10 +266,10 @@ void Utils::video(std::string inputPath) {
         size_t frameIndex = 0;
         do {
             capture >> frame; //extract frame by frame
-            if (dynamic)
-                detect_dynamic(frame, objects);
+            if (yolo.dynamic)
+                yolo.detect_dynamic(frame, objects);
             else
-                detect(frame, objects);
+                yolo.detect(frame, objects);
             draw_objects(frame, objects, 0);
             cv::imshow("Detect", frame);
             if (save) {

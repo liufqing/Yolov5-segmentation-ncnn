@@ -11,7 +11,7 @@ enum colorMode {
     byIndex = 1                 //color object by object number index 
 };
 
-class Utils : public Yolo{
+class Utils {
 public:
     bool save            = false;
     bool drawContour     = false;
@@ -22,6 +22,8 @@ public:
     int offset           = 0;
 
 public:
+    int load(const std::filesystem::path& bin, const std::filesystem::path& param);
+
 	void video(std::string inputPath);
 
 	void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous = false);
@@ -31,6 +33,7 @@ public:
     void get_class_names(const std::filesystem::path& data);
 
 private:
+    Yolo yolo;
     std::vector<std::string> class_names;
 
 private:
