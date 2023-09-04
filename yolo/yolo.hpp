@@ -1,10 +1,14 @@
 #pragma once
-#include <filesystem>
-
 #include <ncnn/net.h>
 #include <opencv2/core/mat.hpp>
 
 #include "common.hpp"
+
+#ifdef NDEBUG
+#define TIME_LOG(name)
+#else
+#define TIME_LOG(name) Timer timer(name)
+#endif // NDEBUG
 
 class Yolo {
 public:
@@ -32,8 +36,6 @@ private:
 
 public:
     int load(const char* bin, const char* param);
-
-    int load(const std::filesystem::path& bin, const std::filesystem::path& param);
 
     int detect(const cv::Mat& bgr, std::vector<Object>& objects);
 

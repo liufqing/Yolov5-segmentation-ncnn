@@ -4,7 +4,6 @@
 #define PERMUTE     0 // Using the permute layer output
 #define FAST_EXP    1 // Using fast exponential function
 
-
 Yolo::Yolo(){
 }
 
@@ -22,10 +21,6 @@ int Yolo::load(const char* bin, const char* param) {
     return 0;
 }
 
-int Yolo::load(const std::filesystem::path& bin, const std::filesystem::path& param) {
-    return load(bin.string().c_str(), param.string().c_str());
-}
-
 void Yolo::get_blob_name(const char* in, const char* out, const char* out1, const char* out2, const char* out3, const char* seg) {
     in_blob   = in;
     out_blob  = out;
@@ -36,7 +31,7 @@ void Yolo::get_blob_name(const char* in, const char* out, const char* out1, cons
 }
 
 int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
-    Timer timer("Inference");
+    TIME_LOG("Inference");
     // load image, resize and pad to 640x640
     const int img_w = bgr.cols;
     const int img_h = bgr.rows;
@@ -198,7 +193,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
 }
 
 int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
-    Timer timer("Inference");
+    TIME_LOG("Inference");
     // load image, resize and letterbox pad to multiple of MAX_STRIDE
     int img_w = bgr.cols;
     int img_h = bgr.rows;
