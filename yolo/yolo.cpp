@@ -15,33 +15,27 @@ Yolo::~Yolo() {
     delete net;
 }
 
-int Yolo::load(const std::string& bin, const std::string& param) {
-    if (net->load_param(param.c_str())) {
+int Yolo::load(const char* bin, const char* param) {
+    if (net->load_param(param)) {
         return -1;
     }
-    if (net->load_model(bin.c_str())) {
+    if (net->load_model(bin)) {
         return -1;
     }
     return 0;
 }
 
 int Yolo::load(const std::filesystem::path& bin, const std::filesystem::path& param) {
-    if (net->load_param(param.string().c_str())) {
-        return -1;
-    }
-    if (net->load_model(bin.string().c_str())) {
-        return -1;
-    }
-    return 0;
+    return load(bin.string().c_str(), param.string().c_str());
 }
 
-void Yolo::get_blob_name(std::string in, std::string out, std::string out1, std::string out2, std::string out3, std::string seg) {
-    in_blob = in;
-    out_blob = out;
+void Yolo::get_blob_name(const char* in, const char* out, const char* out1, const char* out2, const char* out3, const char* seg) {
+    in_blob   = in;
+    out_blob  = out;
     out1_blob = out1;
     out2_blob = out2;
     out3_blob = out3;
-    seg_blob = seg;
+    seg_blob  = seg;
 }
 
 int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
@@ -79,9 +73,9 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
 
     //inference
     ncnn::Extractor ex = net->create_extractor();
-    ex.input(in_blob.c_str(), in_pad);
+    ex.input(in_blob, in_pad);
     ncnn::Mat out;
-    ex.extract(out_blob.c_str(), out);
+    ex.extract(out_blob, out);
     /*
     The out blob would be a 2-dim tensor with w=85 h=25200
 
@@ -107,7 +101,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
     */
 
     ncnn::Mat mask_proto;
-    ex.extract(seg_blob.c_str(), mask_proto);
+    ex.extract(seg_blob, mask_proto);
 
     std::vector<Object> proposals;
 
@@ -242,14 +236,14 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
 
     // yolov5 model inference
     ncnn::Extractor ex = net->create_extractor();
-    ex.input(in_blob.c_str(), in_pad);
+    ex.input(in_blob, in_pad);
 
     ncnn::Mat out1;
     ncnn::Mat out2;
     ncnn::Mat out3;
-    ex.extract(out1_blob.c_str(), out1);
-    ex.extract(out2_blob.c_str(), out2);
-    ex.extract(out3_blob.c_str(), out3);
+    ex.extract(out1_blob, out1);
+    ex.extract(out2_blob, out2);
+    ex.extract(out3_blob, out3);
     /*
     The out blob would be a 3-dim tensor with w=dynamic h=dynamic c=255=85*3
     We view it as [grid_w,grid_h,85,3] for 3 anchor ratio types
@@ -345,7 +339,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     */
 
     ncnn::Mat mask_proto;
-    ex.extract(seg_blob.c_str(), mask_proto);
+    ex.extract(seg_blob, mask_proto);
 
     std::vector<Object> proposals;
 

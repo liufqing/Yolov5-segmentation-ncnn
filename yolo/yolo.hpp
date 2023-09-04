@@ -1,17 +1,8 @@
 #pragma once
 #include <ncnn/net.h>
-#include <string>
-#include <opencv2/core/core.hpp>
+#include <opencv2/core/mat.hpp>
 
 #include "common.hpp"
-
-struct Object {
-    cv::Rect_<float> rect;
-    int label {};
-    float prob {};
-    std::vector<float> mask_feat;
-    cv::Mat cv_mask;
-};
 
 class Yolo {
 public:
@@ -31,7 +22,7 @@ protected:
     ncnn::Net* net;
 
 public:
-    int load(const std::string& bin, const std::string& param);
+    int load(const char* bin, const char* param);
 
     int load(const std::filesystem::path& bin, const std::filesystem::path& param);
 
@@ -39,15 +30,15 @@ public:
 
     int detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects);
 
-    void get_blob_name(std::string in, std::string out, std::string out0, std::string out1, std::string out2, std::string seg);
+    void get_blob_name(const char* in, const char* out, const char* out1, const char* out2, const char* out3, const char* seg);
 
 protected:
-    std::string in_blob   = "in0";
-    std::string out_blob  = "out0";
-    std::string out1_blob = "out1";
-    std::string out2_blob = "out2";
-    std::string out3_blob = "out3";
-    std::string seg_blob  = "seg";
+    const char* in_blob   = "in0";
+    const char* out_blob  = "out0";
+    const char* out1_blob = "out1";
+    const char* out2_blob = "out2";
+    const char* out3_blob = "out3";
+    const char* seg_blob  = "seg";
 
 private:
     void slice(const ncnn::Mat& in, ncnn::Mat& out, int start, int end, int axis);
