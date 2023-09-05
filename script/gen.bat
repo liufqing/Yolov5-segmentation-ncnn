@@ -12,7 +12,7 @@ cd %CWD%
 
 for %%i in (%INPUT%\*.jpg) do (
     echo Generating image from %%i
-    %RELEASE%\autoGenRotate.exe %%i -175 180 5 0.55 >> %LOG%\%%~ni_gen.txt
+    %RELEASE%\autoGenRotate.exe %%i -175 180 5 >> %LOG%\%%~ni_gen.txt
     
     echo ------------------------------------------------
 )

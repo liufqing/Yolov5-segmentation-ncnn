@@ -67,7 +67,7 @@ void Utils::set_arguments(int argc, char** argv) {
     yolo->dynamic                  = parser.cmdOptionExists("--dynamic");
     yolo->agnostic                 = parser.cmdOptionExists("--agnostic");
 
-    LOG("\nmodel     = " << this->model);
+    LOG("model       = " << this->model);
     LOG("\ndata      = " << this->data);
     LOG("\ninput     = " << this->input);
     LOG("\noutput    = " << this->output);

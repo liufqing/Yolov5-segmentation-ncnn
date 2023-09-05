@@ -1,12 +1,12 @@
 @echo off
 
-set RELEASE=D:\Projects\Random_Project\Yolo\x64\Release
-set CWD=D:\Projects\Random_Project\Yolo
+set CWD=D:\Projects\C_Cpp\Yolo
+set RELEASE=%CWD%\x64\Release
 
-set INPUT=D:\Projects\Random_Project\Yolo\autogen
-set OUTPUT_FOLDER=D:\Projects\Random_Project\Yolo\autogen-output
+set INPUT=%CWD%\autogen
+set OUTPUT_FOLDER=%CWD%\autogen-output
 
-set LOG=D:\Projects\Random_Project\Yolo\autogen-log
+set LOG=%CWD%\autogen-log
 
 cd %CWD%
 
