@@ -110,6 +110,7 @@ int Utils::run() {
     std::filesystem::path inputPath = input;
 
     if (not inputPath.has_extension()) {
+        this->show = false;
         folder(inputPath, outputPath);
         return 0;
     }
@@ -140,6 +141,7 @@ void Utils::set_arguments(int argc, char** argv) {
     this->saveTxt                  = parser.cmdOptionExists("--save-txt");
     this->saveMask		           = parser.cmdOptionExists("--save-mask");
     this->rotate			       = parser.cmdOptionExists("--rotate");
+    this->show                     = parser.cmdOptionExists("--show");
     yolo->target_size              = parser.setDefaultArgument("--size", 640);
     yolo->prob_threshold           = parser.setDefaultArgument("--conf", 0.25f);
     yolo->nms_threshold            = parser.setDefaultArgument("--nms", 0.45f);
@@ -156,6 +158,7 @@ void Utils::set_arguments(int argc, char** argv) {
     LOG("\nsaveTxt   = " << this->saveTxt);
     LOG("\nsaveMask  = " << this->saveMask);
     LOG("\nrotate    = " << this->rotate);
+    LOG("\nshow      = " << this->show);
     LOG("\nsize      = " << yolo->target_size);
     LOG("\nconf      = " << yolo->prob_threshold);
     LOG("\nnms       = " << yolo->nms_threshold);
@@ -299,7 +302,7 @@ void Utils::draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rr, const cv::
         cv::line(bgr, vertices[i], vertices[(i + 1) % 4], cc, thickness);
 }
 
-void Utils::image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous) {
+void Utils::image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder) {
     cv::Mat in = cv::imread(inputPath.string());
     std::vector<Object> objects;
     if (yolo->dynamic)
@@ -367,7 +370,7 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
             }
             cv::utils::fs::createDirectory(rotateFolder);
             std::string rotatePath = rotateFolder + "\\" + saveFileName;
-            if (!continuous)
+            if (show)
                 cv::imshow("Rotated", rotated);
             if (save)
                 cv::imwrite(rotatePath, rotated);
@@ -394,7 +397,7 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
 
     LOG(labels);
 
-    if (!continuous) {
+    if (show) {
         cv::imshow("Detect", out);
         cv::waitKey();
     }
@@ -414,7 +417,7 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
     }
 }
 
-void Utils::folder(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous) {
+void Utils::folder(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder) {
     LOG("Auto running on all images in the input folder");
     int count = 0;
     clock_t tStart = clock();
@@ -424,7 +427,7 @@ void Utils::folder(const std::filesystem::path& inputPath, const std::filesystem
         LOG(path << std::endl);
         if (isImage(path)) {
             count++;
-            image(entry.path(), outputFolder, true);
+            image(entry.path(), outputFolder);
         }
         else {
             LOG("skipping non image file");

@@ -34,6 +34,7 @@ public:
     bool saveTxt     = false;
     bool saveMask    = false;
     bool rotate      = false;
+    bool show        = false;
 
     std::string input  = "input/test.jpg";
     std::string output = "output";
@@ -51,9 +52,9 @@ public:
 
     void image(const std::filesystem::path& inputPath);
 
-    void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous = false);
+    void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder);
 
-    void folder(const std::filesystem::path& inputFolder, const std::filesystem::path& outputFolder, bool continuous = false);
+    void folder(const std::filesystem::path& inputFolder, const std::filesystem::path& outputFolder);
 
     void get_class_names(const std::string& data);
 
