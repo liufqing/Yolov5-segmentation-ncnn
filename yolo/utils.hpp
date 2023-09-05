@@ -34,8 +34,6 @@ public:
     std::string data = "data/idcard.txt";
 
 public:
-    void set_arguments(int argc, char** argv);
-
     int run();
 
     int load(const std::string& _model);
@@ -54,9 +52,10 @@ public:
 
     void get_class_names(const std::filesystem::path& data);
 
+    void set_arguments(int argc, char** argv);
+
 private:
     Yolo* yolo = nullptr;
-    InputParser* parser = nullptr;
     std::vector<std::string> class_names;
 
 private:

@@ -49,23 +49,23 @@ int Utils::run() {
 
 
 void Utils::set_arguments(int argc, char** argv) {
-    parser = new InputParser(argc, argv);
+    InputParser parser (argc, argv);
 
-    this->model                    = parser->setDefaultArgument("--model", this->model);
-    this->data                     = parser->setDefaultArgument("--data", this->data);
-    this->input                    = parser->setDefaultArgument("--source", this->input);
-    this->output                   = parser->setDefaultArgument("--output", this->output);
-    this->crop                     = parser->cmdOptionExists("--crop");
-    this->save                     = parser->cmdOptionExists("--save");
-    this->saveTxt                  = parser->cmdOptionExists("--save-txt");
-    this->saveMask		           = parser->cmdOptionExists("--save-mask");
-    this->rotate			       = parser->cmdOptionExists("--rotate");
-    yolo->target_size              = parser->setDefaultArgument("--size", 640);
-    yolo->prob_threshold           = parser->setDefaultArgument("--conf", 0.25f);
-    yolo->nms_threshold            = parser->setDefaultArgument("--nms", 0.45f);
-    yolo->max_object               = parser->setDefaultArgument("--max-obj", 1);
-    yolo->dynamic                  = parser->cmdOptionExists("--dynamic");
-    yolo->agnostic                 = parser->cmdOptionExists("--agnostic");
+    this->model                    = parser.setDefaultArgument("--model", this->model);
+    this->data                     = parser.setDefaultArgument("--data", this->data);
+    this->input                    = parser.setDefaultArgument("--source", this->input);
+    this->output                   = parser.setDefaultArgument("--output", this->output);
+    this->crop                     = parser.cmdOptionExists("--crop");
+    this->save                     = parser.cmdOptionExists("--save");
+    this->saveTxt                  = parser.cmdOptionExists("--save-txt");
+    this->saveMask		           = parser.cmdOptionExists("--save-mask");
+    this->rotate			       = parser.cmdOptionExists("--rotate");
+    yolo->target_size              = parser.setDefaultArgument("--size", 640);
+    yolo->prob_threshold           = parser.setDefaultArgument("--conf", 0.25f);
+    yolo->nms_threshold            = parser.setDefaultArgument("--nms", 0.45f);
+    yolo->max_object               = parser.setDefaultArgument("--max-obj", 1);
+    yolo->dynamic                  = parser.cmdOptionExists("--dynamic");
+    yolo->agnostic                 = parser.cmdOptionExists("--agnostic");
 
     LOG("\nmodel     = " << this->model);
     LOG("\ndata      = " << this->data);
@@ -84,9 +84,7 @@ void Utils::set_arguments(int argc, char** argv) {
     LOG("\nagnostic  = " << yolo->agnostic);
     LOG("\n------------------------------------------------" << std::endl);
 
-    LOG(parser->argNum() << " argument(s) passed" << std::endl);
-
-    delete parser;
+    LOG(parser.argNum() << " argument(s) passed" << std::endl);
 }
 
 int Utils::load(const std::string& _model) {
