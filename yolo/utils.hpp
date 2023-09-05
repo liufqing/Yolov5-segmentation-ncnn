@@ -2,6 +2,8 @@
 #include "yolo.hpp"
 #include "parser.hpp"
 
+#include <filesystem>
+
 enum strategy {
     concatenatedContour = 0,    //concatenate all segments
     largestContour = 1          //select largest segment
@@ -26,17 +28,17 @@ public:
     ~Utils();
 
 public:
-    bool save = false;
+    bool save        = false;
     bool drawContour = false;
-    bool crop = false;
-    bool saveTxt = false;
-    bool saveMask = false;
-    bool rotate = false;
+    bool crop        = false;
+    bool saveTxt     = false;
+    bool saveMask    = false;
+    bool rotate      = false;
 
-    std::string input = "input/test.jpg";
+    std::string input  = "input/test.jpg";
     std::string output = "output";
-    std::string model = "models/yolov5s-seg-idcard-2.ncnn";
-    std::string data = "data/idcard.txt";
+    std::string model  = "models/yolov5s-seg-idcard-2.ncnn";
+    std::string data   = "data/idcard.txt";
 
 public:
     int run();
