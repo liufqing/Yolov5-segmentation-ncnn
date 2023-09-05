@@ -37,7 +37,7 @@ public:
 
     std::string input  = "input/test.jpg";
     std::string output = "output";
-    std::string model  = "models/yolov5s-seg-idcard-2.ncnn";
+    std::string model  = "models/yolov5s-seg-idcard-best-2.ncnn";
     std::string data   = "data/idcard.txt";
 
 public:
