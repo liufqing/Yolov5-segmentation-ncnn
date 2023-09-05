@@ -15,36 +15,40 @@ enum colorMode {
 class Utils {
 public:
     Utils();
-    
+
     Utils(int argc, char** argv);
 
     ~Utils();
 
 public:
-    bool save                   = false;
-    bool drawContour            = false;
-    bool crop                   = false;
-    bool saveTxt                = false;
-    bool saveMask               = false;
-    bool rotate                 = false;
+    bool save = false;
+    bool drawContour = false;
+    bool crop = false;
+    bool saveTxt = false;
+    bool saveMask = false;
+    bool rotate = false;
 
-    std::string input           = "input/test.jpg";
-    std::string output          = "output";
-    std::string model           = "models/yolov5s-seg-idcard-2.ncnn";
-    std::string data            = "data/idcard.txt";
+    std::string input = "input/test.jpg";
+    std::string output = "output";
+    std::string model = "models/yolov5s-seg-idcard-2.ncnn";
+    std::string data = "data/idcard.txt";
 
 public:
+    void set_arguments(int argc, char** argv);
+
     int run();
 
     int load(const std::string& _model);
 
     int load(const std::filesystem::path& bin, const std::filesystem::path& param);
 
-	void video(std::string inputPath);
+    void video(std::string inputPath);
 
     void image(const std::filesystem::path& inputPath);
 
-	void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous = false);
+    void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous = false);
+
+    void folder(const std::filesystem::path& inputFolder, const std::filesystem::path& outputFolder, bool continuous = false);
 
     void get_class_names(const std::string& data);
 
@@ -83,6 +87,4 @@ private:
     void matPrint(const ncnn::Mat& m);
 
     void matVisualize(const char* title, const ncnn::Mat& m, bool save = 0);
-
-    void set_arguments(int argc, char** argv);
 };

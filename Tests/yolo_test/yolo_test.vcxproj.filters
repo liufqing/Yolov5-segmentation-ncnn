@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="yolov5-seg.cpp">
+    <ClCompile Include="yolo_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

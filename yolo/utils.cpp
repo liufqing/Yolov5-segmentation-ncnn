@@ -15,7 +15,6 @@ Utils::Utils() {
 Utils::Utils(int argc, char** argv) {
     yolo = new Yolo();
     set_arguments(argc, argv);
-
 }
 
 Utils::~Utils() {
@@ -26,9 +25,26 @@ int Utils::run() {
     if (load(this->model))
         return -1;
     get_class_names(this->data);
-    image(this->input, this->output);
 
-    return 0;
+    std::filesystem::path outputPath = output;
+    std::filesystem::path inputPath = input;
+
+    if (not inputPath.has_extension()) {
+        folder(inputPath, outputPath);
+        return 0;
+    }
+
+    if (isImage(inputPath)) {
+        image(inputPath, outputPath);
+        return 0;
+    }
+    if (input == "0" or isVideo(inputPath)) {
+        video(inputPath.string());
+        return 0;
+    }
+
+    LOG("input type not supported");
+    return 1;
 }
 
 
@@ -86,7 +102,7 @@ int Utils::load(const std::filesystem::path& bin, const std::filesystem::path& p
 
 void Utils::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int colorMode) {
     size_t objCount = objects.size();
-    std::cout << "Objects count = " << objCount << std::endl;
+    LOG("Objects count = " << objCount << std::endl);
 
     int color_index = 0;
     for (size_t i = 0; i < objCount; i++) {
@@ -96,7 +112,7 @@ void Utils::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int c
         //class-index confident center-x center-y box-width box-height
         sprintf_s(line, "%i %f %i %i %i %i", obj.label, obj.prob, (int) round(obj.rect.tl().x), (int) round(obj.rect.tl().y), (int) round(obj.rect.br().x), (int) round(obj.rect.br().y));
 
-        std::cout << line << std::endl;
+        LOG(line << std::endl);
 
         if (colorMode == byClass)
             color_index = obj.label;
@@ -224,7 +240,7 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
     std::string anglePath = rotateFolder + "\\" + "angle.txt";
 
     const size_t objCount = objects.size();
-    std::cout << "Objects count = " << objCount << std::endl;
+    LOG("Objects count = " << objCount << std::endl);
 
     int color_index = 0;
     cv::Mat out = in.clone();
@@ -298,7 +314,7 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
         }
     }
 
-    std::cout << labels;
+    LOG(labels);
 
     if (!continuous) {
         cv::imshow("Detect", out);
@@ -308,7 +324,7 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
     if (save) {
         cv::utils::fs::createDirectory(outputFolder.string());
         cv::imwrite(outputPath, out);
-        std::cout << "\nOutput saved at " << outputPath;
+        LOG("\nOutput saved at " << outputPath);
     }
 
     if (saveTxt) {
@@ -316,8 +332,32 @@ void Utils::image(const std::filesystem::path& inputPath, const std::filesystem:
         std::ofstream txtFile(labelsPath);
         txtFile << labels;
         txtFile.close();
-        std::cout << "\nLabels saved at " << labelsPath;
+        LOG("\nLabels saved at " << labelsPath);
     }
+}
+
+void Utils::folder(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder, bool continuous) {
+    LOG("Auto running on all images in the input folder");
+    int count = 0;
+    clock_t tStart = clock();
+    for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(inputPath)) {
+        std::string path = entry.path().string();
+        LOG("\n------------------------------------------------" << std::endl);
+        LOG(path << std::endl);
+        if (isImage(path)) {
+            count++;
+            image(entry.path(), outputFolder, true);
+        }
+        else {
+            LOG("skipping non image file");
+        }
+    }
+    auto total = (double) (clock() - tStart) / CLOCKS_PER_SEC;
+    double average = total / count;
+    LOG("\n------------------------------------------------" << std::endl);
+    LOG(count << " images processed" << std::endl);
+    LOG("Total time taken: " << total << " seconds" << std::endl);
+    LOG("Average time taken: " << average << " seconds" << std::endl);
 }
 
 void Utils::image(const std::filesystem::path& inputPath) {
@@ -337,8 +377,8 @@ void Utils::video(std::string inputPath) {
         capture.open(inputPath);
     }
     if (capture.isOpened()) {
-        std::cout << "Object Detection Started...." << std::endl;
-        std::cout << "Press q or esc to stop" << std::endl;
+        LOG("Object Detection Started...." << std::endl);
+        LOG("Press q or esc to stop" << std::endl);
 
         std::vector<Object> objects;
 
@@ -365,7 +405,7 @@ void Utils::video(std::string inputPath) {
                 break;
         } while (!frame.empty());
     } else {
-        std::cout << "Could not Open Camera/Video";
+        LOG("Could not Open Camera/Video");
     }
 }
 

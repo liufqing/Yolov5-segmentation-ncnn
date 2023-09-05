@@ -10,10 +10,10 @@
 #define TIME_LOG(name) Timer timer(name)
 #endif // NDEBUG
 
-#ifdef _DEBUG
-#define LOG(message) std::cout << message
+#ifdef BENCHMARK
+#define LOG(message)
 #else
-#define LOG(name)
+#define LOG(message) std::cout << message
 #endif // _DEBUG
 
 class Yolo {
