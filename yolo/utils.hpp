@@ -12,6 +12,11 @@ enum colorMode {
     byIndex = 1                 //color object by object number index 
 };
 
+extern const unsigned char colors[81][3];
+
+extern std::vector<std::string> IMG_FORMATS;
+extern std::vector<std::string> VID_FORMATS;
+
 class Utils {
 public:
     Utils();
@@ -86,4 +91,12 @@ private:
     void matPrint(const ncnn::Mat& m);
 
     void matVisualize(const char* title, const ncnn::Mat& m, bool save = 0);
+
+    bool isImage(const std::string& path);
+
+    bool isImage(const std::filesystem::path& path);
+
+    bool isVideo(const std::string& path);
+
+    bool isVideo(const std::filesystem::path& path);
 };

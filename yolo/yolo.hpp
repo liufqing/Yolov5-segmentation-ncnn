@@ -2,7 +2,7 @@
 #include <ncnn/net.h>
 #include <opencv2/core/mat.hpp>
 
-#include "common.hpp"
+#include "timer.hpp"
 
 #ifdef NDEBUG
 #define TIME_LOG(name)
@@ -15,6 +15,14 @@
 #else
 #define LOG(message) std::cout << message
 #endif // _DEBUG
+
+struct Object {
+    cv::Rect_<float> rect;
+    int label {};
+    float prob {};
+    std::vector<float> mask_feat;
+    cv::Mat cv_mask;
+};
 
 class Yolo {
 public:
