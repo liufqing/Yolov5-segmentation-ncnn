@@ -10,6 +10,12 @@
 #define TIME_LOG(name) Timer timer(name)
 #endif // NDEBUG
 
+#ifdef _DEBUG
+#define LOG(message) std::cout << message
+#else
+#define LOG(name)
+#endif // _DEBUG
+
 class Yolo {
 public:
     Yolo();
