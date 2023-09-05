@@ -27,12 +27,17 @@ public:
     bool saveTxt                = false;
     bool saveMask               = false;
     bool rotate                 = false;
-    std::string inputFolder     = "input";
-    std::string outputFolder    = "output";
-    std::string modelFolder     = "models";
-    std::string dataFolder      = "data";
+
+    std::string input           = "input/test.jpg";
+    std::string output          = "output";
+    std::string model           = "models/yolov5s-seg-idcard-2.ncnn";
+    std::string data            = "data/idcard.txt";
 
 public:
+    int run();
+
+    int load(const std::string& _model);
+
     int load(const std::filesystem::path& bin, const std::filesystem::path& param);
 
 	void video(std::string inputPath);

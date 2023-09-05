@@ -9,29 +9,41 @@
 #include "utils.hpp"
 
 Utils::Utils() {
+    yolo = new Yolo();
 }
 
 Utils::Utils(int argc, char** argv) {
+    yolo = new Yolo();
     set_arguments(argc, argv);
+
 }
 
 Utils::~Utils() {
     delete yolo;
 }
 
+int Utils::run() {
+    if (load(this->model))
+        return -1;
+    get_class_names(this->data);
+    image(this->input, this->output);
+
+    return 0;
+}
+
+
 void Utils::set_arguments(int argc, char** argv) {
     parser = new InputParser(argc, argv);
 
-    this->modelFolder              = parser->setDefaultArgument("--model", "yolov5s-seg-idcard-2.ncnn");
-    this->dataFolder               = parser->setDefaultArgument("--data", "idcard.txt");
-    this->inputFolder              = parser->setDefaultArgument("--source", "inputFolder");
-    this->outputFolder             = parser->setDefaultArgument("--output", "outputFolder");
+    this->model                    = parser->setDefaultArgument("--model", this->model);
+    this->data                     = parser->setDefaultArgument("--data", this->data);
+    this->input                    = parser->setDefaultArgument("--source", this->input);
+    this->output                   = parser->setDefaultArgument("--output", this->output);
     this->crop                     = parser->cmdOptionExists("--crop");
     this->save                     = parser->cmdOptionExists("--save");
     this->saveTxt                  = parser->cmdOptionExists("--save-txt");
     this->saveMask		           = parser->cmdOptionExists("--save-mask");
     this->rotate			       = parser->cmdOptionExists("--rotate");
-    //this->contour                  = parser->cmdOptionExists("--contour");
     yolo->target_size              = parser->setDefaultArgument("--size", 640);
     yolo->prob_threshold           = parser->setDefaultArgument("--conf", 0.25f);
     yolo->nms_threshold            = parser->setDefaultArgument("--nms", 0.45f);
@@ -39,7 +51,37 @@ void Utils::set_arguments(int argc, char** argv) {
     yolo->dynamic                  = parser->cmdOptionExists("--dynamic");
     yolo->agnostic                 = parser->cmdOptionExists("--agnostic");
 
+    LOG("\nmodel     = " << this->model);
+    LOG("\ndata      = " << this->data);
+    LOG("\ninput     = " << this->input);
+    LOG("\noutput    = " << this->output);
+    LOG("\ncrop      = " << this->crop);
+    LOG("\nsave      = " << this->save);
+    LOG("\nsaveTxt   = " << this->saveTxt);
+    LOG("\nsaveMask  = " << this->saveMask);
+    LOG("\nrotate    = " << this->rotate);
+    LOG("\nsize      = " << yolo->target_size);
+    LOG("\nconf      = " << yolo->prob_threshold);
+    LOG("\nnms       = " << yolo->nms_threshold);
+    LOG("\nmaxObj    = " << yolo->max_object);
+    LOG("\ndynamic   = " << yolo->dynamic);
+    LOG("\nagnostic  = " << yolo->agnostic);
+    LOG("\n------------------------------------------------" << std::endl);
+
+    LOG(parser->argNum() << " argument(s) passed" << std::endl);
+
     delete parser;
+}
+
+int Utils::load(const std::string& _model) {
+    std::filesystem::path bin        = _model + ".bin";
+    std::filesystem::path param      = _model + ".param";
+    load(bin, param);
+    return 0;
+}
+
+int Utils::load(const std::filesystem::path& bin, const std::filesystem::path& param) {
+    return yolo->load(bin.string().c_str(), param.string().c_str());
 }
 
 void Utils::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int colorMode) {
@@ -285,11 +327,6 @@ void Utils::image(const std::filesystem::path& inputPath) {
         yolo->detect_dynamic(in, objects);
     else
         yolo->detect(in, objects);
-}
-
-int Utils::load(const std::filesystem::path& bin, const std::filesystem::path& param) {
-    yolo = new Yolo();
-    return yolo->load(bin.string().c_str(), param.string().c_str());
 }
 
 void Utils::video(std::string inputPath) {
