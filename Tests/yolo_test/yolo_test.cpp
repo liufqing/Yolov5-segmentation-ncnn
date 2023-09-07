@@ -4,8 +4,10 @@
 #include <opencv2/highgui.hpp>
 #include <vector>
 #include <filesystem>
+#include <opencv2/core/utility.hpp>
 
 int main(int argc, char** argv) {
+
     std::vector<Object> objs;
     Utils utils(argc, argv);
 

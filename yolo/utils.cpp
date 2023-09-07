@@ -89,16 +89,13 @@ std::vector<std::string> IMG_FORMATS {"bmp", "dng", "jpg", "jpeg", "mpo", "png",
 std::vector<std::string> VID_FORMATS {"asf", "avi", "gif", "m4v", "mkv", "mov", "mp4", "mpeg", "mpg", "ts", "wmv"};
 
 Utils::Utils() {
-    yolo = new Yolo();
 }
 
 Utils::Utils(int argc, char** argv) {
-    yolo = new Yolo();
     set_arguments(argc, argv);
 }
 
 Utils::~Utils() {
-    delete yolo;
 }
 
 int Utils::run() {
@@ -160,30 +157,30 @@ void Utils::set_arguments(int argc, char** argv) {
     this->saveMask		           = parser.has("save-mask");
     this->rotate			       = parser.has("rotate");
     this->show                     = parser.has("show");
-    yolo->target_size              = parser.get<int>("size");
-    yolo->prob_threshold           = parser.get<float>("conf");
-    yolo->nms_threshold            = parser.get<float>("nms");
-    yolo->max_object               = parser.get<int>("max-obj");
-    yolo->dynamic                  = parser.has("dynamic");
-    yolo->agnostic                 = parser.has("agnostic");
+    yolo.target_size              = parser.get<int>("size");
+    yolo.prob_threshold           = parser.get<float>("conf");
+    yolo.nms_threshold            = parser.get<float>("nms");
+    yolo.max_object               = parser.get<int>("max-obj");
+    yolo.dynamic                  = parser.has("dynamic");
+    yolo.agnostic                 = parser.has("agnostic");
 #else
     Parser parser (argc, argv);
-    this->model                 = parser.get("--model", this->model);
-    this->data                  = parser.get("--data", this->data);
-    this->input                 = parser.get("--source", this->input);
-    this->output                = parser.get("--output", this->output);
-    this->crop                  = parser.has("--crop");
-    this->save                  = parser.has("--save");
-    this->saveTxt               = parser.has("--save-txt");
-    this->saveMask		        = parser.has("--save-mask");
-    this->rotate		        = parser.has("--rotate");
-    this->show                  = parser.has("--show");
-    yolo->target_size           = parser.get("--size", 640);
-    yolo->prob_threshold        = parser.get("--conf", 0.25f);
-    yolo->nms_threshold         = parser.get("--nms", 0.45f);
-    yolo->max_object            = parser.get("--max-obj", 1);
-    yolo->dynamic               = parser.has("--dynamic");
-    yolo->agnostic              = parser.has("--agnostic");
+    this->model                    = parser.get("--model", this->model);
+    this->data                     = parser.get("--data", this->data);
+    this->input                    = parser.get("--source", this->input);
+    this->output                   = parser.get("--output", this->output);
+    this->crop                     = parser.has("--crop");
+    this->save                     = parser.has("--save");
+    this->saveTxt                  = parser.has("--save-txt");
+    this->saveMask		           = parser.has("--save-mask");
+    this->rotate		           = parser.has("--rotate");
+    this->show                     = parser.has("--show");
+    yolo.target_size               = parser.get("--size", 640);
+    yolo.prob_threshold            = parser.get("--conf", 0.25f);
+    yolo.nms_threshold             = parser.get("--nms", 0.45f);
+    yolo.max_object                = parser.get("--max-obj", 1);
+    yolo.dynamic                   = parser.has("--dynamic");
+    yolo.agnostic                  = parser.has("--agnostic");
 #endif // CV_PARSER
 
     LOG("------------------------------------------------" << std::endl);
@@ -198,12 +195,12 @@ void Utils::set_arguments(int argc, char** argv) {
     LOG("\nsaveMask  = " << this->saveMask);
     LOG("\nrotate    = " << this->rotate);
     LOG("\nshow      = " << this->show);
-    LOG("\nsize      = " << yolo->target_size);
-    LOG("\nconf      = " << yolo->prob_threshold);
-    LOG("\nnms       = " << yolo->nms_threshold);
-    LOG("\nmaxObj    = " << yolo->max_object);
-    LOG("\ndynamic   = " << yolo->dynamic);
-    LOG("\nagnostic  = " << yolo->agnostic);
+    LOG("\nsize      = " << yolo.target_size);
+    LOG("\nconf      = " << yolo.prob_threshold);
+    LOG("\nnms       = " << yolo.nms_threshold);
+    LOG("\nmaxObj    = " << yolo.max_object);
+    LOG("\ndynamic   = " << yolo.dynamic);
+    LOG("\nagnostic  = " << yolo.agnostic);
     LOG("\n------------------------------------------------" << std::endl);
 }
 
@@ -215,7 +212,7 @@ int Utils::load(const std::string& _model) {
 }
 
 int Utils::load(const std::filesystem::path& bin, const std::filesystem::path& param) {
-    return yolo->load(bin.string().c_str(), param.string().c_str());
+    return yolo.load(bin.string().c_str(), param.string().c_str());
 }
 
 void Utils::draw_objects(cv::Mat& bgr, const std::vector<Object>& objects, int colorMode) {
@@ -342,10 +339,10 @@ void Utils::draw_RotatedRect(cv::Mat& bgr, const cv::RotatedRect& rr, const cv::
 void Utils::image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder) {
     cv::Mat in = cv::imread(inputPath.string());
     std::vector<Object> objects;
-    if (yolo->dynamic)
-        yolo->detect_dynamic(in, objects);
+    if (yolo.dynamic)
+        yolo.detect_dynamic(in, objects);
     else
-        yolo->detect(in, objects);
+        yolo.detect(in, objects);
 
     std::string fileName = inputPath.filename().string();
     std::string stem = inputPath.stem().string();
@@ -478,15 +475,6 @@ void Utils::folder(const std::filesystem::path& inputPath, const std::filesystem
     LOG("Average time taken: " << average << " seconds" << std::endl);
 }
 
-void Utils::image(const std::filesystem::path& inputPath) {
-    cv::Mat in = cv::imread(inputPath.string());
-    std::vector<Object> objects;
-    if (yolo->dynamic)
-        yolo->detect_dynamic(in, objects);
-    else
-        yolo->detect(in, objects);
-}
-
 void Utils::video(std::string inputPath) {
     cv::VideoCapture capture;
     if (inputPath == "0") {
@@ -504,10 +492,10 @@ void Utils::video(std::string inputPath) {
         size_t frameIndex = 0;
         do {
             capture >> frame; //extract frame by frame
-            if (yolo->dynamic)
-                yolo->detect_dynamic(frame, objects);
+            if (yolo.dynamic)
+                yolo.detect_dynamic(frame, objects);
             else
-                yolo->detect(frame, objects);
+                yolo.detect(frame, objects);
             draw_objects(frame, objects, 0);
             cv::imshow("Detect", frame);
             if (save) {

@@ -55,8 +55,6 @@ public:
 
     void video(std::string inputPath);
 
-    void image(const std::filesystem::path& inputPath);
-
     void image(const std::filesystem::path& inputPath, const std::filesystem::path& outputFolder);
 
     void folder(const std::filesystem::path& inputFolder, const std::filesystem::path& outputFolder);
@@ -68,7 +66,7 @@ public:
     void set_arguments(int argc, char** argv);
 
 private:
-    Yolo* yolo = nullptr;
+    Yolo yolo;
     std::vector<std::string> class_names;
 
 private:
