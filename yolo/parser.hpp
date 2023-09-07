@@ -1,6 +1,17 @@
 #pragma once
 #include <string>
 #include <vector>
+
+struct Argument {
+    Argument();
+
+    Argument(const std::string& name, const std::string& value = "");
+
+private:
+    std::string name;
+    std::string value;
+};
+
 class Parser {
 public:
     /// <summary>
@@ -18,19 +29,12 @@ public:
     bool has(const std::string& name);
 
     /// <summary>
-    /// get argument by name
-    /// </summary>
-    /// <param name="name">argument name</param>
-    /// <returns></returns>
-    const std::string& get(const std::string& name);
-
-    /// <summary>
     /// get argument by name, if not exist, return default argument
     /// </summary>
     /// <param name="name">argument name</param>
     /// <param name="def">default argument</param>
     /// <returns></returns>
-    const std::string& get(const std::string& name, const std::string& def);
+    const std::string get(const std::string& name, const std::string& def = "");
 
     /// <summary>
    /// get argument by name, if not exist, return default argument
@@ -56,6 +60,8 @@ public:
 
 private:
     std::vector <std::string> tokens;
-    std::vector <std::string> names;
+
+    std::vector <Argument> arguments;
+
     int argCount = 0;
 };
