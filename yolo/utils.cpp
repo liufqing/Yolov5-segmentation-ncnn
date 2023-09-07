@@ -167,7 +167,7 @@ void Utils::set_arguments(int argc, char** argv) {
     yolo->dynamic                  = parser.has("dynamic");
     yolo->agnostic                 = parser.has("agnostic");
 #else
-    InputParser parser (argc, argv);
+    Parser parser (argc, argv);
     this->model                 = parser.get("--model", this->model);
     this->data                  = parser.get("--data", this->data);
     this->input                 = parser.get("--source", this->input);

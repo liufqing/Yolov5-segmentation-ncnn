@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
-class InputParser {
+class Parser {
 public:
-    InputParser(int& argc, char** argv);
+    Parser(int& argc, char** argv);
 
     bool has(const std::string& option);
 
