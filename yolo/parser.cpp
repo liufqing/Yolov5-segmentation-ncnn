@@ -1,48 +1,48 @@
 #include "pch.hpp"
 #include "parser.hpp"
 
-Parser::Parser(int& argc, char** argv){
+Parser::Parser(int& argc, char** argv) {
     for (int i = 1; i < argc; ++i)
         this->tokens.push_back(std::string(argv[i]));
 }
 
-const std::string& Parser::get(const std::string& option){
-    std::vector<std::string>::const_iterator itr;
-    itr = std::find(this->tokens.begin(), this->tokens.end(), option);
+const std::string& Parser::get(const std::string& name) {
+    auto itr = std::find(this->tokens.begin(), this->tokens.end(), name);
     if (itr != this->tokens.end() && ++itr != this->tokens.end()) {
         return *itr;
     }
-    static const std::string empty_string("");
-    return empty_string;
+
+    return "";
 }
 
-bool Parser::has(const std::string& option){
-    if (std::find(this->tokens.begin(), this->tokens.end(), option) != this->tokens.end()) {
+bool Parser::has(const std::string& name) {
+    names.push_back(name);
+    if (std::find(this->tokens.begin(), this->tokens.end(), name) != this->tokens.end()) {
         argCount++;
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
-const std::string& Parser::get(const std::string& option, const std::string& def){
-    if (has(option))
-        return get(option);
+const std::string& Parser::get(const std::string& name, const std::string& def) {
+    if (has(name))
+        return get(name);
     else
         return def;
 }
 
-const int Parser::get(const std::string& option, const int& def) {
-    if (has(option))
-		return std::stoi(get(option));
-	else
-		return def;
+const int Parser::get(const std::string& name, const int& def) {
+    if (has(name))
+        return std::stoi(get(name));
+    else
+        return def;
 }
 
-const float Parser::get(const std::string& option, const float& def){
-    if (has(option))
-		return std::stof(get(option));
-	else
-		return def;
+const float Parser::get(const std::string& name, const float& def) {
+    if (has(name))
+        return std::stof(get(name));
+    else
+        return def;
 }
 
 int Parser::getArgCount() {

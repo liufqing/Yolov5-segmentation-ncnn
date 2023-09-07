@@ -23,7 +23,7 @@ public:
     /// <param name="name">argument name</param>
     /// <returns></returns>
     const std::string& get(const std::string& name);
-    
+
     /// <summary>
     /// get argument by name, if not exist, return default argument
     /// </summary>
@@ -32,12 +32,12 @@ public:
     /// <returns></returns>
     const std::string& get(const std::string& name, const std::string& def);
 
-     /// <summary>
-    /// get argument by name, if not exist, return default argument
-    /// </summary>
-    /// <param name="name">argument name</param>
-    /// <param name="def">default argument</param>
-    /// <returns></returns>
+    /// <summary>
+   /// get argument by name, if not exist, return default argument
+   /// </summary>
+   /// <param name="name">argument name</param>
+   /// <param name="def">default argument</param>
+   /// <returns></returns>
     const int get(const std::string& name, const int& def);
 
     /// <summary>
@@ -56,5 +56,6 @@ public:
 
 private:
     std::vector <std::string> tokens;
+    std::vector <std::string> names;
     int argCount = 0;
 };
