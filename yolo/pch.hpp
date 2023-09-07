@@ -8,6 +8,8 @@
 
 // add headers that you want to pre-compile here
 #include <iostream>
+#include <string>
+#include <vector>
 #include <filesystem>
 #include <fstream>
 #include <chrono>

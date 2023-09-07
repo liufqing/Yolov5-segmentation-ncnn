@@ -1,8 +1,13 @@
 #pragma once
 #include "yolo.hpp"
-#include "parser.hpp"
 
 #include <filesystem>
+
+#ifdef CV_PARSER
+#include <opencv2/core/utility.hpp>
+#else
+#include "parser.hpp"
+#endif
 
 enum strategy {
     concatenatedContour = 0,    //concatenate all segments

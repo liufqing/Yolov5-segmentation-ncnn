@@ -4,13 +4,23 @@
 class InputParser {
 public:
     InputParser(int& argc, char** argv);
-    const std::string& getCmdOption(const std::string& option);
-    bool cmdOptionExists(const std::string& option);
-    const std::string& setDefaultArgument(const std::string& option, const std::string& def);
-    const int setDefaultArgument(const std::string& option, const int& def);
-    const float setDefaultArgument(const std::string& option, const float& def);
 
-    int argNum();
+    bool has(const std::string& option);
+
+    const std::string& get(const std::string& option);
+
+    const std::string& get(const std::string& option, const std::string& def);
+
+    const int get(const std::string& option, const int& def);
+
+    const float get(const std::string& option, const float& def);
+
+    /// <summary>
+    /// Return the number of arguments has passed to program
+    /// </summary>
+    /// <returns></returns>
+    int getArgCount();
+
 private:
     std::vector <std::string> tokens;
     int argCount = 0;
