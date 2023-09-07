@@ -30,6 +30,12 @@ public:
 
     ~Yolo();
 
+    /// <summary>
+    /// load ncnn model
+    /// </summary>
+    /// <param name="bin">path to *.bin</param>
+    /// <param name="param">path to *param</param>
+    /// <returns>0 if successed</returns>
     int load(const char* bin, const char* param);
 
     int detect(const cv::Mat& bgr, std::vector<Object>& objects);

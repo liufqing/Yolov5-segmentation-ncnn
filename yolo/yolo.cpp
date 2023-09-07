@@ -33,7 +33,7 @@ void Yolo::get_blob_name(const char* in, const char* out, const char* out1, cons
 
 int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
     TIME_LOG("Inference");
-    // load image, resize and pad to 640x640
+    // load image
     const int img_w = bgr.cols;
     const int img_h = bgr.rows;
 
@@ -54,7 +54,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
     // construct ncnn::Mat from image pixel data, swap order from bgr to rgb
     ncnn::Mat in = ncnn::Mat::from_pixels_resize(bgr.data, ncnn::Mat::PIXEL_BGR2RGB, img_w, img_h, w, h);
 
-    // pad to target_size rectangle
+    // pad to target_size rectangle 640x640
     const int wpad = target_size - w;
     const int hpad = target_size - h;
     ncnn::Mat in_pad;
@@ -145,7 +145,7 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
         }
     }
 
-    // sort all candidates by score from highest to lowest
+    // sort all proposals by score from highest to lowest
     qsort_descent_inplace(proposals);
 
     // apply non max suppression
@@ -195,11 +195,11 @@ int Yolo::detect(const cv::Mat& bgr, std::vector<Object>& objects) {
 
 int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     TIME_LOG("Inference");
-    // load image, resize and letterbox pad to multiple of MAX_STRIDE
-    int img_w = bgr.cols;
-    int img_h = bgr.rows;
+    // load image
+    const int img_w = bgr.cols;
+    const int img_h = bgr.rows;
 
-    // letterbox pad to multiple of MAX_STRIDE
+    // solve resize scale 
     int w = img_w;
     int h = img_h;
     float scale = 1.f;
@@ -216,7 +216,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     // construct ncnn::Mat from image pixel data, swap order from bgr to rgb
     ncnn::Mat in = ncnn::Mat::from_pixels_resize(bgr.data, ncnn::Mat::PIXEL_BGR2RGB, img_w, img_h, w, h);
 
-    // pad to target_size rectangle
+    // pad to letterbox pad to multiple of MAX_STRIDE
     // yolov5/utils/datasets.py letterbox
     int wpad = (w + MAX_STRIDE - 1) / MAX_STRIDE * MAX_STRIDE - w;
     int hpad = (h + MAX_STRIDE - 1) / MAX_STRIDE * MAX_STRIDE - h;
@@ -227,7 +227,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     const float norm_vals[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};
     in_pad.substract_mean_normalize(0, norm_vals);
 
-    // yolov5 model inference
+    //inference
     ncnn::Extractor ex = net.create_extractor();
     ex.input(in_blob, in_pad);
 
@@ -401,7 +401,7 @@ int Yolo::detect_dynamic(const cv::Mat& bgr, std::vector<Object>& objects) {
     // sort all proposals by score from highest to lowest
     qsort_descent_inplace(proposals);
 
-    // apply nms with nms_threshold 
+    // apply non max suppression
     std::vector<int> picked;
     nms_sorted_bboxes(proposals, picked, nms_threshold, agnostic);
 
