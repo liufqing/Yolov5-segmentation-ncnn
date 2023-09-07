@@ -181,27 +181,12 @@ void Utils::set_arguments(int argc, char** argv) {
     yolo.max_object                = parser.get("--max-obj", 1);
     yolo.dynamic                   = parser.has("--dynamic");
     yolo.agnostic                  = parser.has("--agnostic");
-#endif // CV_PARSER
 
-    LOG("------------------------------------------------" << std::endl);
-    LOG(parser.getArgCount() << " argument(s) passed" << std::endl);
-    LOG("\nmodel     = " << this->model);
-    LOG("\ndata      = " << this->data);
-    LOG("\ninput     = " << this->input);
-    LOG("\noutput    = " << this->output);
-    LOG("\ncrop      = " << this->crop);
-    LOG("\nsave      = " << this->save);
-    LOG("\nsaveTxt   = " << this->saveTxt);
-    LOG("\nsaveMask  = " << this->saveMask);
-    LOG("\nrotate    = " << this->rotate);
-    LOG("\nshow      = " << this->show);
-    LOG("\nsize      = " << yolo.target_size);
-    LOG("\nconf      = " << yolo.prob_threshold);
-    LOG("\nnms       = " << yolo.nms_threshold);
-    LOG("\nmaxObj    = " << yolo.max_object);
-    LOG("\ndynamic   = " << yolo.dynamic);
-    LOG("\nagnostic  = " << yolo.agnostic);
-    LOG("\n------------------------------------------------" << std::endl);
+    LOG("------------------------------------------------\n");
+    LOG(parser.getArgCount() << " argument(s) passed\n");
+    LOG(parser.getArg());
+    LOG("------------------------------------------------\n");
+#endif // CV_PARSER
 }
 
 int Utils::load(const std::string& _model) {

@@ -43,6 +43,19 @@ int Parser::getArgCount() {
     return argCount;
 }
 
+std::string Parser::getArg() {
+    std::string buffer;
+
+    for (auto& arg : arguments) {
+        buffer += arg.name;
+        buffer += " = ";
+        buffer += arg.value;
+        buffer += "\n";
+    }
+
+    return buffer;
+}
+
 Argument::Argument() {
 }
 

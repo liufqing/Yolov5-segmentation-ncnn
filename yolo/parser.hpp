@@ -7,7 +7,6 @@ struct Argument {
 
     Argument(const std::string& name, const std::string& value = "");
 
-private:
     std::string name;
     std::string value;
 };
@@ -22,10 +21,10 @@ public:
     Parser(int& argc, char** argv);
 
     /// <summary>
-    /// check if argument exist
+    /// to check if argument exist
     /// </summary>
     /// <param name="name">argument name</param>
-    /// <returns></returns>
+    /// <returns>true if argument exist</returns>
     bool has(const std::string& name);
 
     /// <summary>
@@ -37,11 +36,11 @@ public:
     const std::string get(const std::string& name, const std::string& def = "");
 
     /// <summary>
-   /// get argument by name, if not exist, return default argument
-   /// </summary>
-   /// <param name="name">argument name</param>
-   /// <param name="def">default argument</param>
-   /// <returns></returns>
+    /// get argument by name, if not exist, return default argument
+    /// </summary>
+    /// <param name="name">argument name</param>
+    /// <param name="def">default argument</param>
+    /// <returns></returns>
     const int get(const std::string& name, const int& def);
 
     /// <summary>
@@ -57,6 +56,8 @@ public:
     /// </summary>
     /// <returns></returns>
     int getArgCount();
+
+    std::string getArg();
 
 private:
     std::vector <std::string> tokens;
